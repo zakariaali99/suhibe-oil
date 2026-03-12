@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+
+{% block title %}إتمام الطلب - نظام الزيوت{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header bg-white py-3">
+                <h4 class="mb-0 text-center text-primary fw-bold">إتمام الفاتورة</h4>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+
+                    <div class="row mb-4">
+                        <div class="col-md-6 mb-3 mb-md-0">
+                            <label class="form-label fw-bold">اسم العميل</label>
+                            <input type="text" name="customer_name" class="form-control" placeholder="أدخل اسم العميل"
+                                required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">التاريخ (تلقائي)</label>
+                            <input type="text" class="form-control bg-light" value="{% now 'Y-m-d H:i' %}" readonly>
+                        </div>
+                    </div>
+
+                    <h5 class="border-bottom pb-2 mb-3">تفاصيل المنتجات</h5>
+                    <div class="table-responsive mb-4">
+                        <table class="table table-bordered align-middle">
+                            <thead class="bg-light">
+                                <tr>
+                                    <th>المنتج</th>
+                                    <th style="width: 100px;">الكمية</th>
+                                    <th style="width: 150px;">السعر الفردي</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in products_in_cart %}
+                                <tr>
+                                    <td>
+                                        <div class="fw-bold">{{ item.product.name }}</div>
+                                        <small class="text-muted">{{ item.product.company.name }} - {{
+                                            item.product.density.value }}</small>
+                                    </td>
+                                    <td>
+                                        <input type="number" name="qty_{{ item.product.id }}"
+                                            class="form-control form-control-sm" value="{{ item.quantity }}" min="1">
+                                    </td>
+                                    <td>
+                                        <div class="input-group input-group-sm">
+                                            <input type="number" step="0.01" name="price_{{ item.product.id }}"
+                                                class="form-control" placeholder="0.00" required>
+                                            <span class="input-group-text">ر.س</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="row mb-4">
+                        <div class="col-md-6 mb-3 mb-md-0">
+                            <label class="form-label fw-bold">طريقة الدفع</label>
+                            <select name="payment_method" class="form-select" required>
+                                <option value="cash" selected>نقد</option>
+                                <option value="card">بطاقة</option>
+                                <option value="transfer">تحويل</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 d-flex align-items-end">
+                            <div class="form-check form-switch mb-2">
+                                <input class="form-check-input" type="checkbox" name="is_paid" id="isPaidSwitch"
+                                    checked>
+                                <label class="form-check-label fw-bold" for="isPaidSwitch">تم الدفع</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-grid gap-2 mt-4">
+                        <button type="submit" class="btn btn-primary btn-lg">حفظ الفاتورة وإصدارها</button>
+                        <a href="{% url 'product_list' %}" class="btn btn-outline-secondary">إلغاء والعودة</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

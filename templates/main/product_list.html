@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+
+{% block title %}المنتجات - نظام الزيوت{% endblock %}
+
+{% block content %}
+<div class="row">
+    <!-- Products Column -->
+    <div class="col-md-8">
+        <div class="card mb-4">
+            <div class="card-body">
+                <form action="{% url 'product_list' %}" method="get" class="d-flex mb-3">
+                    <input type="text" name="q" class="form-control me-2" placeholder="ابحث عن شركة، نوع، أو كثافة..."
+                        value="{{ query }}">
+                    <button type="submit" class="btn btn-primary">بحث</button>
+                </form>
+
+                <div class="row g-3">
+                    {% for product in products %}
+                    <div class="col-md-6 col-lg-4">
+                        <div class="card h-100 product-card">
+                            <div class="card-body d-flex flex-column">
+                                <h5 class="card-title">{{ product.name }}</h5>
+                                <p class="card-text text-muted mb-1">
+                                    <i class="bi bi-building me-1"></i>{{ product.company.name }}
+                                </p>
+                                <p class="card-text text-muted mb-3">
+                                    <i class="bi bi-speedometer2 me-1"></i>{{ product.density.value }}
+                                </p>
+                                <a href="{% url 'add_to_cart' product.id %}"
+                                    class="btn btn-outline-primary btn-sm mt-auto">
+                                    <i class="bi bi-cart-plus me-1"></i>إضافة للعربة
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="col-12 text-center py-5">
+                        <i class="bi bi-search display-1 text-muted"></i>
+                        <p class="mt-3">لا توجد منتجات مطابقة للبحث.</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cart Column -->
+    <div class="col-md-4">
+        <div class="card sticky-top" style="top: 80px;">
+            <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="bi bi-cart3 me-2"></i>عربة التسوق</h5>
+                <span class="badge bg-light text-primary">{{ cart_total_qty }}</span>
+            </div>
+            <div class="card-body p-0">
+                <ul class="list-group list-group-flush">
+                    {% for item in cart_items %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="mb-0">{{ item.product.name }}</h6>
+                            <small class="text-muted">{{ item.product.company.name }} - {{ item.product.density.value
+                                }}</small>
+                            <div class="mt-1">
+                                <span class="badge bg-secondary">الكمية: {{ item.quantity }}</span>
+                            </div>
+                        </div>
+                        <a href="{% url 'remove_from_cart' item.product.id %}" class="text-danger">
+                            <i class="bi bi-trash"></i>
+                        </a>
+                    </li>
+                    {% empty %}
+                    <li class="list-group-item text-center py-4">
+                        <p class="text-muted mb-0">العربة فارغة</p>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% if cart_items %}
+            <div class="card-footer bg-white border-0">
+                <div class="d-grid gap-2">
+                    <a href="{% url 'checkout' %}" class="btn btn-success">
+                        <i class="bi bi-credit-card me-1"></i>إتمام الطلب
+                    </a>
+                    <a href="{% url 'clear_cart' %}" class="btn btn-link btn-sm text-muted">مسح العربة</a>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .product-card:hover {
+        transform: translateY(-5px);
+        transition: transform 0.3s ease;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+</style>
+{% endblock %}

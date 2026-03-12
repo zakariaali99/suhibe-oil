@@ -1,0 +1,127 @@
+{% extends 'base.html' %}
+
+{% block title %}فاتورة #{{ invoice.id }} - نظام الزيوت{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card mb-4 border-0 shadow-sm">
+            <div class="card-body p-5">
+                <!-- Invoice Header -->
+                <div class="row mb-5">
+                    <div class="col-6">
+                        <h2 class="text-primary fw-bold mb-0">فاتورة ضريبية</h2>
+                        <p class="text-muted">رقم الفاتورة: #{{ invoice.id }}</p>
+                    </div>
+                    <div class="col-6 text-start">
+                        <h4 class="fw-bold">نظام بيع الزيوت</h4>
+                        <p class="mb-0 text-muted">التاريخ: {{ invoice.date|date:"Y-m-d H:i" }}</p>
+                    </div>
+                </div>
+
+                <!-- Customer Details -->
+                <div class="row mb-5">
+                    <div class="col-12">
+                        <h5 class="fw-bold border-bottom pb-2 mb-3">تفاصيل العميل</h5>
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <p class="mb-1"><span class="text-muted">اسم العميل:</span> <strong>{{
+                                        invoice.customer_name }}</strong></p>
+                                <p class="mb-1">
+                                    <span class="text-muted">طريقة الدفع:</span>
+                                    <span class="badge bg-secondary">
+                                        {% if invoice.payment_method == 'cash' %}نقد{% elif invoice.payment_method ==
+                                        'card' %}بطاقة{% else %}تحويل{% endif %}
+                                    </span>
+                                </p>
+                            </div>
+                            <div class="text-start">
+                                <p class="mb-1">
+                                    <span class="text-muted">الحالة:</span>
+                                    {% if invoice.is_paid %}
+                                    <span class="badge bg-success">مدفوعة</span>
+                                    {% else %}
+                                    <span class="badge bg-danger">غير مدفوعة</span>
+                                    {% endif %}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Items Table -->
+                <div class="table-responsive mb-5">
+                    <table class="table table-hover">
+                        <thead class="bg-light">
+                            <tr>
+                                <th class="text-center" style="width: 50px;">#</th>
+                                <th>المنتج</th>
+                                <th class="text-center">الكمية</th>
+                                <th class="text-start">السعر الفردي</th>
+                                <th class="text-start">المجموع</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in invoice.items.all %}
+                            <tr>
+                                <td class="text-center text-muted">{{ forloop.counter }}</td>
+                                <td>
+                                    <div class="fw-bold">{{ item.product.name }}</div>
+                                    <small class="text-muted">{{ item.product.company.name }} - {{
+                                        item.product.density.value }}</small>
+                                </td>
+                                <td class="text-center">{{ item.quantity }}</td>
+                                <td class="text-start">{{ item.unit_price }} ر.س</td>
+                                <td class="text-start fw-bold">{{ item.subtotal }} ر.س</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="4" class="text-start fw-bold fs-5">الإجمالي:</td>
+                                <td class="text-start fw-bold fs-5 text-primary">{{ invoice.total_amount }} ر.س</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+
+                <!-- Actions -->
+                <div class="d-flex justify-content-between no-print mt-5">
+                    <a href="{% url 'product_list' %}" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-right me-1"></i>العودة للرئيسية
+                    </a>
+                    <div class="d-flex gap-2">
+                        <button onclick="window.print()" class="btn btn-dark">
+                            <i class="bi bi-printer me-1"></i>طباعة
+                        </button>
+                        <a href="{% url 'invoice_pdf' invoice.id %}" class="btn btn-danger">
+                            <i class="bi bi-file-earmark-pdf me-1"></i>تحميل PDF
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    @media print {
+
+        .no-print,
+        .navbar,
+        .btn-link {
+            display: none !important;
+        }
+
+        body {
+            background-color: white !important;
+        }
+
+        .card {
+            box-shadow: none !important;
+        }
+    }
+</style>
+{% endblock %}

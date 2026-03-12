@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+
+{% block title %}قائمة الفواتير - لوحة التحكم{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h3 class="fw-bold"><i class="bi bi-file-earmark-text me-2"></i>قائمة الفواتير</h3>
+    <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary btn-sm">العودة للوحة التحكم</a>
+</div>
+
+<div class="card mb-4 border-0 shadow-sm">
+    <div class="card-body">
+        <form method="get" class="row g-3">
+            <div class="col-md-4">
+                <label class="form-label small fw-bold">طريقة الدفع</label>
+                <select name="payment_method" class="form-select form-select-sm">
+                    <option value="">كل الطرق</option>
+                    <option value="cash" {% if payment_method=='cash' %}selected{% endif %}>نقد</option>
+                    <option value="card" {% if payment_method=='card' %}selected{% endif %}>بطاقة</option>
+                    <option value="transfer" {% if payment_method=='transfer' %}selected{% endif %}>تحويل</option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label small fw-bold">حالة السداد</label>
+                <select name="is_paid" class="form-select form-select-sm">
+                    <option value="">كل الحالات</option>
+                    <option value="1" {% if is_paid=='1' %}selected{% endif %}>مدفوعة</option>
+                    <option value="0" {% if is_paid=='0' %}selected{% endif %}>غير مدفوعة</option>
+                </select>
+            </div>
+            <div class="col-md-4 d-flex align-items-end">
+                <button type="submit" class="btn btn-warning text-white btn-sm w-100">فلترة</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card border-0 shadow-sm">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead class="bg-light">
+                    <tr>
+                        <th>رقم الفاتورة</th>
+                        <th>العميل</th>
+                        <th>التاريخ</th>
+                        <th>طريقة الدفع</th>
+                        <th>المبلغ الإجمالي</th>
+                        <th>الحالة</th>
+                        <th class="text-start">إجراءات</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for invoice in invoices %}
+                    <tr>
+                        <td>#{{ invoice.id }}</td>
+                        <td class="fw-bold">{{ invoice.customer_name }}</td>
+                        <td>{{ invoice.date|date:"Y-m-d H:i" }}</td>
+                        <td>
+                            {% if invoice.payment_method == 'cash' %}نقد{% elif invoice.payment_method == 'card'
+                            %}بطاقة{% else %}تحويل{% endif %}
+                        </td>
+                        <td class="fw-bold">{{ invoice.total_amount }} ر.س</td>
+                        <td>
+                            {% if invoice.is_paid %}
+                            <span class="badge bg-success">مدفوعة</span>
+                            {% else %}
+                            <span class="badge bg-danger">غير مدفوعة</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-start">
+                            <div class="btn-group btn-group-sm">
+                                <a href="{% url 'invoice_view' invoice.id %}" class="btn btn-outline-primary"
+                                    title="عرض">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                                <a href="{% url 'invoice_pdf' invoice.id %}" class="btn btn-outline-danger" title="PDF">
+                                    <i class="bi bi-file-earmark-pdf"></i>
+                                </a>
+                                <a href="{% url 'toggle_invoice_paid' invoice.id %}" class="btn btn-outline-secondary"
+                                    title="تغيير حالة الدفع">
+                                    <i class="bi bi-arrow-left-right"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" class="text-center py-5 text-muted">لا توجد فواتير مطابقة للبحث.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
