@@ -1,59 +1,160 @@
 {% extends 'base.html' %}
 
-{% block title %}إدارة الشركات - لوحة التحكم{% endblock %}
+{% block title %}إدارة الشركات - نظام الزيوت{% endblock %}
 
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h3 class="fw-bold"><i class="bi bi-building me-2"></i>إدارة الشركات</h3>
-    <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary btn-sm">العودة للوحة التحكم</a>
-</div>
+<div class="row g-4 align-items-start">
+    <div class="col-12 mb-2">
+        <div class="d-flex align-items-center justify-content-between">
+            <div>
+                <h2 class="fw-bold text-navy mb-1"><i class="bi bi-building me-3 text-gold"></i>الشركات المصنعة</h2>
+                <p class="text-muted small mb-0">إضافة وتعديل بيانات الشركات والموردين</p>
+            </div>
+            <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary btn-sm rounded-pill px-3">العودة للوحة
+                الإدارة</a>
+        </div>
+    </div>
 
-<div class="row">
-    <div class="col-md-4 mb-4">
-        <div class="card">
-            <div class="card-header bg-white fw-bold">إضافة شركة جديدة</div>
-            <div class="card-body">
+    <!-- Add Company Form -->
+    <div class="col-lg-4">
+        <div class="card border-0 shadow-sm sticky-top" style="top: 100px;">
+            <div class="card-header bg-navy p-4 d-flex align-items-center">
+                <i class="bi bi-plus-circle-dotted text-gold fs-4 me-3"></i>
+                <h5 class="mb-0 text-white fw-bold">إضافة شركة جديدة</h5>
+            </div>
+            <div class="card-body p-4">
                 <form action="{% url 'add_company' %}" method="post">
                     {% csrf_token %}
-                    <div class="mb-3">
-                        <label class="form-label">اسم الشركة</label>
-                        <input type="text" name="name" class="form-control" placeholder="مثلاً: كاسترول، شل" required>
+                    <div class="mb-4">
+                        <label class="form-label fw-bold text-navy small">اسم الشركة (بالعربية أو الإنجليزية)</label>
+                        <input type="text" name="name"
+                            class="form-control form-control-lg border-2 bg-light bg-opacity-50"
+                            placeholder="مثلاً: Castrol, Mobil, توتال" required style="border-radius: 12px;">
                     </div>
-                    <button type="submit" class="btn btn-primary w-100">إضافة</button>
+                    <button type="submit" class="btn btn-gold w-100 py-3 shadow-sm">حفظ وإضافة</button>
+                    <div class="mt-4 p-3 rounded-4 bg-light small text-muted text-center border">
+                        <i class="bi bi-info-circle me-2"></i>سيظهر اسم هذه الشركة كعلامة تجارية في قائمة المنتجات.
+                    </div>
                 </form>
             </div>
         </div>
     </div>
 
-    <div class="col-md-8">
-        <div class="card">
-            <div class="card-header bg-white fw-bold">قائمة الشركات</div>
+    <!-- Companies List -->
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm overflow-hidden">
+            <div class="card-header bg-white p-4 border-bottom d-flex justify-content-between align-items-center">
+                <h5 class="mb-0 fw-bold text-navy">قائمة الشركات المسجلة</h5>
+                <span class="badge bg-light text-navy border px-3 py-2">{{ companies|length }} شركة</span>
+            </div>
             <div class="card-body p-0">
                 <div class="table-responsive">
-                    <table class="table table-hover mb-0">
-                        <thead class="bg-light">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="bg-light text-navy small text-uppercase fw-bold">
                             <tr>
-                                <th>اسم الشركة</th>
-                                <th>تاريخ الإضافة</th>
-                                <th class="text-start">إجراءات</th>
+                                <th class="p-4" style="width: 80px;">#ID</th>
+                                <th class="p-4">اسم الشركة</th>
+                                <th class="p-4 text-center">الإجراءات</th>
                             </tr>
                         </thead>
                         <tbody>
                             {% for company in companies %}
-                            <tr>
-                                <td class="fw-bold">{{ company.name }}</td>
-                                <td>{{ company.created_at|date:"Y-m-d" }}</td>
-                                <td class="text-start">
-                                    <a href="{% url 'delete_company' company.pk %}"
-                                        class="btn btn-sm btn-outline-danger"
-                                        onclick="return confirm('هل أنت متأكد من حذف هذه الشركة؟ سيؤدي ذلك لحذف المنتجات المرتبطة بها.')">
-                                        <i class="bi bi-trash"></i>
-                                    </a>
+                            <tr class="border-bottom border-light">
+                                <td class="p-4 text-muted fw-bold">#{{ company.id }}</td>
+                                <td class="p-4">
+                                    <div class="d-flex align-items-center">
+                                        <div class="company-initial me-3 bg-navy text-gold rounded-3 d-flex align-items-center justify-content-center fw-bold"
+                                            style="width: 40px; height: 40px; font-size: 1.2rem;">
+                                            {{ company.name|slice:":1"|upper }}
+                                        </div>
+                                        <span class="h6 mb-0 fw-bold text-navy">{{ company.name }}</span>
+                                    </div>
+                                </td>
+                                <td class="p-4 text-center">
+                                    <div class="d-flex justify-content-center gap-2">
+                                        <button class="btn btn-sm btn-outline-info rounded-3 px-3"
+                                            data-bs-toggle="modal" data-bs-target="#editModal{{ company.id }}">
+                                            <i class="bi bi-pencil-square"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-danger rounded-3 px-3"
+                                            data-bs-toggle="modal" data-bs-target="#deleteModal{{ company.id }}">
+                                            <i class="bi bi-trash3-fill"></i>
+                                        </button>
+                                    </div>
+
+                                    <!-- Edit Modal -->
+                                    <div class="modal fade" id="editModal{{ company.id }}" tabindex="-1">
+                                        <div class="modal-dialog modal-dialog-centered">
+                                            <div class="modal-content border-0 shadow-lg rounded-4">
+                                                <form action="{% url 'edit_company' company.pk %}" method="post">
+                                                    {% csrf_token %}
+                                                    <div class="modal-header bg-navy text-gold p-4">
+                                                        <h5 class="modal-title fw-bold">تعديل بيانات الشركة</h5>
+                                                        <button type="button"
+                                                            class="btn-close ms-0 me-auto btn-close-white"
+                                                            data-bs-dismiss="modal"></button>
+                                                    </div>
+                                                    <div class="modal-body p-4 text-end">
+                                                        <div class="mb-3">
+                                                            <label class="form-label fw-bold text-navy">اسم الشركة
+                                                                الجديد</label>
+                                                            <input type="text" name="name"
+                                                                class="form-control form-control-lg border-2"
+                                                                value="{{ company.name }}" required
+                                                                style="border-radius: 12px;">
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer border-0 p-4 pt-0">
+                                                        <button type="button" class="btn btn-light rounded-3 px-4"
+                                                            data-bs-dismiss="modal">إلغاء</button>
+                                                        <button type="submit" class="btn btn-gold rounded-3 px-4">حفظ
+                                                            التغييرات</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Delete Modal -->
+                                    <div class="modal fade" id="deleteModal{{ company.id }}" tabindex="-1">
+                                        <div class="modal-dialog modal-dialog-centered">
+                                            <div class="modal-content border-0 shadow-lg rounded-4">
+                                                <form action="{% url 'delete_company' company.pk %}" method="post">
+                                                    {% csrf_token %}
+                                                    <div class="modal-header bg-danger text-white p-4">
+                                                        <h5 class="modal-title fw-bold">تحذير: حذف شركة</h5>
+                                                        <button type="button"
+                                                            class="btn-close ms-0 me-auto btn-close-white"
+                                                            data-bs-dismiss="modal"></button>
+                                                    </div>
+                                                    <div class="modal-body p-4 py-5 text-center">
+                                                        <i
+                                                            class="bi bi-exclamation-triangle display-4 text-danger mb-4 d-block"></i>
+                                                        <p class="h5 text-navy mb-2">هل أنت متأكد من حذف <strong>{{
+                                                                company.name }}</strong>؟</p>
+                                                        <p class="text-muted small">سيؤدي هذا الحذف إلى إزالة كافة
+                                                            المنتجات المرتبطة بهذه الشركة أيضاً.</p>
+                                                    </div>
+                                                    <div class="modal-footer border-0 p-4 pt-0 justify-content-center">
+                                                        <button type="button" class="btn btn-light rounded-3 px-4"
+                                                            data-bs-dismiss="modal">تراجع</button>
+                                                        <button type="submit"
+                                                            class="btn btn-danger rounded-3 px-4">تأكيد الحذف
+                                                            النهائي</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </td>
                             </tr>
                             {% empty %}
                             <tr>
-                                <td colspan="3" class="text-center py-4 text-muted">لا توجد شركات مضافة بعد.</td>
+                                <td colspan="3" class="p-5 text-center">
+                                    <div class="text-muted opacity-50 mb-3"><i
+                                            class="bi bi-building-fill-exclamation display-3"></i></div>
+                                    <p class="h5 text-muted">لا توجد شركات مسجلة في النظام بعد</p>
+                                </td>
                             </tr>
                             {% endfor %}
                         </tbody>
@@ -63,4 +164,24 @@
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .bg-navy {
+        background-color: var(--oil-navy) !important;
+    }
+
+    .text-navy {
+        color: var(--oil-navy) !important;
+    }
+
+    .company-initial {
+        box-shadow: 0 4px 8px rgba(26, 29, 46, 0.2);
+    }
+
+    .table thead th {
+        border-bottom: none;
+    }
+</style>
 {% endblock %}

@@ -4,123 +4,184 @@
 
 {% block content %}
 <div class="row justify-content-center">
-    <div class="col-lg-8">
-        <div class="card mb-4 border-0 shadow-sm">
-            <div class="card-body p-5">
-                <!-- Invoice Header -->
-                <div class="row mb-5">
-                    <div class="col-6">
-                        <h2 class="text-primary fw-bold mb-0">فاتورة ضريبية</h2>
-                        <p class="text-muted">رقم الفاتورة: #{{ invoice.id }}</p>
+    <div class="col-xl-8">
+        <div class="card border-0 invoice-card mb-5">
+            <div class="invoice-header p-5 text-white"
+                style="background: var(--oil-navy); border-bottom: 5px solid var(--oil-gold);">
+                <div class="row align-items-center">
+                    <div class="col-8">
+                        <h1 class="fw-bold mb-0 text-gold d-flex align-items-center">
+                            <i class="bi bi-droplet-fill me-3"></i>فاتورة مبيعات
+                        </h1>
+                        <p class="mb-0 opacity-75 mt-2">نظام الزيوت والهيدروليك — ليبيا</p>
                     </div>
-                    <div class="col-6 text-start">
-                        <h4 class="fw-bold">نظام بيع الزيوت</h4>
-                        <p class="mb-0 text-muted">التاريخ: {{ invoice.date|date:"Y-m-d H:i" }}</p>
+                    <div class="col-4 text-start">
+                        <div
+                            class="invoice-badge bg-gold text-navy px-3 py-2 rounded-3 d-inline-block fw-bold shadow-sm">
+                            رقم: #{{ invoice.id }}
+                        </div>
                     </div>
                 </div>
+            </div>
 
-                <!-- Customer Details -->
-                <div class="row mb-5">
-                    <div class="col-12">
-                        <h5 class="fw-bold border-bottom pb-2 mb-3">تفاصيل العميل</h5>
-                        <div class="d-flex justify-content-between">
+            <div class="card-body p-5">
+                <!-- Status & Date -->
+                <div class="row mb-5 g-4">
+                    <div class="col-md-6">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="p-2 bg-light rounded-3 me-3"><i class="bi bi-person h4 mb-0"></i></div>
                             <div>
-                                <p class="mb-1"><span class="text-muted">اسم العميل:</span> <strong>{{
-                                        invoice.customer_name }}</strong></p>
-                                <p class="mb-1">
-                                    <span class="text-muted">طريقة الدفع:</span>
-                                    <span class="badge bg-secondary">
-                                        {% if invoice.payment_method == 'cash' %}نقد{% elif invoice.payment_method ==
-                                        'card' %}بطاقة{% else %}تحويل{% endif %}
-                                    </span>
-                                </p>
+                                <small class="text-muted d-block">إلى السيد/السادة:</small>
+                                <span class="h5 fw-bold text-navy">{{ invoice.customer_name }}</span>
                             </div>
-                            <div class="text-start">
-                                <p class="mb-1">
-                                    <span class="text-muted">الحالة:</span>
-                                    {% if invoice.is_paid %}
-                                    <span class="badge bg-success">مدفوعة</span>
-                                    {% else %}
-                                    <span class="badge bg-danger">غير مدفوعة</span>
-                                    {% endif %}
-                                </p>
+                        </div>
+                        <div class="d-flex align-items-center">
+                            <div class="p-2 bg-light rounded-3 me-3"><i class="bi bi-calendar3 h4 mb-0"></i></div>
+                            <div>
+                                <small class="text-muted d-block">تاريخ الإصدار:</small>
+                                <span class="fw-bold">{{ invoice.date|date:"Y-m-d — H:i" }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 text-md-start">
+                        <div class="p-4 rounded-4 shadow-sm border text-end" style="background: var(--oil-bg);">
+                            <div class="mb-2">
+                                <small class="text-muted d-block mb-1">طريقة الدفع:</small>
+                                <span class="badge bg-navy text-gold fs-6 px-3 py-2">
+                                    {% if invoice.payment_method == 'cash' %}نقداً (كاش){% elif invoice.payment_method
+                                    == 'card' %}بطاقة مصرفية{% else %}تحويل بنكي{% endif %}
+                                </span>
+                            </div>
+                            <div>
+                                <small class="text-muted d-block mb-1">حالة الفاتورة:</small>
+                                {% if invoice.is_paid %}
+                                <span class="badge bg-success text-white px-3 py-2 fs-6"><i
+                                        class="bi bi-check-circle-fill me-2"></i>تم السداد</span>
+                                {% else %}
+                                <span class="badge bg-danger text-white px-3 py-2 fs-6"><i
+                                        class="bi bi-exclamation-triangle-fill me-2"></i>في انتظار الدفع</span>
+                                {% endif %}
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Items Table -->
-                <div class="table-responsive mb-5">
-                    <table class="table table-hover">
+                <!-- Products Table -->
+                <div class="table-responsive mb-5 rounded-4 overflow-hidden border">
+                    <table class="table table-hover align-middle mb-0">
                         <thead class="bg-light">
                             <tr>
-                                <th class="text-center" style="width: 50px;">#</th>
-                                <th>المنتج</th>
+                                <th class="p-4" style="width: 60px;">#</th>
+                                <th class="p-4">المنتج والمواصفات</th>
                                 <th class="text-center">الكمية</th>
-                                <th class="text-start">السعر الفردي</th>
-                                <th class="text-start">المجموع</th>
+                                <th class="text-start">سعر الوحدة</th>
+                                <th class="text-start p-4">الإجمالي</th>
                             </tr>
                         </thead>
                         <tbody>
                             {% for item in invoice.items.all %}
-                            <tr>
-                                <td class="text-center text-muted">{{ forloop.counter }}</td>
-                                <td>
-                                    <div class="fw-bold">{{ item.product.name }}</div>
-                                    <small class="text-muted">{{ item.product.company.name }} - {{
+                            <tr class="border-bottom">
+                                <td class="p-4 text-center fw-bold text-muted">{{ forloop.counter }}</td>
+                                <td class="p-4">
+                                    {% if item.product %}
+                                    <div class="fw-bold fs-5 text-navy">{{ item.product.name }}</div>
+                                    <small class="text-muted">{{ item.product.company.name }} — {{
                                         item.product.density.value }}</small>
+                                    {% else %}
+                                    <span class="text-muted">منتج محذوف من النظام</span>
+                                    {% endif %}
                                 </td>
-                                <td class="text-center">{{ item.quantity }}</td>
-                                <td class="text-start">{{ item.unit_price }} ر.س</td>
-                                <td class="text-start fw-bold">{{ item.subtotal }} ر.س</td>
+                                <td class="text-center h5 mb-0">{{ item.quantity }}</td>
+                                <td class="text-start">{{ item.unit_price }} <small
+                                        class="text-muted opacity-50">د.ل</small></td>
+                                <td class="text-start p-4 fw-bold text-navy fs-5">{{ item.subtotal }} <small
+                                        class="text-muted opacity-50">د.ل</small></td>
                             </tr>
                             {% endfor %}
                         </tbody>
-                        <tfoot>
+                        <tfoot class="bg-light border-top-0">
                             <tr>
-                                <td colspan="4" class="text-start fw-bold fs-5">الإجمالي:</td>
-                                <td class="text-start fw-bold fs-5 text-primary">{{ invoice.total_amount }} ر.س</td>
+                                <td colspan="4" class="p-4 text-start fw-bold fs-4 border-0">المجموع الكلي للفاتورة:
+                                </td>
+                                <td class="p-4 text-start fw-bold fs-2 text-primary border-0"
+                                    style="color: var(--oil-gold) !important;">
+                                    {{ invoice.total_amount }} <small class="fs-5">د.ل</small>
+                                </td>
                             </tr>
                         </tfoot>
                     </table>
                 </div>
 
+                <!-- Footer Note -->
+                <div class="text-center py-4 border-top">
+                    <p class="text-muted mb-0">شكرًا لتعاملكم معنا. نأمل رؤيتكم مرة أخرى.</p>
+                </div>
+
                 <!-- Actions -->
-                <div class="d-flex justify-content-between no-print mt-5">
-                    <a href="{% url 'product_list' %}" class="btn btn-outline-secondary">
-                        <i class="bi bi-arrow-right me-1"></i>العودة للرئيسية
+                <div class="d-flex justify-content-between no-print mt-5 pt-4">
+                    <a href="{% url 'product_list' %}" class="btn btn-outline-navy btn-lg px-5">
+                        <i class="bi bi-arrow-right me-2"></i>العودة للمتجر
                     </a>
-                    <div class="d-flex gap-2">
-                        <button onclick="window.print()" class="btn btn-dark">
-                            <i class="bi bi-printer me-1"></i>طباعة
+                    <div class="d-flex gap-3">
+                        <button onclick="window.print()" class="btn btn-navy btn-lg px-4 text-gold shadow">
+                            <i class="bi bi-printer me-2"></i>طباعة فورية
                         </button>
-                        <a href="{% url 'invoice_pdf' invoice.id %}" class="btn btn-danger">
-                            <i class="bi bi-file-earmark-pdf me-1"></i>تحميل PDF
+                        <a href="{% url 'invoice_pdf' invoice.id %}" class="btn btn-gold btn-lg px-4 shadow">
+                            <i class="bi bi-file-earmark-pdf me-2"></i>تحميل PDF
                         </a>
+                        <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary btn-lg">أرشيف الفواتير</a>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
-{% endblock %}
 
-{% block extra_css %}
 <style>
+    .invoice-card {
+        box-shadow: 0 40px 60px -15px rgba(26, 29, 46, 0.1);
+        border-radius: 25px;
+        overflow: hidden;
+    }
+
+    .invoice-badge {
+        font-family: 'monospace';
+        letter-spacing: 1px;
+    }
+
+    .text-gold {
+        color: var(--oil-gold) !important;
+    }
+
+    .bg-navy {
+        background-color: var(--oil-navy) !important;
+    }
+
     @media print {
 
         .no-print,
-        .navbar,
-        .btn-link {
+        .navbar {
             display: none !important;
         }
 
         body {
-            background-color: white !important;
+            background: white !important;
         }
 
-        .card {
+        .invoice-card {
             box-shadow: none !important;
+            border: 1px solid #eee;
+        }
+
+        .container {
+            max-width: 100% !important;
+            width: 100% !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+
+        .invoice-header {
+            -webkit-print-color-adjust: exact;
         }
     }
 </style>

@@ -1,90 +1,218 @@
 {% extends 'base.html' %}
 
-{% block title %}إتمام الطلب - نظام الزيوت{% endblock %}
+{% block title %}إتمام الدفع - نظام الزيوت{% endblock %}
 
 {% block content %}
-<div class="row justify-content-center">
-    <div class="col-lg-8">
-        <div class="card">
-            <div class="card-header bg-white py-3">
-                <h4 class="mb-0 text-center text-primary fw-bold">إتمام الفاتورة</h4>
+<div class="row justify-content-center g-4">
+    <div class="col-xl-9">
+        <div class="checkout-header text-center mb-5">
+            <h2 class="fw-bold text-navy mb-2">مراجعة الفاتورة</h2>
+            <p class="text-muted">يرجى مراجعة المنتجات وتأكيد بيانات العميل</p>
+            <div class="stepper d-flex justify-content-center mt-4">
+                <div class="step active d-flex flex-column align-items-center mx-4">
+                    <div class="step-icon bg-navy text-gold rounded-circle d-flex align-items-center justify-content-center mb-2"
+                        style="width: 40px; height: 40px;">1</div>
+                    <span class="small fw-bold">البيانات</span>
+                </div>
+                <div class="step-line border-top mt-3" style="width: 100px;"></div>
+                <div class="step d-flex flex-column align-items-center mx-4">
+                    <div class="step-icon bg-light text-muted rounded-circle d-flex align-items-center justify-content-center mb-2"
+                        style="width: 40px; height: 40px;">2</div>
+                    <span class="small text-muted">الإصدار</span>
+                </div>
             </div>
-            <div class="card-body">
-                <form method="post">
-                    {% csrf_token %}
+        </div>
 
-                    <div class="row mb-4">
-                        <div class="col-md-6 mb-3 mb-md-0">
-                            <label class="form-label fw-bold">اسم العميل</label>
-                            <input type="text" name="customer_name" class="form-control" placeholder="أدخل اسم العميل"
-                                required>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label fw-bold">التاريخ (تلقائي)</label>
-                            <input type="text" class="form-control bg-light" value="{% now 'Y-m-d H:i' %}" readonly>
-                        </div>
+        <div class="card border-0 p-4 p-md-5">
+            <form method="post" id="checkoutForm">
+                {% csrf_token %}
+
+                <div class="row g-4 mb-5">
+                    <div class="col-md-7">
+                        <label class="form-label fw-bold text-navy"><i class="bi bi-person-fill me-2"></i>اسم
+                            العميل</label>
+                        <input type="text" name="customer_name" class="form-control form-control-lg border-2"
+                            placeholder="أدخل اسم العميل بالكامل" required style="border-radius: 12px;">
                     </div>
-
-                    <h5 class="border-bottom pb-2 mb-3">تفاصيل المنتجات</h5>
-                    <div class="table-responsive mb-4">
-                        <table class="table table-bordered align-middle">
-                            <thead class="bg-light">
-                                <tr>
-                                    <th>المنتج</th>
-                                    <th style="width: 100px;">الكمية</th>
-                                    <th style="width: 150px;">السعر الفردي</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for item in products_in_cart %}
-                                <tr>
-                                    <td>
-                                        <div class="fw-bold">{{ item.product.name }}</div>
-                                        <small class="text-muted">{{ item.product.company.name }} - {{
-                                            item.product.density.value }}</small>
-                                    </td>
-                                    <td>
-                                        <input type="number" name="qty_{{ item.product.id }}"
-                                            class="form-control form-control-sm" value="{{ item.quantity }}" min="1">
-                                    </td>
-                                    <td>
-                                        <div class="input-group input-group-sm">
-                                            <input type="number" step="0.01" name="price_{{ item.product.id }}"
-                                                class="form-control" placeholder="0.00" required>
-                                            <span class="input-group-text">ر.س</span>
-                                        </div>
-                                    </td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
+                    <div class="col-md-5">
+                        <label class="form-label fw-bold text-navy"><i
+                                class="bi bi-calendar-event-fill me-2 text-gold"></i>التاريخ والوقت</label>
+                        <input type="text" class="form-control form-control-lg bg-light border-0 text-muted"
+                            value="{% now 'Y-m-d H:i' %}" readonly style="border-radius: 12px;">
                     </div>
+                </div>
 
-                    <div class="row mb-4">
-                        <div class="col-md-6 mb-3 mb-md-0">
-                            <label class="form-label fw-bold">طريقة الدفع</label>
-                            <select name="payment_method" class="form-select" required>
-                                <option value="cash" selected>نقد</option>
-                                <option value="card">بطاقة</option>
-                                <option value="transfer">تحويل</option>
-                            </select>
-                        </div>
-                        <div class="col-md-6 d-flex align-items-end">
-                            <div class="form-check form-switch mb-2">
-                                <input class="form-check-input" type="checkbox" name="is_paid" id="isPaidSwitch"
-                                    checked>
-                                <label class="form-check-label fw-bold" for="isPaidSwitch">تم الدفع</label>
+                <div class="table-responsive mb-5 rounded-4 overflow-hidden border">
+                    <table class="table table-borderless align-middle mb-0">
+                        <thead style="background: var(--oil-navy); color: var(--oil-gold);">
+                            <tr>
+                                <th class="p-4">المنتج</th>
+                                <th class="text-center">الكمية</th>
+                                <th class="text-center">السعر (د.ل)</th>
+                                <th class="text-start p-4">الإجمالي</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white">
+                            {% for item in products_in_cart %}
+                            <tr class="item-row border-bottom">
+                                <td class="p-4">
+                                    <div class="fw-bold text-navy">{{ item.product.name }}</div>
+                                    <small class="text-muted">{{ item.product.company.name }}</small>
+                                </td>
+                                <td style="width: 120px;">
+                                    <input type="number" name="qty_{{ item.product.id }}"
+                                        class="form-control border-0 bg-light text-center qty-input fw-bold"
+                                        value="{{ item.quantity }}" min="1">
+                                </td>
+                                <td style="width: 150px;">
+                                    <div class="input-group">
+                                        <input type="number" step="0.01" name="price_{{ item.product.id }}"
+                                            class="form-control border-0 bg-light text-center price-input fw-bold"
+                                            placeholder="0.00" required>
+                                    </div>
+                                </td>
+                                <td class="text-start p-4 fw-bold text-navy fs-5 row-total">0.00</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                        <tfoot class="bg-light">
+                            <tr>
+                                <td colspan="3" class="p-4 text-start fw-bold fs-4">إجمالي الفاتورة النهائية:</td>
+                                <td class="p-4 text-start fw-bold fs-3 text-primary" id="finalTotal">0.00 <small
+                                        class="currency fs-6">د.ل</small></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+
+                <div class="row g-4">
+                    <div class="col-lg-7">
+                        <label class="form-label fw-bold text-navy mb-3">طريقة الدفع</label>
+                        <div class="row g-3">
+                            <div class="col-4">
+                                <input type="radio" class="btn-check" name="payment_method" id="pay_cash" value="cash"
+                                    checked autocomplete="off">
+                                <label
+                                    class="btn btn-outline-navy w-100 py-3 d-flex flex-column align-items-center rounded-4"
+                                    for="pay_cash">
+                                    <i class="bi bi-cash-stack mb-2 fs-2"></i>
+                                    <span>نقد</span>
+                                </label>
+                            </div>
+                            <div class="col-4">
+                                <input type="radio" class="btn-check" name="payment_method" id="pay_card" value="card"
+                                    autocomplete="off">
+                                <label
+                                    class="btn btn-outline-navy w-100 py-3 d-flex flex-column align-items-center rounded-4"
+                                    for="pay_card">
+                                    <i class="bi bi-credit-card-2-front mb-2 fs-2"></i>
+                                    <span>بطاقة</span>
+                                </label>
+                            </div>
+                            <div class="col-4">
+                                <input type="radio" class="btn-check" name="payment_method" id="pay_transfer"
+                                    value="transfer" autocomplete="off">
+                                <label
+                                    class="btn btn-outline-navy w-100 py-3 d-flex flex-column align-items-center rounded-4"
+                                    for="pay_transfer">
+                                    <i class="bi bi-arrow-left-right mb-2 fs-2"></i>
+                                    <span>تحويل</span>
+                                </label>
                             </div>
                         </div>
                     </div>
-
-                    <div class="d-grid gap-2 mt-4">
-                        <button type="submit" class="btn btn-primary btn-lg">حفظ الفاتورة وإصدارها</button>
-                        <a href="{% url 'product_list' %}" class="btn btn-outline-secondary">إلغاء والعودة</a>
+                    <div class="col-lg-5 d-flex align-items-end">
+                        <div
+                            class="payment-switch w-100 p-4 rounded-4 bg-light border border-2 border-dashed text-center">
+                            <div class="form-check form-switch d-inline-block">
+                                <input class="form-check-input" type="checkbox" name="is_paid" id="isPaidSwitch" checked
+                                    style="width: 3rem; height: 1.5rem;">
+                                <label class="form-check-label ms-3 fw-bold fs-5" for="isPaidSwitch">تم استلام
+                                    المبلغ</label>
+                            </div>
+                        </div>
                     </div>
-                </form>
-            </div>
+                </div>
+
+                <div class="mt-5 pt-4 border-top">
+                    <div class="row g-3">
+                        <div class="col-md-8">
+                            <button type="submit" class="btn btn-gold btn-lg w-100 py-3 text-uppercase shadow-lg">إصدار
+                                الفاتورة والطباعة <i class="bi bi-file-earmark-pdf-fill ms-2"></i></button>
+                        </div>
+                        <div class="col-md-4">
+                            <a href="{% url 'product_list' %}"
+                                class="btn btn-outline-secondary btn-lg w-100 py-3">إلغاء</a>
+                        </div>
+                    </div>
+                </div>
+            </form>
         </div>
     </div>
 </div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const rows = document.querySelectorAll('.item-row');
+        const finalTotalDisplay = document.getElementById('finalTotal');
+
+        function calculateTotal() {
+            let finalTotal = 0;
+            rows.forEach(row => {
+                const qtyInput = row.querySelector('.qty-input');
+                const priceInput = row.querySelector('.price-input');
+                const rowTotalDisplay = row.querySelector('.row-total');
+
+                const qty = parseFloat(qtyInput.value) || 0;
+                const price = parseFloat(priceInput.value) || 0;
+                const subtotal = qty * price;
+
+                rowTotalDisplay.textContent = subtotal.toLocaleString('ar-LY', { minimumFractionDigits: 2 });
+                finalTotal += subtotal;
+            });
+            finalTotalDisplay.innerHTML = finalTotal.toLocaleString('ar-LY', { minimumFractionDigits: 2 }) + ' <small class="currency fs-6">د.ل</small>';
+        }
+
+        document.querySelectorAll('.qty-input, .price-input').forEach(input => {
+            input.addEventListener('input', calculateTotal);
+        });
+    });
+</script>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .bg-navy {
+        background-color: var(--oil-navy) !important;
+    }
+
+    .text-navy {
+        color: var(--oil-navy) !important;
+    }
+
+    .btn-outline-navy {
+        border-color: var(--oil-navy);
+        color: var(--oil-navy);
+    }
+
+    .btn-outline-navy:hover,
+    .btn-check:checked+.btn-outline-navy {
+        background-color: var(--oil-navy);
+        border-color: var(--oil-navy);
+        color: var(--oil-gold);
+    }
+
+    .stepper .step-icon {
+        font-weight: 800;
+        transition: all 0.3s ease;
+    }
+
+    .form-control:focus {
+        border-color: var(--oil-gold) !important;
+        box-shadow: 0 0 0 0.25rem rgba(212, 167, 69, 0.15);
+    }
+</style>
 {% endblock %}

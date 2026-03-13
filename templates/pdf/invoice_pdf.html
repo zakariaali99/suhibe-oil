@@ -4,203 +4,238 @@
 <head>
     <meta charset="UTF-8">
     <style>
+        @font-face {
+            font-family: 'Cairo';
+            src: url('/Users/zakaria/projects/antigravity/suhibe/static/fonts/Cairo-Variable.ttf');
+        }
+
         @page {
             size: A4;
-            margin: 20mm;
+            margin: 1.5cm;
+        }
+
+        * {
+            font-family: 'Cairo', sans-serif;
         }
 
         body {
-            font-family: 'Tajawal', 'Cairo', 'Arial', sans-serif;
             direction: rtl;
             text-align: right;
-            color: #333;
-            line-height: 1.5;
+            color: #1a1d2e;
+            line-height: 1.8;
+            margin: 0;
+            padding: 0;
         }
 
         .header {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 30px;
-            border-bottom: 2px solid #0d6efd;
-            padding-bottom: 20px;
+            background-color: #1a1d2e;
+            color: #d4a745;
+            padding: 25px;
+            text-align: right;
         }
 
-        .title {
-            color: #0d6efd;
-            font-size: 28px;
+        .header-title {
+            font-size: 22pt;
             font-weight: bold;
-            margin: 0;
         }
 
-        .subtitle {
-            font-size: 14px;
-            color: #666;
-            margin: 5px 0 0 0;
+        .header-sub {
+            font-size: 10pt;
+            color: #aaa;
+            margin-top: 5px;
         }
 
-        .info-section {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 40px;
+        .header-id {
+            background-color: #d4a745;
+            color: #1a1d2e;
+            padding: 5px 15px;
+            font-weight: bold;
+            font-size: 12pt;
         }
 
-        .info-box h4 {
-            margin: 0 0 10px 0;
-            font-size: 16px;
-            border-bottom: 1px solid #eee;
-            padding-bottom: 5px;
+        .content {
+            padding: 20px 0;
         }
 
-        .info-box p {
-            margin: 5px 0;
-            font-size: 14px;
+        .info-table {
+            width: 100%;
+            margin-bottom: 20px;
         }
 
-        table {
+        .info-table td {
+            vertical-align: top;
+            padding: 10px;
+        }
+
+        .info-box {
+            background-color: #f8f8f6;
+            padding: 15px;
+            border: 1px solid #eee;
+        }
+
+        .label {
+            color: #888;
+            font-size: 9pt;
+            margin-bottom: 3px;
+        }
+
+        .value {
+            font-weight: bold;
+            font-size: 12pt;
+        }
+
+        .items-table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
         }
 
-        th {
-            background-color: #f8f9fa;
-            color: #333;
-            font-weight: bold;
+        .items-table th {
+            background-color: #f0f0f0;
+            padding: 10px;
+            border-bottom: 2px solid #ddd;
             text-align: right;
-            padding: 12px;
-            border-bottom: 1px solid #dee2e6;
+            font-size: 10pt;
         }
 
-        td {
-            padding: 12px;
+        .items-table td {
+            padding: 10px;
             border-bottom: 1px solid #eee;
-            font-size: 14px;
+            font-size: 10pt;
         }
 
-        .text-start {
+        .total-row td {
+            background-color: #f8f8f6;
+            font-weight: bold;
+            font-size: 14pt;
+            padding: 15px 10px;
+        }
+
+        .total-value {
+            color: #d4a745;
+        }
+
+        .footer {
+            text-align: center;
+            color: #999;
+            font-size: 9pt;
+            margin-top: 40px;
+            border-top: 1px solid #eee;
+            padding-top: 15px;
+        }
+
+        .badge {
+            padding: 3px 10px;
+            font-size: 9pt;
+            font-weight: bold;
+        }
+
+        .badge-paid {
+            background-color: #dcfce7;
+            color: #166534;
+        }
+
+        .badge-unpaid {
+            background-color: #fee2e2;
+            color: #991b1b;
+        }
+
+        .badge-method {
+            background-color: #1a1d2e;
+            color: #d4a745;
+        }
+
+        .text-left {
             text-align: left;
         }
 
         .text-center {
             text-align: center;
         }
-
-        .footer {
-            margin-top: 50px;
-            text-align: center;
-            font-size: 12px;
-            color: #999;
-        }
-
-        .total-row {
-            font-size: 18px;
-            font-weight: bold;
-            background-color: #f8f9fa;
-        }
-
-        .total-label {
-            text-align: left;
-            padding-left: 20px;
-        }
-
-        .total-value {
-            color: #0d6efd;
-            text-align: left;
-        }
-
-        .badge {
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 12px;
-            display: inline-block;
-        }
-
-        .bg-success {
-            background-color: #d1e7dd;
-            color: #0a3622;
-        }
-
-        .bg-danger {
-            background-color: #f8d7da;
-            color: #842029;
-        }
-
-        .bg-secondary {
-            background-color: #e2e3e5;
-            color: #41464b;
-        }
     </style>
 </head>
 
 <body>
     <div class="header">
-        <div style="float: right;">
-            <p class="title">فاتورة ضريبية</p>
-            <p class="subtitle">رقم الفاتورة: #{{ invoice.id }}</p>
-        </div>
-        <div style="float: left; text-align: left;">
-            <p style="font-size: 20px; font-weight: bold; margin: 0;">نظام بيع الزيوت</p>
-            <p class="subtitle">التاريخ: {{ invoice.date|date:"Y-m-d" }}</p>
-        </div>
-        <div style="clear: both;"></div>
-    </div>
-
-    <div class="info-section">
-        <div class="info-box" style="float: right; width: 45%;">
-            <h4>تفاصيل العميل:</h4>
-            <p><strong>اسم العميل:</strong> {{ invoice.customer_name }}</p>
-            <p><strong>طريقة الدفع:</strong>
-                {% if invoice.payment_method == 'cash' %}نقد{% elif invoice.payment_method == 'card' %}بطاقة{% else
-                %}تحويل{% endif %}
-            </p>
-        </div>
-        <div class="info-box" style="float: left; width: 45%; text-align: left;">
-            <h4>الحالة:</h4>
-            <p>
-                {% if invoice.is_paid %}
-                <span class="badge bg-success">تم السداد</span>
-                {% else %}
-                <span class="badge bg-danger">غير مسددة</span>
-                {% endif %}
-            </p>
-        </div>
-        <div style="clear: both;"></div>
-    </div>
-
-    <table>
-        <thead>
+        <table width="100%">
             <tr>
-                <th style="width: 40px;" class="text-center">#</th>
-                <th>المنتج</th>
-                <th class="text-center">الكمية</th>
-                <th class="text-start">السعر الفردي</th>
-                <th class="text-start">المجموع</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for item in invoice.items.all %}
-            <tr>
-                <td class="text-center">{{ forloop.counter }}</td>
                 <td>
-                    <div style="font-weight: bold;">{{ item.product.name }}</div>
-                    <div style="font-size: 12px; color: #666;">{{ item.product.company.name }} - {{
-                        item.product.density.value }}</div>
+                    <div class="header-title">فاتورة مبيعات</div>
+                    <div class="header-sub">نظام الزيوت والهيدروليك — ليبيا</div>
                 </td>
-                <td class="text-center">{{ item.quantity }}</td>
-                <td class="text-start">{{ item.unit_price }} ر.س</td>
-                <td class="text-start" style="font-weight: bold;">{{ item.subtotal }} ر.س</td>
+                <td class="text-left">
+                    <span class="header-id">#{{ invoice.id }}</span>
+                    <div class="header-sub" style="margin-top: 8px;">{{ invoice.date|date:"Y-m-d" }}</div>
+                </td>
             </tr>
-            {% endfor %}
-            <tr class="total-row">
-                <td colspan="4" class="total-label">الإجمالي:</td>
-                <td class="total-value">{{ invoice.total_amount }} ر.س</td>
-            </tr>
-        </tbody>
-    </table>
+        </table>
+    </div>
 
-    <div class="footer">
-        <p>شكرًا لتعاملكم معنا</p>
-        <p>تم استخراج هذه الفاتورة من نظام بيع الزيوت</p>
+    <div class="content">
+        <table class="info-table">
+            <tr>
+                <td width="50%">
+                    <div class="info-box">
+                        <div class="label">إلى السيد/السادة:</div>
+                        <div class="value">{{ invoice.customer_name }}</div>
+                        <div class="label" style="margin-top: 10px;">تاريخ الإصدار:</div>
+                        <div class="value">{{ invoice.date|date:"Y-m-d — H:i" }}</div>
+                    </div>
+                </td>
+                <td width="50%">
+                    <div class="info-box">
+                        <div class="label">طريقة الدفع:</div>
+                        <div><span class="badge badge-method">{% if invoice.payment_method == 'cash' %}نقداً (كاش){% elif invoice.payment_method == 'card' %}بطاقة مصرفية{% else %}تحويل بنكي{% endif %}</span></div>
+                        <div class="label" style="margin-top: 10px;">حالة السداد:</div>
+                        {% if invoice.is_paid %}
+                        <div><span class="badge badge-paid">تم السداد بنجاح</span></div>
+                        {% else %}
+                        <div><span class="badge badge-unpaid">في انتظار الدفع</span></div>
+                        {% endif %}
+                    </div>
+                </td>
+            </tr>
+        </table>
+
+        <table class="items-table">
+            <thead>
+                <tr>
+                    <th width="5%" class="text-center">#</th>
+                    <th width="45%">المنتج والمواصفات</th>
+                    <th width="10%" class="text-center">الكمية</th>
+                    <th width="20%" class="text-left">سعر الوحدة</th>
+                    <th width="20%" class="text-left">الإجمالي</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in invoice.items.all %}
+                <tr>
+                    <td class="text-center">{{ forloop.counter }}</td>
+                    <td>
+                        {% if item.product %}
+                        <strong>{{ item.product.name }}</strong><br>
+                        <span style="color: #888; font-size: 9pt;">{{ item.product.company.name }} — {{
+                            item.product.density.value }}</span>
+                        {% else %}
+                        <span style="color: #ef4444;">منتج محذوف</span>
+                        {% endif %}
+                    </td>
+                    <td class="text-center">{{ item.quantity }}</td>
+                    <td class="text-left">{{ item.unit_price }} د.ل</td>
+                    <td class="text-left"><strong>{{ item.subtotal }} د.ل</strong></td>
+                </tr>
+                {% endfor %}
+                <tr class="total-row">
+                    <td colspan="4" style="text-align: left; font-size: 12pt;">المجموع الكلي:</td>
+                    <td class="text-left total-value">{{ invoice.total_amount }} د.ل</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="footer">
+            <p>تم استخراج هذه الفاتورة من نظام بيع الزيوت</p>
+            <p>شكرًا لتعاملكم معنا</p>
+        </div>
     </div>
 </body>
 

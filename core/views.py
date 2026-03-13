@@ -1,23 +1,21 @@
-import os
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
-from django.db.models import Q
+from django.db.models import Q, Count
 from django.http import HttpResponse
 from django.template.loader import render_to_string
+from django.views.decorators.http import require_POST
 from .models import Company, Density, Product, Invoice, InvoiceItem
-from decimal import Decimal
-import io
+from decimal import Decimal, InvalidOperation
 
 # PDF generation imports
-from weasyprint import HTML
-import arabic_reshaper
-from bidi.algorithm import get_display
+from xhtml2pdf import pisa
+import io
 
 # --- POS Views ---
 
 def product_list(request):
     query = request.GET.get('q', '')
-    products = Product.objects.all()
+    products = Product.objects.all().select_related('company', 'density')
     if query:
         products = products.filter(
             Q(name__icontains=query) | 
@@ -25,7 +23,6 @@ def product_list(request):
             Q(density__value__icontains=query)
         )
     
-    # Simple cart management in session
     cart = request.session.get('cart', {})
     cart_items = []
     cart_total_qty = 0
@@ -49,7 +46,20 @@ def add_to_cart(request, product_id):
     product_id_str = str(product_id)
     cart[product_id_str] = cart.get(product_id_str, 0) + 1
     request.session['cart'] = cart
-    messages.success(request, "تمت إضافة المنتج للعربة successfully.")
+    messages.success(request, "تمت إضافة المنتج للعربة.")
+    return redirect('product_list')
+
+def update_cart_qty(request, product_id, action):
+    cart = request.session.get('cart', {})
+    pid_str = str(product_id)
+    if pid_str in cart:
+        if action == 'plus':
+            cart[pid_str] += 1
+        elif action == 'minus':
+            cart[pid_str] -= 1
+            if cart[pid_str] <= 0:
+                del cart[pid_str]
+    request.session['cart'] = cart
     return redirect('product_list')
 
 def remove_from_cart(request, product_id):
@@ -77,40 +87,53 @@ def checkout(request):
         products_in_cart.append({'product': prod, 'quantity': qty})
 
     if request.method == 'POST':
-        customer_name = request.POST.get('customer_name')
+        customer_name = request.POST.get('customer_name', '').strip()
         payment_method = request.POST.get('payment_method')
         is_paid = request.POST.get('is_paid') == 'on'
         
-        # Create Invoice
-        invoice = Invoice.objects.create(
-            customer_name=customer_name,
-            payment_method=payment_method,
-            is_paid=is_paid
-        )
-        
-        total = Decimal('0.00')
-        for item in products_in_cart:
-            pid = str(item['product'].id)
-            price = Decimal(request.POST.get(f'price_{pid}', '0.00'))
-            qty = int(request.POST.get(f'qty_{pid}', item['quantity']))
-            
-            subtotal = price * qty
-            InvoiceItem.objects.create(
-                invoice=invoice,
-                product=item['product'],
-                quantity=qty,
-                unit_price=price,
-                subtotal=subtotal
+        if not customer_name:
+            messages.error(request, "يرجى إدخال اسم العميل.")
+            return render(request, 'main/checkout.html', {'products_in_cart': products_in_cart})
+
+        try:
+            # Create Invoice
+            invoice = Invoice.objects.create(
+                customer_name=customer_name,
+                payment_method=payment_method,
+                is_paid=is_paid
             )
-            total += subtotal
-        
-        invoice.total_amount = total
-        invoice.save()
-        
-        # Clear cart
-        request.session['cart'] = {}
-        
-        return redirect('invoice_view', invoice_id=invoice.id)
+            
+            total = Decimal('0.00')
+            for item in products_in_cart:
+                pid = str(item['product'].id)
+                price_str = request.POST.get(f'price_{pid}', '0').strip()
+                qty_str = request.POST.get(f'qty_{pid}', '1').strip()
+                
+                price = Decimal(price_str) if price_str else Decimal('0.00')
+                qty = int(qty_str) if qty_str else 0
+                
+                if qty <= 0: continue
+
+                subtotal = price * qty
+                InvoiceItem.objects.create(
+                    invoice=invoice,
+                    product=item['product'],
+                    quantity=qty,
+                    unit_price=price,
+                    subtotal=subtotal
+                )
+                total += subtotal
+            
+            invoice.total_amount = total
+            invoice.save()
+            
+            # Clear cart
+            request.session['cart'] = {}
+            return redirect('invoice_view', invoice_id=invoice.id)
+            
+        except (InvalidOperation, ValueError):
+            messages.error(request, "خطأ في القيم المدخلة (الأسعار أو الكميات).")
+            return render(request, 'main/checkout.html', {'products_in_cart': products_in_cart})
 
     return render(request, 'main/checkout.html', {
         'products_in_cart': products_in_cart
@@ -122,66 +145,95 @@ def invoice_view(request, invoice_id):
 
 def invoice_pdf(request, invoice_id):
     invoice = get_object_or_404(Invoice, id=invoice_id)
-    
-    # Reshape Arabic text for PDF
-    def reshape_text(text):
-        if not text: return ""
-        reshaped_text = arabic_reshaper.reshape(text)
-        bidi_text = get_display(reshaped_text)
-        return bidi_text
-
-    # We'll handle reshaping in the template or here
-    # For simplicity, we'll try to use a font that handles RTL well in WeasyPrint
-    
     html_string = render_to_string('pdf/invoice_pdf.html', {'invoice': invoice})
-    html = HTML(string=html_string, base_url=request.build_absolute_uri())
-    pdf = html.write_pdf()
     
-    response = HttpResponse(pdf, content_type='application/pdf')
-    response['Content-Disposition'] = f'attachment; filename="invoice_{invoice.id}.pdf"'
-    return response
+    result = io.BytesIO()
+    pdf = pisa.pisaDocument(io.BytesIO(html_string.encode("UTF-8")), result)
+    
+    if not pdf.err:
+        response = HttpResponse(result.getvalue(), content_type='application/pdf')
+        response['Content-Disposition'] = f'attachment; filename="invoice_{invoice.id}.pdf"'
+        return response
+    return HttpResponse("Error generating PDF", status=500)
 
 # --- Dashboard Views ---
 
 def dashboard(request):
-    return render(request, 'dashboard/index.html')
+    stats = {
+        'companies': Company.objects.count(),
+        'densities': Density.objects.count(),
+        'products': Product.objects.count(),
+        'invoices': Invoice.objects.count(),
+    }
+    return render(request, 'dashboard/index.html', {'stats': stats})
 
+# Companies
 def manage_companies(request):
     companies = Company.objects.all().order_by('-created_at')
     return render(request, 'dashboard/companies.html', {'companies': companies})
 
+@require_POST
 def add_company(request):
-    if request.method == 'POST':
-        name = request.POST.get('name')
+    name = request.POST.get('name', '').strip()
+    if name:
         Company.objects.create(name=name)
         messages.success(request, "تمت إضافة الشركة.")
+    else:
+        messages.error(request, "اسم الشركة مطلوب.")
     return redirect('manage_companies')
 
+@require_POST
+def edit_company(request, pk):
+    company = get_object_or_404(Company, pk=pk)
+    name = request.POST.get('name', '').strip()
+    if name:
+        company.name = name
+        company.save()
+        messages.success(request, "تم تحديث الشركة.")
+    return redirect('manage_companies')
+
+@require_POST
 def delete_company(request, pk):
     company = get_object_or_404(Company, pk=pk)
     company.delete()
     messages.info(request, "تم حذف الشركة.")
     return redirect('manage_companies')
 
+# Densities
 def manage_densities(request):
     densities = Density.objects.all().order_by('-created_at')
     return render(request, 'dashboard/densities.html', {'densities': densities})
 
+@require_POST
 def add_density(request):
-    if request.method == 'POST':
-        value = request.POST.get('value')
+    value = request.POST.get('value', '').strip()
+    if value:
         Density.objects.create(value=value)
         messages.success(request, "تمت إضافة الكثافة.")
+    else:
+        messages.error(request, "قيمة الكثافة مطلوبة.")
     return redirect('manage_densities')
 
+@require_POST
+def edit_density(request, pk):
+    density = get_object_or_404(Density, pk=pk)
+    value = request.POST.get('value', '').strip()
+    if value:
+        density.value = value
+        density.save()
+        messages.success(request, "تم تحديث الكثافة.")
+    return redirect('manage_densities')
+
+@require_POST
 def delete_density(request, pk):
     density = get_object_or_404(Density, pk=pk)
     density.delete()
     messages.info(request, "تم حذف الكثافة.")
     return redirect('manage_densities')
 
+# Products
 def manage_products(request):
-    products = Product.objects.all().order_by('-created_at')
+    products = Product.objects.all().select_related('company', 'density').order_by('-created_at')
     companies = Company.objects.all()
     densities = Density.objects.all()
     return render(request, 'dashboard/products.html', {
@@ -190,42 +242,67 @@ def manage_products(request):
         'densities': densities
     })
 
+@require_POST
 def add_product(request):
-    if request.method == 'POST':
-        name = request.POST.get('name')
-        company_id = request.POST.get('company_id')
-        density_id = request.POST.get('density_id')
-        Product.objects.create(
-            name=name,
-            company_id=company_id,
-            density_id=density_id
-        )
+    name = request.POST.get('name', '').strip()
+    company_id = request.POST.get('company_id')
+    density_id = request.POST.get('density_id')
+    if name and company_id and density_id:
+        Product.objects.create(name=name, company_id=company_id, density_id=density_id)
         messages.success(request, "تمت إضافة المنتج.")
+    else:
+        messages.error(request, "جميع الحقول مطلوبة.")
     return redirect('manage_products')
 
+@require_POST
+def edit_product(request, pk):
+    product = get_object_or_404(Product, pk=pk)
+    name = request.POST.get('name', '').strip()
+    company_id = request.POST.get('company_id')
+    density_id = request.POST.get('density_id')
+    if name and company_id and density_id:
+        product.name = name
+        product.company_id = company_id
+        product.density_id = density_id
+        product.save()
+        messages.success(request, "تم تحديث المنتج.")
+    return redirect('manage_products')
+
+@require_POST
 def delete_product(request, pk):
     product = get_object_or_404(Product, pk=pk)
     product.delete()
     messages.info(request, "تم حذف المنتج.")
     return redirect('manage_products')
 
+# Invoices
 def invoice_list(request):
-    payment_method = request.GET.get('payment_method')
-    is_paid = request.GET.get('is_paid')
+    query = request.GET.get('q')
+    paid_filter = request.GET.get('paid')
+    method_filter = request.GET.get('method')
     
     invoices = Invoice.objects.all().order_by('-date')
     
-    if payment_method:
-        invoices = invoices.filter(payment_method=payment_method)
-    if is_paid:
-        invoices = invoices.filter(is_paid=(is_paid == '1'))
+    if query:
+        invoices = invoices.filter(
+            Q(customer_name__icontains=query) |
+            Q(id__icontains=query.replace('#', ''))
+        )
+    
+    if paid_filter:
+        invoices = invoices.filter(is_paid=(paid_filter == '1'))
+        
+    if method_filter:
+        invoices = invoices.filter(payment_method=method_filter)
         
     return render(request, 'dashboard/invoices.html', {
         'invoices': invoices,
-        'payment_method': payment_method,
-        'is_paid': is_paid
+        'query': query,
+        'paid_filter': paid_filter,
+        'method_filter': method_filter
     })
 
+@require_POST
 def toggle_invoice_paid(request, pk):
     invoice = get_object_or_404(Invoice, pk=pk)
     invoice.is_paid = not invoice.is_paid
