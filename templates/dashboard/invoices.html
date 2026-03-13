@@ -111,7 +111,7 @@
                                         <a href="{% url 'invoice_view' invoice.id %}" class="btn btn-navy px-3"
                                             title="عرض"><i class="bi bi-eye"></i></a>
                                         <a href="{% url 'invoice_pdf' invoice.id %}" class="btn btn-gold px-3"
-                                            title="PDF" rel="noopener noreferrer"><i
+                                            title="PDF" target="_blank" rel="noopener noreferrer"><i
                                                 class="bi bi-file-earmark-pdf"></i></a>
                                         <form action="{% url 'toggle_invoice_paid' invoice.id %}" method="post"
                                             class="d-inline">

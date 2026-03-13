@@ -1,10 +1,10 @@
 import os
-import django
+import django  # type: ignore
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'oilsystem.settings')
 django.setup()
 
-from core.models import Company, Density, Product
+from core.models import Company, Density, Product  # type: ignore
 
 def populate():
     # Companies

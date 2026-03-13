@@ -1,5 +1,5 @@
-from django.db import models
-from django.utils.translation import gettext_lazy as _
+from django.db import models  # type: ignore
+from django.utils.translation import gettext_lazy as _  # type: ignore
 
 class Company(models.Model):
     name = models.CharField(_("Company Name"), max_length=255)

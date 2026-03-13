@@ -1,15 +1,47 @@
-from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib import messages
-from django.db.models import Q, Count
-from django.http import HttpResponse
-from django.template.loader import render_to_string
-from django.views.decorators.http import require_POST
-from .models import Company, Density, Product, Invoice, InvoiceItem
+from django.shortcuts import render, redirect, get_object_or_404  # type: ignore
+from django.contrib import messages  # type: ignore
+from django.db.models import Q, Count  # type: ignore
+from django.http import HttpResponse  # type: ignore
+from django.template.loader import render_to_string  # type: ignore
+from django.views.decorators.http import require_POST  # type: ignore
+from .models import Company, Density, Product, Invoice, InvoiceItem  # type: ignore
 from decimal import Decimal, InvalidOperation
 
 # PDF generation imports
-from xhtml2pdf import pisa
+from xhtml2pdf import pisa  # type: ignore
 import io
+import os
+from django.conf import settings  # type: ignore
+from django.contrib.staticfiles import finders  # type: ignore
+
+def link_callback(uri, rel):
+    """
+    Convert HTML URIs to absolute system paths so xhtml2pdf can access those
+    resources on the disk.
+    """
+    result = finders.find(uri)
+    if result:
+        if not os.path.isabs(result):
+            result = os.path.join(settings.STATIC_ROOT, result)
+    else:
+        s_url = settings.STATIC_URL
+        s_root = settings.STATIC_ROOT
+        m_url = settings.MEDIA_URL
+        m_root = settings.MEDIA_ROOT
+
+        if uri.startswith(m_url):
+            path = os.path.join(m_root, uri.replace(m_url, ""))
+        elif uri.startswith(s_url):
+            path = os.path.join(s_root, uri.replace(s_url, ""))
+        else:
+            return uri
+
+        # make sure that file exists
+        if not os.path.isfile(path):
+            return uri
+        result = path
+
+    return result
 
 # --- POS Views ---
 
@@ -41,6 +73,7 @@ def product_list(request):
         'query': query,
     })
 
+@require_POST
 def add_to_cart(request, product_id):
     cart = request.session.get('cart', {})
     product_id_str = str(product_id)
@@ -49,6 +82,7 @@ def add_to_cart(request, product_id):
     messages.success(request, "تمت إضافة المنتج للعربة.")
     return redirect('product_list')
 
+@require_POST
 def update_cart_qty(request, product_id, action):
     cart = request.session.get('cart', {})
     pid_str = str(product_id)
@@ -62,6 +96,7 @@ def update_cart_qty(request, product_id, action):
     request.session['cart'] = cart
     return redirect('product_list')
 
+@require_POST
 def remove_from_cart(request, product_id):
     cart = request.session.get('cart', {})
     product_id_str = str(product_id)
@@ -71,6 +106,7 @@ def remove_from_cart(request, product_id):
         messages.info(request, "تمت إزالة المنتج من العربة.")
     return redirect('product_list')
 
+@require_POST
 def clear_cart(request):
     request.session['cart'] = {}
     return redirect('product_list')
@@ -103,13 +139,17 @@ def checkout(request):
                 is_paid=is_paid
             )
             
-            total = Decimal('0.00')
+            subtotals = []
             for item in products_in_cart:
                 pid = str(item['product'].id)
                 price_str = request.POST.get(f'price_{pid}', '0').strip()
                 qty_str = request.POST.get(f'qty_{pid}', '1').strip()
                 
-                price = Decimal(price_str) if price_str else Decimal('0.00')
+                try:
+                    price = Decimal(price_str) if price_str else Decimal('0.00')
+                except InvalidOperation:
+                    price = Decimal('0.00')
+                
                 qty = int(qty_str) if qty_str else 0
                 
                 if qty <= 0: continue
@@ -122,9 +162,9 @@ def checkout(request):
                     unit_price=price,
                     subtotal=subtotal
                 )
-                total += subtotal
+                subtotals.append(subtotal)
             
-            invoice.total_amount = total
+            invoice.total_amount = sum(subtotals, Decimal('0.00'))
             invoice.save()
             
             # Clear cart
@@ -145,10 +185,15 @@ def invoice_view(request, invoice_id):
 
 def invoice_pdf(request, invoice_id):
     invoice = get_object_or_404(Invoice, id=invoice_id)
-    html_string = render_to_string('pdf/invoice_pdf.html', {'invoice': invoice})
+    html_string = render_to_string('pdf/invoice_pdf.html', {'invoice': invoice, 'STATIC_URL': settings.STATIC_URL})
     
     result = io.BytesIO()
-    pdf = pisa.pisaDocument(io.BytesIO(html_string.encode("UTF-8")), result)
+    pdf = pisa.pisaDocument(
+        io.BytesIO(html_string.encode("UTF-8")), 
+        result,
+        encoding='UTF-8',
+        link_callback=link_callback
+    )
     
     if not pdf.err:
         response = HttpResponse(result.getvalue(), content_type='application/pdf')

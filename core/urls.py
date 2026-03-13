@@ -1,5 +1,5 @@
-from django.urls import path
-from . import views
+from django.urls import path  # type: ignore
+from . import views  # type: ignore
 
 urlpatterns = [
     # POS Flow

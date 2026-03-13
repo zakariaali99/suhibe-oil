@@ -126,7 +126,7 @@
                         <button onclick="window.print()" class="btn btn-navy btn-lg px-4 text-gold shadow">
                             <i class="bi bi-printer me-2"></i>طباعة فورية
                         </button>
-                        <a href="{% url 'invoice_pdf' invoice.id %}" class="btn btn-gold btn-lg px-4 shadow">
+                        <a href="{% url 'invoice_pdf' invoice.id %}" class="btn btn-gold btn-lg px-4 shadow" target="_blank" rel="noopener noreferrer">
                             <i class="bi bi-file-earmark-pdf me-2"></i>تحميل PDF
                         </a>
                         <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary btn-lg">أرشيف الفواتير</a>
@@ -137,6 +137,9 @@
     </div>
 </div>
 
+{% endblock %}
+
+{% block extra_css %}
 <style>
     .invoice-card {
         box-shadow: 0 40px 60px -15px rgba(26, 29, 46, 0.1);
@@ -182,6 +185,7 @@
 
         .invoice-header {
             -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
         }
     }
 </style>

@@ -42,10 +42,12 @@
                         </p>
 
                         <div class="mt-auto d-grid">
-                            <a href="{% url 'add_to_cart' product.id %}"
-                                class="btn btn-primary d-flex align-items-center justify-content-center">
-                                <i class="bi bi-cart-plus me-2"></i>إضافة للسلة
-                            </a>
+                            <form action="{% url 'add_to_cart' product.id %}" method="post">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-primary w-100 d-flex align-items-center justify-content-center">
+                                    <i class="bi bi-cart-plus me-2"></i>إضافة للسلة
+                                </button>
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -81,19 +83,25 @@
                                 <small class="text-white-50">{{ item.product.company.name }} - {{
                                     item.product.density.value }}</small>
                             </div>
-                            <a href="{% url 'remove_from_cart' item.product.id %}"
-                                class="text-danger opacity-75 hover-opacity-100">
-                                <i class="bi bi-trash3-fill"></i>
-                            </a>
+                            <form action="{% url 'remove_from_cart' item.product.id %}" method="post" class="d-inline">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-link text-danger p-0 border-0 opacity-75 hover-opacity-100">
+                                    <i class="bi bi-trash3-fill"></i>
+                                </button>
+                            </form>
                         </div>
                         <div class="d-flex align-items-center justify-content-between">
                             <div class="quantity-control d-flex align-items-center bg-white rounded-pill px-1"
                                 style="transform: scale(0.9);">
-                                <a href="{% url 'update_cart_qty' item.product.id 'minus' %}"
-                                    class="btn btn-sm text-navy p-1"><i class="bi bi-dash"></i></a>
+                                <form action="{% url 'update_cart_qty' item.product.id 'minus' %}" method="post" class="d-inline">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-sm text-navy p-1"><i class="bi bi-dash"></i></button>
+                                </form>
                                 <span class="mx-3 fw-bold text-navy">{{ item.quantity }}</span>
-                                <a href="{% url 'update_cart_qty' item.product.id 'plus' %}"
-                                    class="btn btn-sm text-navy p-1"><i class="bi bi-plus"></i></a>
+                                <form action="{% url 'update_cart_qty' item.product.id 'plus' %}" method="post" class="d-inline">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-sm text-navy p-1"><i class="bi bi-plus"></i></button>
+                                </form>
                             </div>
                         </div>
                     </li>
@@ -111,8 +119,10 @@
                     <a href="{% url 'checkout' %}" class="btn btn-gold py-3 shadow">
                         <i class="bi bi-credit-card-fill me-2"></i>إتمام الطلب
                     </a>
-                    <a href="{% url 'clear_cart' %}" class="btn btn-outline-light btn-sm border-0 opacity-50">تفريغ
-                        السلة</a>
+                    <form action="{% url 'clear_cart' %}" method="post" class="d-grid">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-outline-light btn-sm border-0 opacity-50">تفريغ السلة</button>
+                    </form>
                 </div>
             </div>
             {% endif %}
@@ -127,7 +137,10 @@
     <div class="container d-flex justify-content-between align-items-center">
         <div class="cart-info">
             <h6 class="mb-0 fw-bold text-navy">السلة: {{ cart_total_qty }} قطع</h6>
-            <a href="{% url 'clear_cart' %}" class="small text-danger">مسح</a>
+            <form action="{% url 'clear_cart' %}" method="post" class="d-inline">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-link btn-sm text-danger p-0 border-0">مسح</button>
+            </form>
         </div>
         <a href="{% url 'checkout' %}" class="btn btn-gold px-4">إتمام الدفع</a>
     </div>
