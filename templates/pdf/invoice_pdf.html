@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+{% load arabic_tags %}
 <html lang="ar" dir="rtl">
 
 <head>
@@ -160,8 +161,8 @@
         <table width="100%">
             <tr>
                 <td>
-                    <div class="header-title">فاتورة مبيعات</div>
-                    <div class="header-sub">نظام الزيوت والهيدروليك — ليبيا</div>
+                    <div class="header-title">{{ "فاتورة مبيعات"|reshape_arabic }}</div>
+                    <div class="header-sub">{{ "نظام الزيوت والهيدروليك — ليبيا"|reshape_arabic }}</div>
                 </td>
                 <td class="text-left">
                     <span class="header-id">#{{ invoice.id }}</span>
@@ -176,21 +177,21 @@
             <tr>
                 <td width="50%">
                     <div class="info-box">
-                        <div class="label">إلى السيد/السادة:</div>
-                        <div class="value">{{ invoice.customer_name }}</div>
-                        <div class="label" style="margin-top: 10px;">تاريخ الإصدار:</div>
+                        <div class="label">{{ "إلى السيد/السادة:"|reshape_arabic }}</div>
+                        <div class="value">{{ invoice.customer_name|reshape_arabic }}</div>
+                        <div class="label" style="margin-top: 10px;">{{ "تاريخ الإصدار:"|reshape_arabic }}</div>
                         <div class="value">{{ invoice.date|date:"Y-m-d — H:i" }}</div>
                     </div>
                 </td>
                 <td width="50%">
                     <div class="info-box">
-                        <div class="label">طريقة الدفع:</div>
-                        <div><span class="badge badge-method">{% if invoice.payment_method == 'cash' %}نقداً (كاش){% elif invoice.payment_method == 'card' %}بطاقة مصرفية{% else %}تحويل بنكي{% endif %}</span></div>
-                        <div class="label" style="margin-top: 10px;">حالة السداد:</div>
+                        <div class="label">{{ "طريقة الدفع:"|reshape_arabic }}</div>
+                        <div><span class="badge badge-method">{% if invoice.payment_method == 'cash' %}{{ "نقداً (كاش)"|reshape_arabic }}{% elif invoice.payment_method == 'card' %}{{ "بطاقة مصرفية"|reshape_arabic }}{% else %}{{ "تحويل بنكي"|reshape_arabic }}{% endif %}</span></div>
+                        <div class="label" style="margin-top: 10px;">{{ "حالة السداد:"|reshape_arabic }}</div>
                         {% if invoice.is_paid %}
-                        <div><span class="badge badge-paid">تم السداد بنجاح</span></div>
+                        <div><span class="badge badge-paid">{{ "تم السداد بنجاح"|reshape_arabic }}</span></div>
                         {% else %}
-                        <div><span class="badge badge-unpaid">في انتظار الدفع</span></div>
+                        <div><span class="badge badge-unpaid">{{ "في انتظار الدفع"|reshape_arabic }}</span></div>
                         {% endif %}
                     </div>
                 </td>
@@ -201,10 +202,10 @@
             <thead>
                 <tr>
                     <th width="5%" class="text-center">#</th>
-                    <th width="45%">المنتج والمواصفات</th>
-                    <th width="10%" class="text-center">الكمية</th>
-                    <th width="20%" class="text-left">سعر الوحدة</th>
-                    <th width="20%" class="text-left">الإجمالي</th>
+                    <th width="45%">{{ "المنتج والمواصفات"|reshape_arabic }}</th>
+                    <th width="10%" class="text-center">{{ "الكمية"|reshape_arabic }}</th>
+                    <th width="20%" class="text-left">{{ "سعر الوحدة"|reshape_arabic }}</th>
+                    <th width="20%" class="text-left">{{ "الإجمالي"|reshape_arabic }}</th>
                 </tr>
             </thead>
             <tbody>
@@ -213,28 +214,28 @@
                     <td class="text-center">{{ forloop.counter }}</td>
                     <td>
                         {% if item.product %}
-                        <strong>{{ item.product.name }}</strong><br>
-                        <span style="color: #888; font-size: 9pt;">{{ item.product.company.name }} — {{
-                            item.product.density.value }}</span>
+                        <strong>{{ item.product.name|reshape_arabic }}</strong><br>
+                        <span style="color: #888; font-size: 9pt;">{{ item.product.company.name|reshape_arabic }} — {{
+                            item.product.density.value|reshape_arabic }}</span>
                         {% else %}
-                        <span style="color: #ef4444;">منتج محذوف</span>
+                        <span style="color: #ef4444;">{{ "منتج محذوف"|reshape_arabic }}</span>
                         {% endif %}
                     </td>
                     <td class="text-center">{{ item.quantity }}</td>
-                    <td class="text-left">{{ item.unit_price }} د.ل</td>
-                    <td class="text-left"><strong>{{ item.subtotal }} د.ل</strong></td>
+                    <td class="text-left">{{ item.unit_price }} {{ "د.ل"|reshape_arabic }}</td>
+                    <td class="text-left"><strong>{{ item.subtotal }} {{ "د.ل"|reshape_arabic }}</strong></td>
                 </tr>
                 {% endfor %}
                 <tr class="total-row">
-                    <td colspan="4" style="text-align: left; font-size: 12pt;">المجموع الكلي:</td>
-                    <td class="text-left total-value">{{ invoice.total_amount }} د.ل</td>
+                    <td colspan="4" style="text-align: left; font-size: 12pt;">{{ "المجموع الكلي:"|reshape_arabic }}</td>
+                    <td class="text-left total-value">{{ invoice.total_amount }} {{ "د.ل"|reshape_arabic }}</td>
                 </tr>
             </tbody>
         </table>
 
         <div class="footer">
-            <p>تم استخراج هذه الفاتورة من نظام بيع الزيوت</p>
-            <p>شكرًا لتعاملكم معنا</p>
+            <p>{{ "تم استخراج هذه الفاتورة من نظام بيع الزيوت"|reshape_arabic }}</p>
+            <p>{{ "شكرًا لتعاملكم معنا"|reshape_arabic }}</p>
         </div>
     </div>
 </body>

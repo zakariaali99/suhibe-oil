@@ -19,29 +19,34 @@ def link_callback(uri, rel):
     Convert HTML URIs to absolute system paths so xhtml2pdf can access those
     resources on the disk.
     """
+    # Try finding via Django finders first (best for development)
     result = finders.find(uri)
     if result:
-        if not os.path.isabs(result):
-            result = os.path.join(settings.STATIC_ROOT, result)
-    else:
-        s_url = settings.STATIC_URL
-        s_root = settings.STATIC_ROOT
-        m_url = settings.MEDIA_URL
-        m_root = settings.MEDIA_ROOT
-
-        if uri.startswith(m_url):
-            path = os.path.join(m_root, uri.replace(m_url, ""))
-        elif uri.startswith(s_url):
-            path = os.path.join(s_root, uri.replace(s_url, ""))
+        if isinstance(result, (list, tuple)):
+            path = result[0]
         else:
-            return uri
+            path = result
+        return path
 
-        # make sure that file exists
-        if not os.path.isfile(path):
-            return uri
-        result = path
+    # Fallback to manual path construction if finders fail
+    static_url = settings.STATIC_URL
+    static_root = settings.STATIC_ROOT
+    media_url = settings.MEDIA_URL
+    media_root = settings.MEDIA_ROOT
 
-    return result
+    if uri.startswith(static_url):
+        path = os.path.join(static_root, uri.replace(static_url, ""))
+    elif uri.startswith(media_url):
+        path = os.path.join(media_root, uri.replace(media_url, ""))
+    else:
+        # If it's a relative path, try joining with static root as a last resort
+        path = os.path.join(static_root, uri)
+
+    # Final check
+    if os.path.isfile(path):
+        return path
+    
+    return uri
 
 # --- POS Views ---
 
@@ -197,7 +202,8 @@ def invoice_pdf(request, invoice_id):
     
     if not pdf.err:
         response = HttpResponse(result.getvalue(), content_type='application/pdf')
-        response['Content-Disposition'] = f'attachment; filename="invoice_{invoice.id}.pdf"'
+        filename = f"invoice_{invoice.id}.pdf"
+        response['Content-Disposition'] = f'attachment; filename="{filename}"'
         return response
     return HttpResponse("Error generating PDF", status=500)
 

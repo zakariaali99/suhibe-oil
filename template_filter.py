@@ -1,6 +1,6 @@
-from django import template  # type: ignore
-import arabic_reshaper  # type: ignore
-from bidi.algorithm import get_display  # type: ignore
+from django import template
+import arabic_reshaper
+from bidi.algorithm import get_display
 
 register = template.Library()
 
