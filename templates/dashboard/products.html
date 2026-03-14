@@ -117,92 +117,9 @@
                                             <i class="bi bi-trash3-fill"></i>
                                         </button>
                                     </div>
+                                </td>
+                            </tr>
 
-                                    <!-- Edit Modal -->
-                                    <div class="modal fade" id="editModal{{ product.id }}" tabindex="-1">
-                                        <div class="modal-dialog modal-dialog-centered">
-                                            <div class="modal-content border-0 shadow-lg rounded-4">
-                                                <form action="{% url 'edit_product' product.pk %}" method="post">
-                                                    {% csrf_token %}
-                                                    <div class="modal-header bg-navy text-gold p-4">
-                                                        <h5 class="modal-title fw-bold">تعديل بيانات المنتج</h5>
-                                                        <button type="button"
-                                                            class="btn-close ms-0 me-auto btn-close-white"
-                                                            data-bs-dismiss="modal"></button>
-                                                    </div>
-                                                    <div class="modal-body p-4 text-end">
-                                                        <div class="mb-3">
-                                                            <label class="form-label fw-bold text-navy">اسم
-                                                                المنتج</label>
-                                                            <input type="text" name="name"
-                                                                class="form-control form-control-lg border-2"
-                                                                value="{{ product.name }}" required
-                                                                style="border-radius: 12px;">
-                                                        </div>
-                                                        <div class="mb-3">
-                                                            <label class="form-label fw-bold text-navy small">الشركة
-                                                                المصنعة</label>
-                                                            <select name="company_id"
-                                                                class="form-select border-2 bg-light py-2" required
-                                                                style="border-radius: 12px;">
-                                                                {% for company in companies %}
-                                                                <option value="{{ company.id }}" {% if company.id == product.company.id %}selected{% endif %}>{{ company.name }}</option>
-                                                                {% endfor %}
-                                                            </select>
-                                                        </div>
-                                                        <div class="mb-3">
-                                                            <label class="form-label fw-bold text-navy small">درجة
-                                                                الكثافة</label>
-                                                            <select name="density_id"
-                                                                class="form-select border-2 bg-light py-2" required
-                                                                style="border-radius: 12px;">
-                                                                {% for density in densities %}
-                                                                <option value="{{ density.id }}" {% if density.id == product.density.id %}selected{% endif %}>{{ density.value }}</option>
-                                                                {% endfor %}
-                                                            </select>
-                                                        </div>
-                                                    </div>
-                                                    <div class="modal-footer border-0 p-4 pt-0">
-                                                        <button type="button" class="btn btn-light rounded-3 px-4"
-                                                            data-bs-dismiss="modal">إلغاء</button>
-                                                        <button type="submit" class="btn btn-gold rounded-3 px-4">حفظ
-                                                            التغييرات</button>
-                                                    </div>
-                                                </form>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <!-- Delete Modal -->
-                                    <div class="modal fade" id="deleteModal{{ product.id }}" tabindex="-1">
-                                        <div class="modal-dialog modal-dialog-centered">
-                                            <div class="modal-content border-0 shadow-lg rounded-4">
-                                                <form action="{% url 'delete_product' product.pk %}" method="post">
-                                                    {% csrf_token %}
-                                                    <div class="modal-header bg-danger text-white p-4">
-                                                        <h5 class="modal-title fw-bold">تحذير: حذف منتج</h5>
-                                                        <button type="button"
-                                                            class="btn-close ms-0 me-auto btn-close-white"
-                                                            data-bs-dismiss="modal"></button>
-                                                    </div>
-                                                    <div class="modal-body p-4 py-5 text-center">
-                                                        <i
-                                                            class="bi bi-box-fill display-4 text-danger mb-4 d-block"></i>
-                                                        <p class="h5 text-navy mb-2">هل أنت متأكد من حذف <strong>{{ product.name }}</strong>؟</p>
-                                                        <p class="text-muted small">لن يتمكن الموظفون من اختيار هذا
-                                                            المنتج في الفواتير الجديدة بعد حذفه.</p>
-                                                    </div>
-                                                    <div class="modal-footer border-0 p-4 pt-0 justify-content-center">
-                                                        <button type="button" class="btn btn-light rounded-3 px-4"
-                                                            data-bs-dismiss="modal">تراجع</button>
-                                                        <button type="submit"
-                                                            class="btn btn-danger rounded-3 px-4">تأكيد الحذف
-                                                            النهائي</button>
-                                                    </div>
-                                                </form>
-                                            </div>
-                                        </div>
-                                    </div>
                                 </td>
                             </tr>
                             {% empty %}
@@ -220,6 +137,78 @@
             </div>
         </div>
     </div>
+</div>
+
+<!-- Modal Section at Bottom -->
+<div class="modals-container">
+    {% for product in products %}
+    <!-- Edit Modal -->
+    <div class="modal fade" id="editModal{{ product.id }}" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+                <form action="{% url 'edit_product' product.pk %}" method="post">
+                    {% csrf_token %}
+                    <div class="modal-header bg-navy p-4">
+                        <h5 class="modal-title fw-bold text-gold">تعديل بيانات المنتج</h5>
+                        <button type="button" class="btn-close btn-close-white ms-0 me-auto" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body p-4 text-end bg-white">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold text-navy small mb-2">اسم المنتج</label>
+                            <input type="text" name="name" class="form-control form-control-lg border-2 bg-light bg-opacity-50" value="{{ product.name }}" required autofocus style="border-radius: 12px;">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold text-navy small mb-2">الشركة المصنعة</label>
+                            <select name="company_id" class="form-select border-2 bg-light bg-opacity-50 py-2" required style="border-radius: 12px;">
+                                {% for company in companies %}
+                                <option value="{{ company.id }}" {% if company.id == product.company.id %}selected{% endif %}>{{ company.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold text-navy small mb-2">درجة الكثافة</label>
+                            <select name="density_id" class="form-select border-2 bg-light bg-opacity-50 py-2" required style="border-radius: 12px;">
+                                {% for density in densities %}
+                                <option value="{{ density.id }}" {% if density.id == product.density.id %}selected{% endif %}>{{ density.value }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer border-0 p-4 pt-0 gap-2">
+                        <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">إلغاء</button>
+                        <button type="submit" class="btn btn-gold rounded-pill px-4">حفظ التغييرات</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Modal -->
+    <div class="modal fade" id="deleteModal{{ product.id }}" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+                <form action="{% url 'delete_product' product.pk %}" method="post">
+                    {% csrf_token %}
+                    <div class="modal-header bg-danger text-white p-4">
+                        <h5 class="modal-title fw-bold">تحذير: حذف منتج</h5>
+                        <button type="button" class="btn-close btn-close-white ms-0 me-auto" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body p-4 py-5 text-center">
+                        <div class="mb-4">
+                            <i class="bi bi-box-fill text-danger" style="font-size: 4rem;"></i>
+                        </div>
+                        <h5 class="text-navy fw-bold mb-3">متأكد من حذف {{ product.name }}؟</h5>
+                        <p class="text-muted small px-3">لن يتمكن الموظفون من اختيار هذا المنتج في الفواتير الجديدة بعد حذفه بشكل نهائي.</p>
+                    </div>
+                    <div class="modal-footer border-0 p-4 pt-0 justify-content-center gap-2">
+                        <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">تراجع</button>
+                        <button type="submit" class="btn btn-danger rounded-pill px-4">تأكيد الحذف</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
 </div>
 {% endblock %}
 
