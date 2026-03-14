@@ -1,0 +1,3621 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="robots" content="NONE,NOARCHIVE">
+  <title>TypeError
+          at /invoice/4/invoice.pdf</title>
+  <style type="text/css">
+    html * { padding:0; margin:0; }
+    body * { padding:10px 20px; }
+    body * * { padding:0; }
+    body { font:small sans-serif; background-color:#fff; color:#000; }
+    body>div { border-bottom:1px solid #ddd; }
+    h1 { font-weight:normal; }
+    h2 { margin-bottom:.8em; }
+    h3 { margin:1em 0 .5em 0; }
+    h4 { margin:0 0 .5em 0; font-weight: normal; }
+    code, pre { font-size: 100%; white-space: pre-wrap; word-break: break-word; }
+    summary { cursor: pointer; }
+    table { border:1px solid #ccc; border-collapse: collapse; width:100%; background:white; }
+    tbody td, tbody th { vertical-align:top; padding:2px 3px; }
+    thead th {
+      padding:1px 6px 1px 3px; background:#fefefe; text-align:left;
+      font-weight:normal; font-size:11px; border:1px solid #ddd;
+    }
+    tbody th { width:12em; text-align:right; color:#666; padding-right:.5em; }
+    table.vars { margin:5px 10px 2px 40px; width: auto; }
+    table.vars td, table.req td { font-family:monospace; }
+    table td.code { width:100%; }
+    table td.code pre { overflow:hidden; }
+    table.source th { color:#666; }
+    table.source td { font-family:monospace; white-space:pre; border-bottom:1px solid #eee; }
+    ul.traceback { list-style-type:none; color: #222; }
+    ul.traceback li.cause { word-break: break-word; }
+    ul.traceback li.frame { padding-bottom:1em; color:#4f4f4f; }
+    ul.traceback li.user { background-color:#e0e0e0; color:#000 }
+    div.context { padding:10px 0; overflow:hidden; }
+    div.context ol { padding-left:30px; margin:0 10px; list-style-position: inside; }
+    div.context ol li { font-family:monospace; white-space:pre; color:#777; cursor:pointer; padding-left: 2px; }
+    div.context ol li pre { display:inline; }
+    div.context ol.context-line li { color:#464646; background-color:#dfdfdf; padding: 3px 2px; }
+    div.context ol.context-line li span { position:absolute; right:32px; }
+    .user div.context ol.context-line li { background-color:#bbb; color:#000; }
+    .user div.context ol li { color:#666; }
+    div.commands, summary.commands { margin-left: 40px; }
+    div.commands a, summary.commands { color:#555; text-decoration:none; }
+    .user div.commands a { color: black; }
+    #summary { background: #ffc; }
+    #summary h2 { font-weight: normal; color: #666; }
+    #explanation { background:#eee; }
+    #template, #template-not-exist { background:#f6f6f6; }
+    #template-not-exist ul { margin: 0 0 10px 20px; }
+    #template-not-exist .postmortem-section { margin-bottom: 3px; }
+    #unicode-hint { background:#eee; }
+    #traceback { background:#eee; }
+    #requestinfo { background:#f6f6f6; padding-left:120px; }
+    #summary table { border:none; background:transparent; }
+    #requestinfo h2, #requestinfo h3 { position:relative; margin-left:-100px; }
+    #requestinfo h3 { margin-bottom:-1em; }
+    .error { background: #ffc; }
+    .specific { color:#cc3300; font-weight:bold; }
+    h2 span.commands { font-size:.7em; font-weight:normal; }
+    span.commands a:link {color:#5E5694;}
+    pre.exception_value { font-family: sans-serif; color: #575757; font-size: 1.5em; margin: 10px 0 10px 0; }
+    .append-bottom { margin-bottom: 10px; }
+    .fname { user-select: all; }
+  </style>
+  
+  <script>
+    function hideAll(elems) {
+      for (var e = 0; e < elems.length; e++) {
+        elems[e].style.display = 'none';
+      }
+    }
+    window.onload = function() {
+      hideAll(document.querySelectorAll('ol.pre-context'));
+      hideAll(document.querySelectorAll('ol.post-context'));
+      hideAll(document.querySelectorAll('div.pastebin'));
+    }
+    function toggle() {
+      for (var i = 0; i < arguments.length; i++) {
+        var e = document.getElementById(arguments[i]);
+        if (e) {
+          e.style.display = e.style.display == 'none' ? 'block': 'none';
+        }
+      }
+      return false;
+    }
+    function switchPastebinFriendly(link) {
+      s1 = "Switch to copy-and-paste view";
+      s2 = "Switch back to interactive view";
+      link.textContent = link.textContent.trim() == s1 ? s2: s1;
+      toggle('browserTraceback', 'pastebinTraceback');
+      return false;
+    }
+  </script>
+  
+</head>
+<body>
+<div id="summary">
+  <h1>TypeError
+       at /invoice/4/invoice.pdf</h1>
+  <pre class="exception_value">int() argument must be a string, a bytes-like object or a number, not &#x27;NoneType&#x27;</pre>
+  <table class="meta">
+
+    <tr>
+      <th>Request Method:</th>
+      <td>GET</td>
+    </tr>
+    <tr>
+      <th>Request URL:</th>
+      <td>http://localhost:8000/invoice/4/invoice.pdf</td>
+    </tr>
+
+    <tr>
+      <th>Django Version:</th>
+      <td>4.2.29</td>
+    </tr>
+
+    <tr>
+      <th>Exception Type:</th>
+      <td>TypeError</td>
+    </tr>
+
+
+    <tr>
+      <th>Exception Value:</th>
+      <td><pre>int() argument must be a string, a bytes-like object or a number, not &#x27;NoneType&#x27;</pre></td>
+    </tr>
+
+
+    <tr>
+      <th>Exception Location:</th>
+      <td><span class="fname">/Users/zakaria/projects/antigravity/suhibe/venv/lib/python3.9/site-packages/reportlab/platypus/tables.py</span>, line 440, in identity</td>
+    </tr>
+
+
+    <tr>
+      <th>Raised during:</th>
+      <td>core.views.invoice_pdf</td>
+    </tr>
+
+    <tr>
+      <th>Python Executable:</th>
+      <td>/Users/zakaria/projects/antigravity/suhibe/venv/bin/python</td>
+    </tr>
+    <tr>
+      <th>Python Version:</th>
+      <td>3.9.11</td>
+    </tr>
+    <tr>
+      <th>Python Path:</th>
+      <td><pre>[&#x27;/Users/zakaria/projects/antigravity/suhibe&#x27;,
+ &#x27;/Library/Frameworks/Python.framework/Versions/3.9/lib/python39.zip&#x27;,
+ &#x27;/Library/Frameworks/Python.framework/Versions/3.9/lib/python3.9&#x27;,
+ &#x27;/Library/Frameworks/Python.framework/Versions/3.9/lib/python3.9/lib-dynload&#x27;,
+ &#x27;/Users/zakaria/projects/antigravity/suhibe/venv/lib/python3.9/site-packages&#x27;]</pre></td>
+    </tr>
+    <tr>
+      <th>Server time:</th>
+      <td>Sat, 14 Mar 2026 03:06:00 +0300</td>
+    </tr>
+  </table>
+</div>
+
+
+
+
+<div id="traceback">
+  <h2>Traceback <span class="commands"><a href="#" onclick="return switchPastebinFriendly(this);">
+    Switch to copy-and-paste view</a></span>
+  </h2>
+  <div id="browserTraceback">
+    <ul class="traceback">
+      
+        
+        <li class="frame django">
+          
+            <code class="fname">/Users/zakaria/projects/antigravity/suhibe/venv/lib/python3.9/site-packages/django/core/handlers/exception.py</code>, line 55, in inner
+          
+
+          
+            <div class="context" id="c4434594368">
+              
+                <ol start="48" class="pre-context" id="pre4434594368">
+                
+                  <li onclick="toggle('pre4434594368', 'post4434594368')"><pre></pre></li>
+                
+                  <li onclick="toggle('pre4434594368', 'post4434594368')"><pre>        return inner</pre></li>
+                
+                  <li onclick="toggle('pre4434594368', 'post4434594368')"><pre>    else:</pre></li>
+                
+                  <li onclick="toggle('pre4434594368', 'post4434594368')"><pre></pre></li>
+                
+                  <li onclick="toggle('pre4434594368', 'post4434594368')"><pre>        @wraps(get_response)</pre></li>
+                
+                  <li onclick="toggle('pre4434594368', 'post4434594368')"><pre>        def inner(request):</pre></li>
+                
+                  <li onclick="toggle('pre4434594368', 'post4434594368')"><pre>            try:</pre></li>
+                
+                </ol>
+              
+              <ol start="55" class="context-line">
+                <li onclick="toggle('pre4434594368', 'post4434594368')"><pre>                response = get_response(request)</pre> <span>…</span></li>
+              </ol>
+              
+                <ol start='56' class="post-context" id="post4434594368">
+                  
+                  <li onclick="toggle('pre4434594368', 'post4434594368')"><pre>            except Exception as exc:</pre></li>
+                  
+                  <li onclick="toggle('pre4434594368', 'post4434594368')"><pre>                response = response_for_exception(request, exc)</pre></li>
+                  
+                  <li onclick="toggle('pre4434594368', 'post4434594368')"><pre>            return response</pre></li>
+                  
+                  <li onclick="toggle('pre4434594368', 'post4434594368')"><pre></pre></li>
+                  
+                  <li onclick="toggle('pre4434594368', 'post4434594368')"><pre>        return inner</pre></li>
+                  
+                  <li onclick="toggle('pre4434594368', 'post4434594368')"><pre></pre></li>
+                  
+              </ol>
+              
+            </div>
+          
+
+          
+            
+              <details>
+                <summary class="commands">Local vars</summary>
+            
+            <table class="vars" id="v4434594368">
+              <thead>
+                <tr>
+                  <th>Variable</th>
+                  <th>Value</th>
+                </tr>
+              </thead>
+              <tbody>
+                
+                  <tr>
+                    <td>exc</td>
+                    <td class="code"><pre>TypeError(&quot;int() argument must be a string, a bytes-like object or a number, not &#x27;NoneType&#x27;&quot;)</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>get_response</td>
+                    <td class="code"><pre>&lt;bound method BaseHandler._get_response of &lt;django.core.handlers.wsgi.WSGIHandler object at 0x10291d910&gt;&gt;</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>request</td>
+                    <td class="code"><pre>&lt;WSGIRequest: GET &#x27;/invoice/4/invoice.pdf&#x27;&gt;</pre></td>
+                  </tr>
+                
+              </tbody>
+            </table>
+            </details>
+          
+        </li>
+      
+        
+        <li class="frame django">
+          
+            <code class="fname">/Users/zakaria/projects/antigravity/suhibe/venv/lib/python3.9/site-packages/django/core/handlers/base.py</code>, line 197, in _get_response
+          
+
+          
+            <div class="context" id="c4434594304">
+              
+                <ol start="190" class="pre-context" id="pre4434594304">
+                
+                  <li onclick="toggle('pre4434594304', 'post4434594304')"><pre></pre></li>
+                
+                  <li onclick="toggle('pre4434594304', 'post4434594304')"><pre>        if response is None:</pre></li>
+                
+                  <li onclick="toggle('pre4434594304', 'post4434594304')"><pre>            wrapped_callback = self.make_view_atomic(callback)</pre></li>
+                
+                  <li onclick="toggle('pre4434594304', 'post4434594304')"><pre>            # If it is an asynchronous view, run it in a subthread.</pre></li>
+                
+                  <li onclick="toggle('pre4434594304', 'post4434594304')"><pre>            if iscoroutinefunction(wrapped_callback):</pre></li>
+                
+                  <li onclick="toggle('pre4434594304', 'post4434594304')"><pre>                wrapped_callback = async_to_sync(wrapped_callback)</pre></li>
+                
+                  <li onclick="toggle('pre4434594304', 'post4434594304')"><pre>            try:</pre></li>
+                
+                </ol>
+              
+              <ol start="197" class="context-line">
+                <li onclick="toggle('pre4434594304', 'post4434594304')"><pre>                response = wrapped_callback(request, *callback_args, **callback_kwargs)</pre> <span>…</span></li>
+              </ol>
+              
+                <ol start='198' class="post-context" id="post4434594304">
+                  
+                  <li onclick="toggle('pre4434594304', 'post4434594304')"><pre>            except Exception as e:</pre></li>
+                  
+                  <li onclick="toggle('pre4434594304', 'post4434594304')"><pre>                response = self.process_exception_by_middleware(e, request)</pre></li>
+                  
+                  <li onclick="toggle('pre4434594304', 'post4434594304')"><pre>                if response is None:</pre></li>
+                  
+                  <li onclick="toggle('pre4434594304', 'post4434594304')"><pre>                    raise</pre></li>
+                  
+                  <li onclick="toggle('pre4434594304', 'post4434594304')"><pre></pre></li>
+                  
+                  <li onclick="toggle('pre4434594304', 'post4434594304')"><pre>        # Complain if the view returned None (a common error).</pre></li>
+                  
+              </ol>
+              
+            </div>
+          
+
+          
+            
+              <details>
+                <summary class="commands">Local vars</summary>
+            
+            <table class="vars" id="v4434594304">
+              <thead>
+                <tr>
+                  <th>Variable</th>
+                  <th>Value</th>
+                </tr>
+              </thead>
+              <tbody>
+                
+                  <tr>
+                    <td>callback</td>
+                    <td class="code"><pre>&lt;function invoice_pdf at 0x1081383a0&gt;</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>callback_args</td>
+                    <td class="code"><pre>()</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>callback_kwargs</td>
+                    <td class="code"><pre>{&#x27;invoice_id&#x27;: 4}</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>middleware_method</td>
+                    <td class="code"><pre>&lt;bound method CsrfViewMiddleware.process_view of &lt;CsrfViewMiddleware get_response=convert_exception_to_response.&lt;locals&gt;.inner&gt;&gt;</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>request</td>
+                    <td class="code"><pre>&lt;WSGIRequest: GET &#x27;/invoice/4/invoice.pdf&#x27;&gt;</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>response</td>
+                    <td class="code"><pre>None</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>self</td>
+                    <td class="code"><pre>&lt;django.core.handlers.wsgi.WSGIHandler object at 0x10291d910&gt;</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>wrapped_callback</td>
+                    <td class="code"><pre>&lt;function invoice_pdf at 0x1081383a0&gt;</pre></td>
+                  </tr>
+                
+              </tbody>
+            </table>
+            </details>
+          
+        </li>
+      
+        
+        <li class="frame user">
+          
+            <code class="fname">/Users/zakaria/projects/antigravity/suhibe/core/views.py</code>, line 196, in invoice_pdf
+          
+
+          
+            <div class="context" id="c4432423744">
+              
+                <ol start="189" class="pre-context" id="pre4432423744">
+                
+                  <li onclick="toggle('pre4432423744', 'post4432423744')"><pre>    return render(request, &#x27;main/invoice.html&#x27;, {&#x27;invoice&#x27;: invoice})</pre></li>
+                
+                  <li onclick="toggle('pre4432423744', 'post4432423744')"><pre></pre></li>
+                
+                  <li onclick="toggle('pre4432423744', 'post4432423744')"><pre>def invoice_pdf(request, invoice_id):</pre></li>
+                
+                  <li onclick="toggle('pre4432423744', 'post4432423744')"><pre>    invoice = get_object_or_404(Invoice, id=invoice_id)</pre></li>
+                
+                  <li onclick="toggle('pre4432423744', 'post4432423744')"><pre>    html_string = render_to_string(&#x27;pdf/invoice_pdf.html&#x27;, {&#x27;invoice&#x27;: invoice, &#x27;STATIC_URL&#x27;: settings.STATIC_URL})</pre></li>
+                
+                  <li onclick="toggle('pre4432423744', 'post4432423744')"><pre>    </pre></li>
+                
+                  <li onclick="toggle('pre4432423744', 'post4432423744')"><pre>    result = io.BytesIO()</pre></li>
+                
+                </ol>
+              
+              <ol start="196" class="context-line">
+                <li onclick="toggle('pre4432423744', 'post4432423744')"><pre>    pdf = pisa.pisaDocument(</pre> <span>…</span></li>
+              </ol>
+              
+                <ol start='197' class="post-context" id="post4432423744">
+                  
+                  <li onclick="toggle('pre4432423744', 'post4432423744')"><pre>        io.BytesIO(html_string.encode(&quot;UTF-8&quot;)), </pre></li>
+                  
+                  <li onclick="toggle('pre4432423744', 'post4432423744')"><pre>        result,</pre></li>
+                  
+                  <li onclick="toggle('pre4432423744', 'post4432423744')"><pre>        encoding=&#x27;UTF-8&#x27;,</pre></li>
+                  
+                  <li onclick="toggle('pre4432423744', 'post4432423744')"><pre>        link_callback=link_callback</pre></li>
+                  
+                  <li onclick="toggle('pre4432423744', 'post4432423744')"><pre>    )</pre></li>
+                  
+                  <li onclick="toggle('pre4432423744', 'post4432423744')"><pre>    </pre></li>
+                  
+              </ol>
+              
+            </div>
+          
+
+          
+            
+              <details>
+                <summary class="commands">Local vars</summary>
+            
+            <table class="vars" id="v4432423744">
+              <thead>
+                <tr>
+                  <th>Variable</th>
+                  <th>Value</th>
+                </tr>
+              </thead>
+              <tbody>
+                
+                  <tr>
+                    <td>html_string</td>
+                    <td class="code"><pre>(&#x27;&lt;!DOCTYPE html&gt;\n&#x27;
+ &#x27;\n&#x27;
+ &#x27;&lt;html lang=&quot;ar&quot; dir=&quot;rtl&quot;&gt;\n&#x27;
+ &#x27;\n&#x27;
+ &#x27;&lt;head&gt;\n&#x27;
+ &#x27;    &lt;meta charset=&quot;UTF-8&quot;&gt;\n&#x27;
+ &#x27;    &lt;style&gt;\n&#x27;
+ &#x27;        @font-face {\n&#x27;
+ &quot;            font-family: &#x27;ArialUnicode&#x27;;\n&quot;
+ &quot;            src: url(&#x27;fonts/ArialUnicode.ttf&#x27;);\n&quot;
+ &#x27;        }\n&#x27;
+ &#x27;\n&#x27;
+ &#x27;        @page {\n&#x27;
+ &#x27;            size: A4;\n&#x27;
+ &#x27;            margin: 1cm;\n&#x27;
+ &#x27;        }\n&#x27;
+ &#x27;\n&#x27;
+ &#x27;        * {\n&#x27;
+ &quot;            font-family: &#x27;ArialUnicode&#x27;, sans-serif;\n&quot;
+ &#x27;            box-sizing: border-box;\n&#x27;
+ &#x27;        }\n&#x27;
+ &#x27;\n&#x27;
+ &#x27;        body {\n&#x27;
+ &#x27;            direction: rtl;\n&#x27;
+ &#x27;            text-align: right;\n&#x27;
+ &#x27;            color: #1a1d2e;\n&#x27;
+ &#x27;            line-height: 1.4;\n&#x27;
+ &#x27;            margin: 0;\n&#x27;
+ &#x27;            padding: 0;\n&#x27;
+ &#x27;            background-color: #ffffff;\n&#x27;
+ &#x27;            font-size: 10pt;\n&#x27;
+ &#x27;        }\n&#x27;
+ &#x27;\n&#x27;
+ &#x27;        .container {\n&#x27;
+ &#x27;            border: 2px solid #1a1d2e;\n&#x27;
+ &#x27;            padding: 20px;\n&#x27;
+ &#x27;            min-height: 26cm;\n&#x27;
+ &#x27;            position: relative;\n&#x27;
+ &#x27;        }\n&#x27;
+ &#x27;\n&#x27;
+ &#x27;        .header-table {\n&#x27;
+ &#x27;            width: 100%;\n&#x27;
+ &#x27;            border-bottom: 3px solid #d4a745;\n&#x27;
+ &#x27;            padding-bottom: 20px;\n&#x27;
+ &#x27;            margin-bottom: 20px;\n&#x27;
+ &#x27;        }\n&#x27;
+ &#x27;\n&#x27;
+ &#x27;        .logo-text {\n&#x27;
+ &#x27;            color: #1a1d2e;\n&#x27;
+ &#x27;            font-size: 24pt;\n&#x27;
+ &#x27;            font-weight: bold;\n&#x27;
+ &#x27;            margin-bottom: 5px;\n&#x27;
+ &#x27;        }\n&#x27;
+ &#x27;\n&#x27;
+ &#x27;        .header-info {\n&#x27;
+ &#x27;            font-size: 9pt;\n&#x27;
+ &#x27;            color: #666;\n&#x27;
+ &#x27;        }\n&#x27;
+ &#x27;\n&#x27;
+ &#x27;        .invoice-title {\n&#x27;
+ &#x27;            font-size: 26pt;\n&#x27;
+ &#x27;            font-weight: bold;\n&#x27;
+ &#x27;            color: #d4a745;\n&#x27;
+ &#x27;            text-align: left;\n&#x27;
+ &#x27;        }\n&#x27;
+ &#x27;\n&#x27;
+ &#x27;        .info-section {\n&#x27;
+ &#x27;            width: 100%;\n&#x27;
+ &#x27;            margin-bottom: 25px;\n&#x27;
+ &#x27;        }\n&#x27;
+ &#x27;\n&#x27;
+ &#x27;        .info-box {\n&#x27;
+ &#x27;            border: 1px solid #ddd;\n&#x27;
+ &#x27;            padding: 15px;\n&#x27;
+ &#x27;            height: 100px;\n&#x27;
+ &#x27;        }\n&#x27;
+ &#x27;\n&#x27;
+ &#x27;        .info-header {\n&#x27;
+ &#x27;            background-color: #f8f8f8;\n&#x27;
+ &#x27;            border-bottom: 1px solid #ddd;\n&#x27;
+ &#x27;            margin: -15px -15px 10px -15px;\n&#x27;
+ &#x27;            padding: 5px 15px;\n&#x27;
+ &#x27;            font-weight: bold;\n&#x27;
+ &#x27;            font-size: 9pt;\n&#x27;
+ &#x27;            color: #1a1d2e;\n&#x27;
+ &#x27;        }\n&#x27;
+ &#x27;\n&#x27;
+ &#x27;        .label {\n&#x27;
+ &#x27;            color: #777;\n&#x27;
+ &#x27;            font-size: 8pt;\n&#x27;
+ &#x27;            margin-bottom: 2px;\n&#x27;
+ &#x27;        }\n&#x27;
+ &#x27;\n&#x27;
+ &#x27;        .value {\n&#x27;
+ &#x27;            font-weight: bold;\n&#x27;
+ &#x27;            font-size: 11pt;\n&#x27;
+ &#x27;        }\n&#x27;
+ &#x27;\n&#x27;
+ &#x27;        .items-table {\n&#x27;
+ &#x27;            width: 100%;\n&#x27;
+ &#x27;            border-collapse: collapse;\n&#x27;
+ &#x27;            margin-bottom: 30px;\n&#x27;
+ &#x27;        }\n&#x27;
+ &#x27;\n&#x27;
+ &#x27;        .items-table th {\n&#x27;
+ &#x27;            background-color: #1a1d2e;\n&#x27;
+ &#x27;            color: #ffffff;\n&#x27;
+ &#x27;            padding: 10px;\n&#x27;
+ &#x27;            border: 1px solid #1a1d2e;\n&#x27;
+ &#x27;            text-align: center;\n&#x27;
+ &#x27;            font-size: 10pt;\n&#x27;
+ &#x27;        }\n&#x27;
+ &#x27;\n&#x27;
+ &#x27;        .items-table td {\n&#x27;
+ &#x27;            padding: 12px 8px;\n&#x27;
+ &#x27;            border: 1px solid #ddd;\n&#x27;
+ &#x27;            text-align: center;\n&#x27;
+ &#x27;        }\n&#x27;
+ &#x27;\n&#x27;
+ &#x27;        .text-right { text-align: right !important; }\n&#x27;
+ &#x27;        .text-left { text-align: left !important; }\n&#x27;
+ &#x27;\n&#x27;
+ &#x27;        .total-box {\n&#x27;
+ &#x27;            width: 60%;\n&#x27;
+ &#x27;            margin-right: auto;\n&#x27;
+ &#x27;            border: 2px solid #d4a745;\n&#x27;
+ &#x27;            background-color: #faf9f6;\n&#x27;
+ &#x27;        }\n&#x27;
+ &#x27;\n&#x27;
+ &#x27;        .total-row {\n&#x27;
+ &#x27;            width: 100%;\n&#x27;
+ &#x27;        }\n&#x27;
+ &#x27;\n&#x27;
+ &#x27;        .total-label {\n&#x27;
+ &#x27;            padding: 10px;\n&#x27;
+ &#x27;            font-weight: bold;\n&#x27;
+ &#x27;            font-size: 12pt;\n&#x27;
+ &#x27;            text-align: right;\n&#x27;
+ &#x27;        }\n&#x27;
+ &#x27;\n&#x27;
+ &#x27;        .total-value {\n&#x27;
+ &#x27;            padding: 10px;\n&#x27;
+ &#x27;            font-weight: bold;\n&#x27;
+ &#x27;            font-size: 16pt;\n&#x27;
+ &#x27;            color: #d4a745;\n&#x27;
+ &#x27;            text-align: left;\n&#x27;
+ &#x27;        }\n&#x27;
+ &#x27;\n&#x27;
+ &#x27;        .signature-area {\n&#x27;
+ &#x27;            margin-top: 60px;\n&#x27;
+ &#x27;            width: 100%;\n&#x27;
+ &#x27;        }\n&#x27;
+ &#x27;\n&#x27;
+ &#x27;   … &lt;trimmed 9451 bytes string&gt;</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>invoice</td>
+                    <td class="code"><pre>&lt;Invoice: Invoice #4 - محمد علي&gt;</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>invoice_id</td>
+                    <td class="code"><pre>4</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>request</td>
+                    <td class="code"><pre>&lt;WSGIRequest: GET &#x27;/invoice/4/invoice.pdf&#x27;&gt;</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>result</td>
+                    <td class="code"><pre>&lt;_io.BytesIO object at 0x1085bf1d0&gt;</pre></td>
+                  </tr>
+                
+              </tbody>
+            </table>
+            </details>
+          
+        </li>
+      
+        
+        <li class="frame user">
+          
+            <code class="fname">/Users/zakaria/projects/antigravity/suhibe/venv/lib/python3.9/site-packages/xhtml2pdf/document.py</code>, line 196, in pisaDocument
+          
+
+          
+            <div class="context" id="c4498894528">
+              
+                <ol start="189" class="pre-context" id="pre4498894528">
+                
+                  <li onclick="toggle('pre4498894528', 'post4498894528')"><pre></pre></li>
+                
+                  <li onclick="toggle('pre4498894528', 'post4498894528')"><pre>    doc.addPageTemplates([body, *list(context.templateList.values())])</pre></li>
+                
+                  <li onclick="toggle('pre4498894528', 'post4498894528')"><pre></pre></li>
+                
+                  <li onclick="toggle('pre4498894528', 'post4498894528')"><pre>    # Use multibuild e.g. if a TOC has to be created</pre></li>
+                
+                  <li onclick="toggle('pre4498894528', 'post4498894528')"><pre>    if context.multiBuild:</pre></li>
+                
+                  <li onclick="toggle('pre4498894528', 'post4498894528')"><pre>        doc.multiBuild(context.story)</pre></li>
+                
+                  <li onclick="toggle('pre4498894528', 'post4498894528')"><pre>    else:</pre></li>
+                
+                </ol>
+              
+              <ol start="196" class="context-line">
+                <li onclick="toggle('pre4498894528', 'post4498894528')"><pre>        doc.build(context.story)</pre> <span>…</span></li>
+              </ol>
+              
+                <ol start='197' class="post-context" id="post4498894528">
+                  
+                  <li onclick="toggle('pre4498894528', 'post4498894528')"><pre></pre></li>
+                  
+                  <li onclick="toggle('pre4498894528', 'post4498894528')"><pre>    # Add watermarks</pre></li>
+                  
+                  <li onclick="toggle('pre4498894528', 'post4498894528')"><pre>    output = io.BytesIO()</pre></li>
+                  
+                  <li onclick="toggle('pre4498894528', 'post4498894528')"><pre>    output, has_bg = WaterMarks.process_doc(context, out, output)</pre></li>
+                  
+                  <li onclick="toggle('pre4498894528', 'post4498894528')"><pre></pre></li>
+                  
+                  <li onclick="toggle('pre4498894528', 'post4498894528')"><pre>    if not has_bg:</pre></li>
+                  
+              </ol>
+              
+            </div>
+          
+
+          
+            
+              <details>
+                <summary class="commands">Local vars</summary>
+            
+            <table class="vars" id="v4498894528">
+              <thead>
+                <tr>
+                  <th>Variable</th>
+                  <th>Value</th>
+                </tr>
+              </thead>
+              <tbody>
+                
+                  <tr>
+                    <td>_kwargs</td>
+                    <td class="code"><pre>{}</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>body</td>
+                    <td class="code"><pre>&lt;xhtml2pdf.xhtml2pdf_reportlab.PmlPageTemplate object at 0x108628400&gt;</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>capacity</td>
+                    <td class="code"><pre>102400</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>context</td>
+                    <td class="code"><pre>&lt;xhtml2pdf.context.pisaContext object at 0x10825cc10&gt;</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>context_meta</td>
+                    <td class="code"><pre>None</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>debug</td>
+                    <td class="code"><pre>0</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>default_css</td>
+                    <td class="code"><pre>None</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>dest</td>
+                    <td class="code"><pre>&lt;_io.BytesIO object at 0x1085bf1d0&gt;</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>dest_bytes</td>
+                    <td class="code"><pre>False</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>doc</td>
+                    <td class="code"><pre>&lt;xhtml2pdf.xhtml2pdf_reportlab.PmlBaseDoc object at 0x108353400&gt;</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>encoding</td>
+                    <td class="code"><pre>&#x27;UTF-8&#x27;</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>encrypt</td>
+                    <td class="code"><pre>None</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>link_callback</td>
+                    <td class="code"><pre>&lt;function link_callback at 0x10319f5e0&gt;</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>out</td>
+                    <td class="code"><pre>&lt;_io.BytesIO object at 0x1081b5950&gt;</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>path</td>
+                    <td class="code"><pre>&#x27;&#x27;</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>raise_exception</td>
+                    <td class="code"><pre>True</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>signature</td>
+                    <td class="code"><pre>None</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>src</td>
+                    <td class="code"><pre>&lt;_io.BytesIO object at 0x1085bfd60&gt;</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>xhtml</td>
+                    <td class="code"><pre>False</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>xml_output</td>
+                    <td class="code"><pre>None</pre></td>
+                  </tr>
+                
+              </tbody>
+            </table>
+            </details>
+          
+        </li>
+      
+        
+        <li class="frame user">
+          
+            <code class="fname">/Users/zakaria/projects/antigravity/suhibe/venv/lib/python3.9/site-packages/reportlab/platypus/doctemplate.py</code>, line 1083, in build
+          
+
+          
+            <div class="context" id="c4498893376">
+              
+                <ol start="1076" class="pre-context" id="pre4498893376">
+                
+                  <li onclick="toggle('pre4498893376', 'post4498893376')"><pre>                        npt=NextPageTemplate(npt)</pre></li>
+                
+                  <li onclick="toggle('pre4498893376', 'post4498893376')"><pre>                        npt.apply(self)</pre></li>
+                
+                  <li onclick="toggle('pre4498893376', 'post4498893376')"><pre>                        self._setPageTemplate()</pre></li>
+                
+                  <li onclick="toggle('pre4498893376', 'post4498893376')"><pre>                    del flowables[0]</pre></li>
+                
+                  <li onclick="toggle('pre4498893376', 'post4498893376')"><pre>                self.clean_hanging()</pre></li>
+                
+                  <li onclick="toggle('pre4498893376', 'post4498893376')"><pre>                try:</pre></li>
+                
+                  <li onclick="toggle('pre4498893376', 'post4498893376')"><pre>                    first = flowables[0]</pre></li>
+                
+                </ol>
+              
+              <ol start="1083" class="context-line">
+                <li onclick="toggle('pre4498893376', 'post4498893376')"><pre>                    self.handle_flowable(flowables)</pre> <span>…</span></li>
+              </ol>
+              
+                <ol start='1084' class="post-context" id="post4498893376">
+                  
+                  <li onclick="toggle('pre4498893376', 'post4498893376')"><pre>                    handled += 1</pre></li>
+                  
+                  <li onclick="toggle('pre4498893376', 'post4498893376')"><pre>                except:</pre></li>
+                  
+                  <li onclick="toggle('pre4498893376', 'post4498893376')"><pre>                    #if it has trace info, add it to the traceback message.</pre></li>
+                  
+                  <li onclick="toggle('pre4498893376', 'post4498893376')"><pre>                    if hasattr(first, &#x27;_traceInfo&#x27;) and first._traceInfo:</pre></li>
+                  
+                  <li onclick="toggle('pre4498893376', 'post4498893376')"><pre>                        exc = sys.exc_info()[1]</pre></li>
+                  
+                  <li onclick="toggle('pre4498893376', 'post4498893376')"><pre>                        args = list(exc.args)</pre></li>
+                  
+              </ol>
+              
+            </div>
+          
+
+          
+            
+              <details>
+                <summary class="commands">Local vars</summary>
+            
+            <table class="vars" id="v4498893376">
+              <thead>
+                <tr>
+                  <th>Variable</th>
+                  <th>Value</th>
+                </tr>
+              </thead>
+              <tbody>
+                
+                  <tr>
+                    <td>canv</td>
+                    <td class="code"><pre>&lt;reportlab.pdfgen.canvas.Canvas object at 0x108353a90&gt;</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>canvasmaker</td>
+                    <td class="code"><pre>&lt;class &#x27;reportlab.pdfgen.canvas.Canvas&#x27;&gt;</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>filename</td>
+                    <td class="code"><pre>None</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>first</td>
+                    <td class="code"><pre>PmlTable(
+ rowHeights=[None],
+ colWidths=[258.51968503937013, 21.543307086614178, 258.51968503937013],
+[[(&lt;xhtml2pdf.xhtml2pdf_reportlab.PmlKeepInFrame object at 0x108341760&gt;,),
+    (&lt;xhtml2pdf.xhtml2pdf_reportlab.PmlKeepInFrame object at 0x108507ee0&gt;,),
+    &lt;xhtml2pdf.xhtml2pdf_reportlab.PmlKeepInFrame object at 0x108341550&gt;]]
+) # end table</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>flowableCount</td>
+                    <td class="code"><pre>6</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>flowables</td>
+                    <td class="code"><pre>[PmlTable(
+ rowHeights=[None, None, None],
+ colWidths=[&#x27;8%&#x27;, &#x27;47%&#x27;, &#x27;10%&#x27;, &#x27;15%&#x27;, &#x27;20%&#x27;],
+[[&lt;xhtml2pdf.xhtml2pdf_reportlab.PmlKeepInFrame object at 0x108507520&gt;,
+    &lt;xhtml2pdf.xhtml2pdf_reportlab.PmlKeepInFrame object at 0x1083e9220&gt;,
+    &lt;xhtml2pdf.xhtml2pdf_reportlab.PmlKeepInFrame object at 0x1083e9190&gt;,
+    &lt;xhtml2pdf.xhtml2pdf_reportlab.PmlKeepInFrame object at 0x1083e9640&gt;,
+    &lt;xhtml2pdf.xhtml2pdf_reportlab.PmlKeepInFrame object at 0x1083e9820&gt;],
+   [&lt;xhtml2pdf.xhtml2pdf_reportlab.PmlKeepInFrame object at 0x1083e9400&gt;,
+    &lt;xhtml2pdf.xhtml2pdf_reportlab.PmlKeepInFrame object at 0x1083e9580&gt;,
+    &lt;xhtml2pdf.xhtml2pdf_reportlab.PmlKeepInFrame object at 0x1083e9fa0&gt;,
+    &lt;xhtml2pdf.xhtml2pdf_reportlab.PmlKeepInFrame object at 0x1083e9700&gt;,
+    &lt;xhtml2pdf.xhtml2pdf_reportlab.PmlKeepInFrame object at 0x10841e9d0&gt;],
+   [&lt;xhtml2pdf.xhtml2pdf_reportlab.PmlKeepInFrame object at 0x10841ee20&gt;,
+    &lt;xhtml2pdf.xhtml2pdf_reportlab.PmlKeepInFrame object at 0x108187d30&gt;,
+    &lt;xhtml2pdf.xhtml2pdf_reportlab.PmlKeepInFrame object at 0x1028e4a00&gt;,
+    &lt;xhtml2pdf.xhtml2pdf_reportlab.PmlKeepInFrame object at 0x10837dd60&gt;,
+    &lt;xhtml2pdf.xhtml2pdf_reportlab.PmlKeepInFrame object at 0x10837da90&gt;]]
+) # end table,
+ PmlTable(
+ rowHeights=[None],
+ colWidths=[None, None],
+[[&lt;xhtml2pdf.xhtml2pdf_reportlab.PmlKeepInFrame object at 0x10837d7c0&gt;,
+    &lt;xhtml2pdf.xhtml2pdf_reportlab.PmlKeepInFrame object at 0x10837dac0&gt;]]
+) # end table,
+ PmlTable(
+ rowHeights=[None],
+ colWidths=[&#x27;50%&#x27;, &#x27;50%&#x27;],
+[[&lt;xhtml2pdf.xhtml2pdf_reportlab.PmlKeepInFrame object at 0x10837dbe0&gt;,
+    &lt;xhtml2pdf.xhtml2pdf_reportlab.PmlKeepInFrame object at 0x10837d9a0&gt;]]
+) # end table,
+ PmlParagraph(
+  &#x27;dir&#x27;
+      &#x27;dir&#x27;
+  &#x27;caseSensitive&#x27;
+      &#x27;caseSensitive&#x27;
+  &#x27;encoding&#x27;
+      &#x27;encoding&#x27;
+  &#x27;text&#x27;
+      &#x27;text&#x27;
+  &#x27;frags&#x27;
+      &#x27;frags&#x27;
+  &#x27;style&#x27;
+      &#x27;style&#x27;
+  &#x27;bulletText&#x27;
+      &#x27;bulletText&#x27;
+  &#x27;debug&#x27;
+      &#x27;debug&#x27;
+  &#x27;outline&#x27;
+      &#x27;outline&#x27;
+  &#x27;outlineLevel&#x27;
+      &#x27;outlineLevel&#x27;
+  &#x27;outlineOpen&#x27;
+      &#x27;outlineOpen&#x27;
+  &#x27;keepWithNext&#x27;
+      &#x27;keepWithNext&#x27;
+  &#x27;autoLeading&#x27;
+      &#x27;autoLeading&#x27;
+) #PmlParagraph]</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>handled</td>
+                    <td class="code"><pre>1</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>self</td>
+                    <td class="code"><pre>&lt;xhtml2pdf.xhtml2pdf_reportlab.PmlBaseDoc object at 0x108353400&gt;</pre></td>
+                  </tr>
+                
+              </tbody>
+            </table>
+            </details>
+          
+        </li>
+      
+        
+        <li class="frame user">
+          
+            <code class="fname">/Users/zakaria/projects/antigravity/suhibe/venv/lib/python3.9/site-packages/reportlab/platypus/doctemplate.py</code>, line 932, in handle_flowable
+          
+
+          
+            <div class="context" id="c4498817344">
+              
+                <ol start="925" class="pre-context" id="pre4498817344">
+                
+                  <li onclick="toggle('pre4498817344', 'post4498817344')"><pre>        elif isinstance(f,ActionFlowable):</pre></li>
+                
+                  <li onclick="toggle('pre4498817344', 'post4498817344')"><pre>            f.apply(self)</pre></li>
+                
+                  <li onclick="toggle('pre4498817344', 'post4498817344')"><pre>            self.afterFlowable(f)</pre></li>
+                
+                  <li onclick="toggle('pre4498817344', 'post4498817344')"><pre>        else:</pre></li>
+                
+                  <li onclick="toggle('pre4498817344', 'post4498817344')"><pre>            frame = self.frame</pre></li>
+                
+                  <li onclick="toggle('pre4498817344', 'post4498817344')"><pre>            canv = self.canv</pre></li>
+                
+                  <li onclick="toggle('pre4498817344', 'post4498817344')"><pre>            #try to fit it then draw it</pre></li>
+                
+                </ol>
+              
+              <ol start="932" class="context-line">
+                <li onclick="toggle('pre4498817344', 'post4498817344')"><pre>            if frame.add(f, canv, trySplit=self.allowSplitting):</pre> <span>…</span></li>
+              </ol>
+              
+                <ol start='933' class="post-context" id="post4498817344">
+                  
+                  <li onclick="toggle('pre4498817344', 'post4498817344')"><pre>                if not isinstance(f,FrameActionFlowable):</pre></li>
+                  
+                  <li onclick="toggle('pre4498817344', 'post4498817344')"><pre>                    self._curPageFlowableCount += 1</pre></li>
+                  
+                  <li onclick="toggle('pre4498817344', 'post4498817344')"><pre>                    self.afterFlowable(f)</pre></li>
+                  
+                  <li onclick="toggle('pre4498817344', 'post4498817344')"><pre>                _addGeneratedContent(flowables,frame)</pre></li>
+                  
+                  <li onclick="toggle('pre4498817344', 'post4498817344')"><pre>            else:</pre></li>
+                  
+                  <li onclick="toggle('pre4498817344', 'post4498817344')"><pre>                if self.allowSplitting:</pre></li>
+                  
+              </ol>
+              
+            </div>
+          
+
+          
+            
+              <details>
+                <summary class="commands">Local vars</summary>
+            
+            <table class="vars" id="v4498817344">
+              <thead>
+                <tr>
+                  <th>Variable</th>
+                  <th>Value</th>
+                </tr>
+              </thead>
+              <tbody>
+                
+                  <tr>
+                    <td>canv</td>
+                    <td class="code"><pre>&lt;reportlab.pdfgen.canvas.Canvas object at 0x108353a90&gt;</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>f</td>
+                    <td class="code"><pre>PmlTable(
+ rowHeights=[None],
+ colWidths=[258.51968503937013, 21.543307086614178, 258.51968503937013],
+[[(&lt;xhtml2pdf.xhtml2pdf_reportlab.PmlKeepInFrame object at 0x108341760&gt;,),
+    (&lt;xhtml2pdf.xhtml2pdf_reportlab.PmlKeepInFrame object at 0x108507ee0&gt;,),
+    &lt;xhtml2pdf.xhtml2pdf_reportlab.PmlKeepInFrame object at 0x108341550&gt;]]
+) # end table</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>flowables</td>
+                    <td class="code"><pre>[PmlTable(
+ rowHeights=[None, None, None],
+ colWidths=[&#x27;8%&#x27;, &#x27;47%&#x27;, &#x27;10%&#x27;, &#x27;15%&#x27;, &#x27;20%&#x27;],
+[[&lt;xhtml2pdf.xhtml2pdf_reportlab.PmlKeepInFrame object at 0x108507520&gt;,
+    &lt;xhtml2pdf.xhtml2pdf_reportlab.PmlKeepInFrame object at 0x1083e9220&gt;,
+    &lt;xhtml2pdf.xhtml2pdf_reportlab.PmlKeepInFrame object at 0x1083e9190&gt;,
+    &lt;xhtml2pdf.xhtml2pdf_reportlab.PmlKeepInFrame object at 0x1083e9640&gt;,
+    &lt;xhtml2pdf.xhtml2pdf_reportlab.PmlKeepInFrame object at 0x1083e9820&gt;],
+   [&lt;xhtml2pdf.xhtml2pdf_reportlab.PmlKeepInFrame object at 0x1083e9400&gt;,
+    &lt;xhtml2pdf.xhtml2pdf_reportlab.PmlKeepInFrame object at 0x1083e9580&gt;,
+    &lt;xhtml2pdf.xhtml2pdf_reportlab.PmlKeepInFrame object at 0x1083e9fa0&gt;,
+    &lt;xhtml2pdf.xhtml2pdf_reportlab.PmlKeepInFrame object at 0x1083e9700&gt;,
+    &lt;xhtml2pdf.xhtml2pdf_reportlab.PmlKeepInFrame object at 0x10841e9d0&gt;],
+   [&lt;xhtml2pdf.xhtml2pdf_reportlab.PmlKeepInFrame object at 0x10841ee20&gt;,
+    &lt;xhtml2pdf.xhtml2pdf_reportlab.PmlKeepInFrame object at 0x108187d30&gt;,
+    &lt;xhtml2pdf.xhtml2pdf_reportlab.PmlKeepInFrame object at 0x1028e4a00&gt;,
+    &lt;xhtml2pdf.xhtml2pdf_reportlab.PmlKeepInFrame object at 0x10837dd60&gt;,
+    &lt;xhtml2pdf.xhtml2pdf_reportlab.PmlKeepInFrame object at 0x10837da90&gt;]]
+) # end table,
+ PmlTable(
+ rowHeights=[None],
+ colWidths=[None, None],
+[[&lt;xhtml2pdf.xhtml2pdf_reportlab.PmlKeepInFrame object at 0x10837d7c0&gt;,
+    &lt;xhtml2pdf.xhtml2pdf_reportlab.PmlKeepInFrame object at 0x10837dac0&gt;]]
+) # end table,
+ PmlTable(
+ rowHeights=[None],
+ colWidths=[&#x27;50%&#x27;, &#x27;50%&#x27;],
+[[&lt;xhtml2pdf.xhtml2pdf_reportlab.PmlKeepInFrame object at 0x10837dbe0&gt;,
+    &lt;xhtml2pdf.xhtml2pdf_reportlab.PmlKeepInFrame object at 0x10837d9a0&gt;]]
+) # end table,
+ PmlParagraph(
+  &#x27;dir&#x27;
+      &#x27;dir&#x27;
+  &#x27;caseSensitive&#x27;
+      &#x27;caseSensitive&#x27;
+  &#x27;encoding&#x27;
+      &#x27;encoding&#x27;
+  &#x27;text&#x27;
+      &#x27;text&#x27;
+  &#x27;frags&#x27;
+      &#x27;frags&#x27;
+  &#x27;style&#x27;
+      &#x27;style&#x27;
+  &#x27;bulletText&#x27;
+      &#x27;bulletText&#x27;
+  &#x27;debug&#x27;
+      &#x27;debug&#x27;
+  &#x27;outline&#x27;
+      &#x27;outline&#x27;
+  &#x27;outlineLevel&#x27;
+      &#x27;outlineLevel&#x27;
+  &#x27;outlineOpen&#x27;
+      &#x27;outlineOpen&#x27;
+  &#x27;keepWithNext&#x27;
+      &#x27;keepWithNext&#x27;
+  &#x27;autoLeading&#x27;
+      &#x27;autoLeading&#x27;
+) #PmlParagraph]</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>frame</td>
+                    <td class="code"><pre>&lt;reportlab.platypus.frames.Frame object at 0x10824c130&gt;</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>self</td>
+                    <td class="code"><pre>&lt;xhtml2pdf.xhtml2pdf_reportlab.PmlBaseDoc object at 0x108353400&gt;</pre></td>
+                  </tr>
+                
+              </tbody>
+            </table>
+            </details>
+          
+        </li>
+      
+        
+        <li class="frame user">
+          
+            <code class="fname">/Users/zakaria/projects/antigravity/suhibe/venv/lib/python3.9/site-packages/reportlab/platypus/frames.py</code>, line 158, in _add
+          
+
+          
+            <div class="context" id="c4498891136">
+              
+                <ol start="151" class="pre-context" id="pre4498891136">
+                
+                  <li onclick="toggle('pre4498891136', 'post4498891136')"><pre>                s =flowable.getSpaceBefore()</pre></li>
+                
+                  <li onclick="toggle('pre4498891136', 'post4498891136')"><pre>                if self._oASpace:</pre></li>
+                
+                  <li onclick="toggle('pre4498891136', 'post4498891136')"><pre>                    if getattr(flowable,&#x27;_SPACETRANSFER&#x27;,False) or zeroSize:</pre></li>
+                
+                  <li onclick="toggle('pre4498891136', 'post4498891136')"><pre>                        s = self._prevASpace</pre></li>
+                
+                  <li onclick="toggle('pre4498891136', 'post4498891136')"><pre>                    s = max(s-self._prevASpace,0)</pre></li>
+                
+                  <li onclick="toggle('pre4498891136', 'post4498891136')"><pre>            h = y - p - s</pre></li>
+                
+                  <li onclick="toggle('pre4498891136', 'post4498891136')"><pre>            if h&gt;0 or zeroSize:</pre></li>
+                
+                </ol>
+              
+              <ol start="158" class="context-line">
+                <li onclick="toggle('pre4498891136', 'post4498891136')"><pre>                w, h = flowable.wrap(aW, h)</pre> <span>…</span></li>
+              </ol>
+              
+                <ol start='159' class="post-context" id="post4498891136">
+                  
+                  <li onclick="toggle('pre4498891136', 'post4498891136')"><pre>            else:</pre></li>
+                  
+                  <li onclick="toggle('pre4498891136', 'post4498891136')"><pre>                return 0</pre></li>
+                  
+                  <li onclick="toggle('pre4498891136', 'post4498891136')"><pre></pre></li>
+                  
+                  <li onclick="toggle('pre4498891136', 'post4498891136')"><pre>            h += s</pre></li>
+                  
+                  <li onclick="toggle('pre4498891136', 'post4498891136')"><pre>            y -= h</pre></li>
+                  
+                  <li onclick="toggle('pre4498891136', 'post4498891136')"><pre></pre></li>
+                  
+              </ol>
+              
+            </div>
+          
+
+          
+            
+              <details>
+                <summary class="commands">Local vars</summary>
+            
+            <table class="vars" id="v4498891136">
+              <thead>
+                <tr>
+                  <th>Variable</th>
+                  <th>Value</th>
+                </tr>
+              </thead>
+              <tbody>
+                
+                  <tr>
+                    <td>a</td>
+                    <td class="code"><pre>&#x27;_frame&#x27;</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>aW</td>
+                    <td class="code"><pre>538.5826771653544</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>canv</td>
+                    <td class="code"><pre>&lt;reportlab.pdfgen.canvas.Canvas object at 0x108353a90&gt;</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>flowable</td>
+                    <td class="code"><pre>PmlTable(
+ rowHeights=[None],
+ colWidths=[258.51968503937013, 21.543307086614178, 258.51968503937013],
+[[(&lt;xhtml2pdf.xhtml2pdf_reportlab.PmlKeepInFrame object at 0x108341760&gt;,),
+    (&lt;xhtml2pdf.xhtml2pdf_reportlab.PmlKeepInFrame object at 0x108507ee0&gt;,),
+    &lt;xhtml2pdf.xhtml2pdf_reportlab.PmlKeepInFrame object at 0x108341550&gt;]]
+) # end table</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>h</td>
+                    <td class="code"><pre>550.196851393701</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>p</td>
+                    <td class="code"><pre>28.346456692913307</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>s</td>
+                    <td class="code"><pre>0</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>self</td>
+                    <td class="code"><pre>&lt;reportlab.platypus.frames.Frame object at 0x10824c130&gt;</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>trySplit</td>
+                    <td class="code"><pre>1</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>y</td>
+                    <td class="code"><pre>578.5433080866143</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>zeroSize</td>
+                    <td class="code"><pre>False</pre></td>
+                  </tr>
+                
+              </tbody>
+            </table>
+            </details>
+          
+        </li>
+      
+        
+        <li class="frame user">
+          
+            <code class="fname">/Users/zakaria/projects/antigravity/suhibe/venv/lib/python3.9/site-packages/xhtml2pdf/xhtml2pdf_reportlab.py</code>, line 858, in wrap
+          
+
+          
+            <div class="context" id="c4433240896">
+              
+                <ol start="851" class="pre-context" id="pre4433240896">
+                
+                  <li onclick="toggle('pre4433240896', 'post4433240896')"><pre>                newColWidths[i] *= quotient</pre></li>
+                
+                  <li onclick="toggle('pre4433240896', 'post4433240896')"><pre></pre></li>
+                
+                  <li onclick="toggle('pre4433240896', 'post4433240896')"><pre>        # To avoid rounding errors adjust one col with the difference</pre></li>
+                
+                  <li onclick="toggle('pre4433240896', 'post4433240896')"><pre>        diff = sum(newColWidths) - totalWidth</pre></li>
+                
+                  <li onclick="toggle('pre4433240896', 'post4433240896')"><pre>        if diff &gt; 0:</pre></li>
+                
+                  <li onclick="toggle('pre4433240896', 'post4433240896')"><pre>            newColWidths[0] -= diff</pre></li>
+                
+                  <li onclick="toggle('pre4433240896', 'post4433240896')"><pre></pre></li>
+                
+                </ol>
+              
+              <ol start="858" class="context-line">
+                <li onclick="toggle('pre4433240896', 'post4433240896')"><pre>        return Table.wrap(self, availWidth, availHeight)</pre> <span>…</span></li>
+              </ol>
+              
+                <ol start='859' class="post-context" id="post4433240896">
+                  
+                  <li onclick="toggle('pre4433240896', 'post4433240896')"><pre></pre></li>
+                  
+                  <li onclick="toggle('pre4433240896', 'post4433240896')"><pre></pre></li>
+                  
+                  <li onclick="toggle('pre4433240896', 'post4433240896')"><pre>class PmlPageCount(IndexingFlowable):</pre></li>
+                  
+                  <li onclick="toggle('pre4433240896', 'post4433240896')"><pre>    def __init__(self) -&gt; None:</pre></li>
+                  
+                  <li onclick="toggle('pre4433240896', 'post4433240896')"><pre>        super().__init__()</pre></li>
+                  
+                  <li onclick="toggle('pre4433240896', 'post4433240896')"><pre>        self.second_round = False</pre></li>
+                  
+              </ol>
+              
+            </div>
+          
+
+          
+            
+              <details>
+                <summary class="commands">Local vars</summary>
+            
+            <table class="vars" id="v4433240896">
+              <thead>
+                <tr>
+                  <th>Variable</th>
+                  <th>Value</th>
+                </tr>
+              </thead>
+              <tbody>
+                
+                  <tr>
+                    <td>availHeight</td>
+                    <td class="code"><pre>550.196851393701</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>availWidth</td>
+                    <td class="code"><pre>538.5826771653544</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>colWidth</td>
+                    <td class="code"><pre>&#x27;48%&#x27;</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>diff</td>
+                    <td class="code"><pre>0.0</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>i</td>
+                    <td class="code"><pre>2</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>minCellWidth</td>
+                    <td class="code"><pre>5.385826771653544</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>newColWidth</td>
+                    <td class="code"><pre>258.51968503937013</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>newColWidths</td>
+                    <td class="code"><pre>[258.51968503937013, 21.543307086614178, 258.51968503937013]</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>remainingCols</td>
+                    <td class="code"><pre>0</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>remainingWidth</td>
+                    <td class="code"><pre>0.0</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>self</td>
+                    <td class="code"><pre>PmlTable(
+ rowHeights=[None],
+ colWidths=[258.51968503937013, 21.543307086614178, 258.51968503937013],
+[[(&lt;xhtml2pdf.xhtml2pdf_reportlab.PmlKeepInFrame object at 0x108341760&gt;,),
+    (&lt;xhtml2pdf.xhtml2pdf_reportlab.PmlKeepInFrame object at 0x108507ee0&gt;,),
+    &lt;xhtml2pdf.xhtml2pdf_reportlab.PmlKeepInFrame object at 0x108341550&gt;]]
+) # end table</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>totalWidth</td>
+                    <td class="code"><pre>538.5826771653544</pre></td>
+                  </tr>
+                
+              </tbody>
+            </table>
+            </details>
+          
+        </li>
+      
+        
+        <li class="frame user">
+          
+            <code class="fname">/Users/zakaria/projects/antigravity/suhibe/venv/lib/python3.9/site-packages/reportlab/platypus/tables.py</code>, line 1354, in wrap
+          
+
+          
+            <div class="context" id="c4435541504">
+              
+                <ol start="1347" class="pre-context" id="pre4435541504">
+                
+                  <li onclick="toggle('pre4435541504', 'post4435541504')"><pre></pre></li>
+                
+                  <li onclick="toggle('pre4435541504', 'post4435541504')"><pre>    def _drawVLinesA(self, start, end, weight, color, count, space):</pre></li>
+                
+                  <li onclick="toggle('pre4435541504', 'post4435541504')"><pre>        sc,sr = start</pre></li>
+                
+                  <li onclick="toggle('pre4435541504', 'post4435541504')"><pre>        ec,er = end</pre></li>
+                
+                  <li onclick="toggle('pre4435541504', 'post4435541504')"><pre>        self._drawVLines((sc+1, sr), (ec+1, er), weight, color, count, space)</pre></li>
+                
+                  <li onclick="toggle('pre4435541504', 'post4435541504')"><pre></pre></li>
+                
+                  <li onclick="toggle('pre4435541504', 'post4435541504')"><pre>    def wrap(self, availWidth, availHeight):</pre></li>
+                
+                </ol>
+              
+              <ol start="1354" class="context-line">
+                <li onclick="toggle('pre4435541504', 'post4435541504')"><pre>        self._calc(availWidth, availHeight)</pre> <span>…</span></li>
+              </ol>
+              
+                <ol start='1355' class="post-context" id="post4435541504">
+                  
+                  <li onclick="toggle('pre4435541504', 'post4435541504')"><pre>        self.availWidth = availWidth</pre></li>
+                  
+                  <li onclick="toggle('pre4435541504', 'post4435541504')"><pre>        return (self._width, self._height)</pre></li>
+                  
+                  <li onclick="toggle('pre4435541504', 'post4435541504')"><pre></pre></li>
+                  
+                  <li onclick="toggle('pre4435541504', 'post4435541504')"><pre>    def onSplit(self,T,byRow=1):</pre></li>
+                  
+                  <li onclick="toggle('pre4435541504', 'post4435541504')"><pre>        &#x27;&#x27;&#x27;</pre></li>
+                  
+                  <li onclick="toggle('pre4435541504', 'post4435541504')"><pre>        This method will be called when the Table is split.</pre></li>
+                  
+              </ol>
+              
+            </div>
+          
+
+          
+            
+              <details>
+                <summary class="commands">Local vars</summary>
+            
+            <table class="vars" id="v4435541504">
+              <thead>
+                <tr>
+                  <th>Variable</th>
+                  <th>Value</th>
+                </tr>
+              </thead>
+              <tbody>
+                
+                  <tr>
+                    <td>availHeight</td>
+                    <td class="code"><pre>550.196851393701</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>availWidth</td>
+                    <td class="code"><pre>538.5826771653544</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>self</td>
+                    <td class="code"><pre>PmlTable(
+ rowHeights=[None],
+ colWidths=[258.51968503937013, 21.543307086614178, 258.51968503937013],
+[[(&lt;xhtml2pdf.xhtml2pdf_reportlab.PmlKeepInFrame object at 0x108341760&gt;,),
+    (&lt;xhtml2pdf.xhtml2pdf_reportlab.PmlKeepInFrame object at 0x108507ee0&gt;,),
+    &lt;xhtml2pdf.xhtml2pdf_reportlab.PmlKeepInFrame object at 0x108341550&gt;]]
+) # end table</pre></td>
+                  </tr>
+                
+              </tbody>
+            </table>
+            </details>
+          
+        </li>
+      
+        
+        <li class="frame user">
+          
+            <code class="fname">/Users/zakaria/projects/antigravity/suhibe/venv/lib/python3.9/site-packages/reportlab/platypus/tables.py</code>, line 740, in _calc
+          
+
+          
+            <div class="context" id="c4435539072">
+              
+                <ol start="733" class="pre-context" id="pre4435539072">
+                
+                  <li onclick="toggle('pre4435539072', 'post4435539072')"><pre>            if None in self._argH:</pre></li>
+                
+                  <li onclick="toggle('pre4435539072', 'post4435539072')"><pre>                self._calc_width(availWidth,W=W)</pre></li>
+                
+                  <li onclick="toggle('pre4435539072', 'post4435539072')"><pre></pre></li>
+                
+                  <li onclick="toggle('pre4435539072', 'post4435539072')"><pre>        if self._nosplitCmds:</pre></li>
+                
+                  <li onclick="toggle('pre4435539072', 'post4435539072')"><pre>            self._calcNoSplitRanges()</pre></li>
+                
+                  <li onclick="toggle('pre4435539072', 'post4435539072')"><pre></pre></li>
+                
+                  <li onclick="toggle('pre4435539072', 'post4435539072')"><pre>        # calculate the full table height</pre></li>
+                
+                </ol>
+              
+              <ol start="740" class="context-line">
+                <li onclick="toggle('pre4435539072', 'post4435539072')"><pre>        self._calc_height(availHeight,availWidth,W=W)</pre> <span>…</span></li>
+              </ol>
+              
+                <ol start='741' class="post-context" id="post4435539072">
+                  
+                  <li onclick="toggle('pre4435539072', 'post4435539072')"><pre></pre></li>
+                  
+                  <li onclick="toggle('pre4435539072', 'post4435539072')"><pre>        # calculate the full table width</pre></li>
+                  
+                  <li onclick="toggle('pre4435539072', 'post4435539072')"><pre>        self._calc_width(availWidth,W=W)</pre></li>
+                  
+                  <li onclick="toggle('pre4435539072', 'post4435539072')"><pre></pre></li>
+                  
+                  <li onclick="toggle('pre4435539072', 'post4435539072')"><pre>        if self._spanCmds:</pre></li>
+                  
+                  <li onclick="toggle('pre4435539072', 'post4435539072')"><pre>            #now work out the actual rect for each spanned cell from the underlying grid</pre></li>
+                  
+              </ol>
+              
+            </div>
+          
+
+          
+            
+              <details>
+                <summary class="commands">Local vars</summary>
+            
+            <table class="vars" id="v4435539072">
+              <thead>
+                <tr>
+                  <th>Variable</th>
+                  <th>Value</th>
+                </tr>
+              </thead>
+              <tbody>
+                
+                  <tr>
+                    <td>W</td>
+                    <td class="code"><pre>None</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>availHeight</td>
+                    <td class="code"><pre>550.196851393701</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>availWidth</td>
+                    <td class="code"><pre>538.5826771653544</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>self</td>
+                    <td class="code"><pre>PmlTable(
+ rowHeights=[None],
+ colWidths=[258.51968503937013, 21.543307086614178, 258.51968503937013],
+[[(&lt;xhtml2pdf.xhtml2pdf_reportlab.PmlKeepInFrame object at 0x108341760&gt;,),
+    (&lt;xhtml2pdf.xhtml2pdf_reportlab.PmlKeepInFrame object at 0x108507ee0&gt;,),
+    &lt;xhtml2pdf.xhtml2pdf_reportlab.PmlKeepInFrame object at 0x108341550&gt;]]
+) # end table</pre></td>
+                  </tr>
+                
+              </tbody>
+            </table>
+            </details>
+          
+        </li>
+      
+        
+        <li class="frame user">
+          
+            <code class="fname">/Users/zakaria/projects/antigravity/suhibe/venv/lib/python3.9/site-packages/reportlab/platypus/tables.py</code>, line 664, in _calc_height
+          
+
+          
+            <div class="context" id="c4498877248">
+              
+                <ol start="657" class="pre-context" id="pre4498877248">
+                
+                  <li onclick="toggle('pre4498877248', 'post4498877248')"><pre>                            v = V[j] = self._cellListProcess(v,w,None)</pre></li>
+                
+                  <li onclick="toggle('pre4498877248', 'post4498877248')"><pre>                            if w is None and not self._canGetWidth(v):</pre></li>
+                
+                  <li onclick="toggle('pre4498877248', 'post4498877248')"><pre>                                raise ValueError(f&#x27;Flowable {v[0].identity()} in cell({i},{j}) can\&#x27;t have auto width\n{self.identity(30)}&#x27;)</pre></li>
+                
+                  <li onclick="toggle('pre4498877248', 'post4498877248')"><pre>                            if canv: canv._fontname, canv._fontsize, canv._leading = s.fontname, s.fontsize, s.leading or 1.2*s.fontsize</pre></li>
+                
+                  <li onclick="toggle('pre4498877248', 'post4498877248')"><pre>                            if ji in colSpanCells:</pre></li>
+                
+                  <li onclick="toggle('pre4498877248', 'post4498877248')"><pre>                                if not span: continue</pre></li>
+                
+                  <li onclick="toggle('pre4498877248', 'post4498877248')"><pre>                                w = max(colpositions[span[2]+1]-colpositions[span[0]],w or 0)</pre></li>
+                
+                </ol>
+              
+              <ol start="664" class="context-line">
+                <li onclick="toggle('pre4498877248', 'post4498877248')"><pre>                            dW,t = self._listCellGeom(v,w or self._listValueWidth(v),s)</pre> <span>…</span></li>
+              </ol>
+              
+                <ol start='665' class="post-context" id="post4498877248">
+                  
+                  <li onclick="toggle('pre4498877248', 'post4498877248')"><pre>                            if canv: canv._fontname, canv._fontsize, canv._leading = saved</pre></li>
+                  
+                  <li onclick="toggle('pre4498877248', 'post4498877248')"><pre>                            dW = dW + s.leftPadding + s.rightPadding</pre></li>
+                  
+                  <li onclick="toggle('pre4498877248', 'post4498877248')"><pre>                            if not rl_config.allowTableBoundsErrors and dW&gt;w:</pre></li>
+                  
+                  <li onclick="toggle('pre4498877248', 'post4498877248')"><pre>                                from reportlab.platypus.doctemplate import LayoutError</pre></li>
+                  
+                  <li onclick="toggle('pre4498877248', 'post4498877248')"><pre>                                raise LayoutError(&quot;Flowable %s (%sx%s points) too wide for cell(%d,%d) (%sx* points) in\n%s&quot; % (v[0].identity(30),fp_str(dW),fp_str(t),i,j, fp_str(w), self.identity(30)))</pre></li>
+                  
+                  <li onclick="toggle('pre4498877248', 'post4498877248')"><pre>                        else:</pre></li>
+                  
+              </ol>
+              
+            </div>
+          
+
+          
+            
+              <details>
+                <summary class="commands">Local vars</summary>
+            
+            <table class="vars" id="v4498877248">
+              <thead>
+                <tr>
+                  <th>Variable</th>
+                  <th>Value</th>
+                </tr>
+              </thead>
+              <tbody>
+                
+                  <tr>
+                    <td>FUZZ</td>
+                    <td class="code"><pre>1e-06</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>H</td>
+                    <td class="code"><pre>[None]</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>H0</td>
+                    <td class="code"><pre>[None]</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>S</td>
+                    <td class="code"><pre>[&lt;CellStyle &#x27;(0, 0)&#x27;&gt;, &lt;CellStyle &#x27;(0, 1)&#x27;&gt;, &lt;CellStyle &#x27;(0, 2)&#x27;&gt;]</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>V</td>
+                    <td class="code"><pre>[(&lt;xhtml2pdf.xhtml2pdf_reportlab.PmlKeepInFrame object at 0x108341760&gt;,),
+ (&lt;xhtml2pdf.xhtml2pdf_reportlab.PmlKeepInFrame object at 0x108507ee0&gt;,),
+ &lt;xhtml2pdf.xhtml2pdf_reportlab.PmlKeepInFrame object at 0x108341550&gt;]</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>W</td>
+                    <td class="code"><pre>[258.51968503937013, 21.543307086614178, 258.51968503937013]</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>availHeight</td>
+                    <td class="code"><pre>550.196851393701</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>availWidth</td>
+                    <td class="code"><pre>538.5826771653544</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>canv</td>
+                    <td class="code"><pre>&lt;reportlab.pdfgen.canvas.Canvas object at 0x108353a90&gt;</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>colSpanCells</td>
+                    <td class="code"><pre>()</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>dW</td>
+                    <td class="code"><pre>258.51968403937013</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>h</td>
+                    <td class="code"><pre>135.19999900000002</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>hmax</td>
+                    <td class="code"><pre>1</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>i</td>
+                    <td class="code"><pre>0</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>j</td>
+                    <td class="code"><pre>1</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>ji</td>
+                    <td class="code"><pre>(1, 0)</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>lim</td>
+                    <td class="code"><pre>1</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>longTable</td>
+                    <td class="code"><pre>1</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>minRowHeights</td>
+                    <td class="code"><pre>None</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>rowSpanCells</td>
+                    <td class="code"><pre>()</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>s</td>
+                    <td class="code"><pre>&lt;CellStyle &#x27;(0, 1)&#x27;&gt;</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>saved</td>
+                    <td class="code"><pre>(&#x27;Helvetica&#x27;, 12, 14.399999999999999)</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>self</td>
+                    <td class="code"><pre>PmlTable(
+ rowHeights=[None],
+ colWidths=[258.51968503937013, 21.543307086614178, 258.51968503937013],
+[[(&lt;xhtml2pdf.xhtml2pdf_reportlab.PmlKeepInFrame object at 0x108341760&gt;,),
+    (&lt;xhtml2pdf.xhtml2pdf_reportlab.PmlKeepInFrame object at 0x108507ee0&gt;,),
+    &lt;xhtml2pdf.xhtml2pdf_reportlab.PmlKeepInFrame object at 0x108341550&gt;]]
+) # end table</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>span</td>
+                    <td class="code"><pre>None</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>spanCons</td>
+                    <td class="code"><pre>{}</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>spanRanges</td>
+                    <td class="code"><pre>{}</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>t</td>
+                    <td class="code"><pre>135.19999900000002</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>v</td>
+                    <td class="code"><pre>(&lt;xhtml2pdf.xhtml2pdf_reportlab.PmlKeepInFrame object at 0x108507ee0&gt;,)</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>w</td>
+                    <td class="code"><pre>21.543307086614178</pre></td>
+                  </tr>
+                
+              </tbody>
+            </table>
+            </details>
+          
+        </li>
+      
+        
+        <li class="frame user">
+          
+            <code class="fname">/Users/zakaria/projects/antigravity/suhibe/venv/lib/python3.9/site-packages/xhtml2pdf/xhtml2pdf_reportlab.py</code>, line 810, in _listCellGeom
+          
+
+          
+            <div class="context" id="c4498878208">
+              
+                <ol start="803" class="pre-context" id="pre4498878208">
+                
+                  <li onclick="toggle('pre4498878208', 'post4498878208')"><pre>            w = maxw</pre></li>
+                
+                  <li onclick="toggle('pre4498878208', 'post4498878208')"><pre>        return min(w, maxw)</pre></li>
+                
+                  <li onclick="toggle('pre4498878208', 'post4498878208')"><pre></pre></li>
+                
+                  <li onclick="toggle('pre4498878208', 'post4498878208')"><pre>    def _listCellGeom(self, V, w, s, W=None, H=None, aH=72000):</pre></li>
+                
+                  <li onclick="toggle('pre4498878208', 'post4498878208')"><pre>        # print &quot;#&quot;, self.availHeightValue</pre></li>
+                
+                  <li onclick="toggle('pre4498878208', 'post4498878208')"><pre>        if aH == 72000:</pre></li>
+                
+                  <li onclick="toggle('pre4498878208', 'post4498878208')"><pre>            aH = self.getMaxHeight() or aH</pre></li>
+                
+                </ol>
+              
+              <ol start="810" class="context-line">
+                <li onclick="toggle('pre4498878208', 'post4498878208')"><pre>        return Table._listCellGeom(self, V, w, s, W=W, H=H, aH=aH)</pre> <span>…</span></li>
+              </ol>
+              
+                <ol start='811' class="post-context" id="post4498878208">
+                  
+                  <li onclick="toggle('pre4498878208', 'post4498878208')"><pre></pre></li>
+                  
+                  <li onclick="toggle('pre4498878208', 'post4498878208')"><pre>    def wrap(self, availWidth, availHeight):</pre></li>
+                  
+                  <li onclick="toggle('pre4498878208', 'post4498878208')"><pre>        self.setMaxHeight(availHeight)</pre></li>
+                  
+                  <li onclick="toggle('pre4498878208', 'post4498878208')"><pre></pre></li>
+                  
+                  <li onclick="toggle('pre4498878208', 'post4498878208')"><pre>        # Strange bug, sometime the totalWidth is not set !?</pre></li>
+                  
+                  <li onclick="toggle('pre4498878208', 'post4498878208')"><pre>        if not hasattr(self, &quot;totalWidth&quot;):</pre></li>
+                  
+              </ol>
+              
+            </div>
+          
+
+          
+            
+              <details>
+                <summary class="commands">Local vars</summary>
+            
+            <table class="vars" id="v4498878208">
+              <thead>
+                <tr>
+                  <th>Variable</th>
+                  <th>Value</th>
+                </tr>
+              </thead>
+              <tbody>
+                
+                  <tr>
+                    <td>H</td>
+                    <td class="code"><pre>None</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>V</td>
+                    <td class="code"><pre>(&lt;xhtml2pdf.xhtml2pdf_reportlab.PmlKeepInFrame object at 0x108507ee0&gt;,)</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>W</td>
+                    <td class="code"><pre>None</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>aH</td>
+                    <td class="code"><pre>785.196850393701</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>s</td>
+                    <td class="code"><pre>&lt;CellStyle &#x27;(0, 1)&#x27;&gt;</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>self</td>
+                    <td class="code"><pre>PmlTable(
+ rowHeights=[None],
+ colWidths=[258.51968503937013, 21.543307086614178, 258.51968503937013],
+[[(&lt;xhtml2pdf.xhtml2pdf_reportlab.PmlKeepInFrame object at 0x108341760&gt;,),
+    (&lt;xhtml2pdf.xhtml2pdf_reportlab.PmlKeepInFrame object at 0x108507ee0&gt;,),
+    &lt;xhtml2pdf.xhtml2pdf_reportlab.PmlKeepInFrame object at 0x108341550&gt;]]
+) # end table</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>w</td>
+                    <td class="code"><pre>21.543307086614178</pre></td>
+                  </tr>
+                
+              </tbody>
+            </table>
+            </details>
+          
+        </li>
+      
+        
+        <li class="frame user">
+          
+            <code class="fname">/Users/zakaria/projects/antigravity/suhibe/venv/lib/python3.9/site-packages/reportlab/platypus/tables.py</code>, line 490, in _listCellGeom
+          
+
+          
+            <div class="context" id="c4498875712">
+              
+                <ol start="483" class="pre-context" id="pre4498875712">
+                
+                  <li onclick="toggle('pre4498875712', 'post4498875712')"><pre>        return C</pre></li>
+                
+                  <li onclick="toggle('pre4498875712', 'post4498875712')"><pre></pre></li>
+                
+                  <li onclick="toggle('pre4498875712', 'post4498875712')"><pre>    def _listCellGeom(self, V,w,s,W=None,H=None,aH=72000):</pre></li>
+                
+                  <li onclick="toggle('pre4498875712', 'post4498875712')"><pre>        if not V: return 0,0</pre></li>
+                
+                  <li onclick="toggle('pre4498875712', 'post4498875712')"><pre>        aW = w - s.leftPadding - s.rightPadding</pre></li>
+                
+                  <li onclick="toggle('pre4498875712', 'post4498875712')"><pre>        aH = aH - s.topPadding - s.bottomPadding</pre></li>
+                
+                  <li onclick="toggle('pre4498875712', 'post4498875712')"><pre>        if aW&lt;0:</pre></li>
+                
+                </ol>
+              
+              <ol start="490" class="context-line">
+                <li onclick="toggle('pre4498875712', 'post4498875712')"><pre>            raise ValueError(f&#x27;{self.identity()}: flowable given negative availWidth={aW} == width={w} - leftPadding={s.leftPadding} - rightPadding={s.rightPadding}&#x27;)</pre> <span>…</span></li>
+              </ol>
+              
+                <ol start='491' class="post-context" id="post4498875712">
+                  
+                  <li onclick="toggle('pre4498875712', 'post4498875712')"><pre>        t = 0</pre></li>
+                  
+                  <li onclick="toggle('pre4498875712', 'post4498875712')"><pre>        w = 0</pre></li>
+                  
+                  <li onclick="toggle('pre4498875712', 'post4498875712')"><pre>        canv = getattr(self,&#x27;canv&#x27;,None)</pre></li>
+                  
+                  <li onclick="toggle('pre4498875712', 'post4498875712')"><pre>        sb0 = None</pre></li>
+                  
+                  <li onclick="toggle('pre4498875712', 'post4498875712')"><pre>        if isinstance(V, str):</pre></li>
+                  
+                  <li onclick="toggle('pre4498875712', 'post4498875712')"><pre>            vw = self._elementWidth(V, s)</pre></li>
+                  
+              </ol>
+              
+            </div>
+          
+
+          
+            
+              <details>
+                <summary class="commands">Local vars</summary>
+            
+            <table class="vars" id="v4498875712">
+              <thead>
+                <tr>
+                  <th>Variable</th>
+                  <th>Value</th>
+                </tr>
+              </thead>
+              <tbody>
+                
+                  <tr>
+                    <td>H</td>
+                    <td class="code"><pre>None</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>V</td>
+                    <td class="code"><pre>(&lt;xhtml2pdf.xhtml2pdf_reportlab.PmlKeepInFrame object at 0x108507ee0&gt;,)</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>W</td>
+                    <td class="code"><pre>None</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>aH</td>
+                    <td class="code"><pre>755.196850393701</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>aW</td>
+                    <td class="code"><pre>-8.456692913385822</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>s</td>
+                    <td class="code"><pre>&lt;CellStyle &#x27;(0, 1)&#x27;&gt;</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>self</td>
+                    <td class="code"><pre>PmlTable(
+ rowHeights=[None],
+ colWidths=[258.51968503937013, 21.543307086614178, 258.51968503937013],
+[[(&lt;xhtml2pdf.xhtml2pdf_reportlab.PmlKeepInFrame object at 0x108341760&gt;,),
+    (&lt;xhtml2pdf.xhtml2pdf_reportlab.PmlKeepInFrame object at 0x108507ee0&gt;,),
+    &lt;xhtml2pdf.xhtml2pdf_reportlab.PmlKeepInFrame object at 0x108341550&gt;]]
+) # end table</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>w</td>
+                    <td class="code"><pre>21.543307086614178</pre></td>
+                  </tr>
+                
+              </tbody>
+            </table>
+            </details>
+          
+        </li>
+      
+        
+        <li class="frame user">
+          
+            <code class="fname">/Users/zakaria/projects/antigravity/suhibe/venv/lib/python3.9/site-packages/reportlab/platypus/tables.py</code>, line 440, in identity
+          
+
+          
+            <div class="context" id="c4498874560">
+              
+                <ol start="433" class="pre-context" id="pre4498874560">
+                
+                  <li onclick="toggle('pre4498874560', 'post4498874560')"><pre>                        v = v is None and &#x27;&#x27; or str(v)</pre></li>
+                
+                  <li onclick="toggle('pre4498874560', 'post4498874560')"><pre>                        ix, jx, vx = i, j, v</pre></li>
+                
+                  <li onclick="toggle('pre4498874560', 'post4498874560')"><pre>                        b = (vx and isinstance(v,strTypes)) and 1 or 0</pre></li>
+                
+                  <li onclick="toggle('pre4498874560', 'post4498874560')"><pre>                        if maxLen: vx = vx[:maxLen]</pre></li>
+                
+                  <li onclick="toggle('pre4498874560', 'post4498874560')"><pre>                    if b: break</pre></li>
+                
+                  <li onclick="toggle('pre4498874560', 'post4498874560')"><pre>                if b: break</pre></li>
+                
+                  <li onclick="toggle('pre4498874560', 'post4498874560')"><pre>        if rh:  #find tallest row, it&#x27;s of great interest&#x27;</pre></li>
+                
+                </ol>
+              
+              <ol start="440" class="context-line">
+                <li onclick="toggle('pre4498874560', 'post4498874560')"><pre>            tallest = &#x27;(tallest row %d)&#x27; % int(max(rh))</pre> <span>…</span></li>
+              </ol>
+              
+                <ol start='441' class="post-context" id="post4498874560">
+                  
+                  <li onclick="toggle('pre4498874560', 'post4498874560')"><pre>        else:</pre></li>
+                  
+                  <li onclick="toggle('pre4498874560', 'post4498874560')"><pre>            tallest = &#x27;&#x27;</pre></li>
+                  
+                  <li onclick="toggle('pre4498874560', 'post4498874560')"><pre>        if vx:</pre></li>
+                  
+                  <li onclick="toggle('pre4498874560', 'post4498874560')"><pre>            vx = &#x27; with cell(%d,%d) containing\n%s&#x27; % (ix,jx,repr(vx))</pre></li>
+                  
+                  <li onclick="toggle('pre4498874560', 'post4498874560')"><pre>        else:</pre></li>
+                  
+                  <li onclick="toggle('pre4498874560', 'post4498874560')"><pre>            vx = &#x27;...&#x27;</pre></li>
+                  
+              </ol>
+              
+            </div>
+          
+
+          
+            
+              <details>
+                <summary class="commands">Local vars</summary>
+            
+            <table class="vars" id="v4498874560">
+              <thead>
+                <tr>
+                  <th>Variable</th>
+                  <th>Value</th>
+                </tr>
+              </thead>
+              <tbody>
+                
+                  <tr>
+                    <td>b</td>
+                    <td class="code"><pre>1</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>cv</td>
+                    <td class="code"><pre>[[(&lt;xhtml2pdf.xhtml2pdf_reportlab.PmlKeepInFrame object at 0x108341760&gt;,),
+  (&lt;xhtml2pdf.xhtml2pdf_reportlab.PmlKeepInFrame object at 0x108507ee0&gt;,),
+  &lt;xhtml2pdf.xhtml2pdf_reportlab.PmlKeepInFrame object at 0x108341550&gt;]]</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>i</td>
+                    <td class="code"><pre>0</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>ix</td>
+                    <td class="code"><pre>0</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>j</td>
+                    <td class="code"><pre>0</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>jx</td>
+                    <td class="code"><pre>0</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>maxLen</td>
+                    <td class="code"><pre>30</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>nc</td>
+                    <td class="code"><pre>3</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>nr</td>
+                    <td class="code"><pre>1</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>r</td>
+                    <td class="code"><pre>&#x27;&lt;PmlKeepInFrame at 0x108341760&gt; size= maxWidth=228.5197x maxHeight=785.1969&#x27;</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>rh</td>
+                    <td class="code"><pre>[None]</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>self</td>
+                    <td class="code"><pre>PmlTable(
+ rowHeights=[None],
+ colWidths=[258.51968503937013, 21.543307086614178, 258.51968503937013],
+[[(&lt;xhtml2pdf.xhtml2pdf_reportlab.PmlKeepInFrame object at 0x108341760&gt;,),
+    (&lt;xhtml2pdf.xhtml2pdf_reportlab.PmlKeepInFrame object at 0x108507ee0&gt;,),
+    &lt;xhtml2pdf.xhtml2pdf_reportlab.PmlKeepInFrame object at 0x108341550&gt;]]
+) # end table</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>v</td>
+                    <td class="code"><pre>(&lt;xhtml2pdf.xhtml2pdf_reportlab.PmlKeepInFrame object at 0x108341760&gt;,)</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>vij</td>
+                    <td class="code"><pre>&lt;xhtml2pdf.xhtml2pdf_reportlab.PmlKeepInFrame object at 0x108341760&gt;</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>vx</td>
+                    <td class="code"><pre>&#x27;&lt;PmlKeepInFrame at 0x108341760&gt; size= maxWidth=228.5197x maxHeight=785.1969&#x27;</pre></td>
+                  </tr>
+                
+              </tbody>
+            </table>
+            </details>
+          
+        </li>
+      
+    </ul>
+  </div>
+
+  <form action="https://dpaste.com/" name="pasteform" id="pasteform" method="post">
+  <div id="pastebinTraceback" class="pastebin">
+    <input type="hidden" name="language" value="PythonConsole">
+    <input type="hidden" name="title"
+      value="TypeError at /invoice/4/invoice.pdf">
+    <input type="hidden" name="source" value="Django Dpaste Agent">
+    <input type="hidden" name="poster" value="Django">
+    <textarea name="content" id="traceback_area" cols="140" rows="25">
+Environment:
+
+
+Request Method: GET
+Request URL: http://localhost:8000/invoice/4/invoice.pdf
+
+Django Version: 4.2.29
+Python Version: 3.9.11
+Installed Applications:
+[&#x27;django.contrib.admin&#x27;,
+ &#x27;django.contrib.auth&#x27;,
+ &#x27;django.contrib.contenttypes&#x27;,
+ &#x27;django.contrib.sessions&#x27;,
+ &#x27;django.contrib.messages&#x27;,
+ &#x27;django.contrib.staticfiles&#x27;,
+ &#x27;django_bootstrap5&#x27;,
+ &#x27;core&#x27;]
+Installed Middleware:
+[&#x27;django.middleware.security.SecurityMiddleware&#x27;,
+ &#x27;django.contrib.sessions.middleware.SessionMiddleware&#x27;,
+ &#x27;django.middleware.common.CommonMiddleware&#x27;,
+ &#x27;django.middleware.csrf.CsrfViewMiddleware&#x27;,
+ &#x27;django.contrib.auth.middleware.AuthenticationMiddleware&#x27;,
+ &#x27;django.contrib.messages.middleware.MessageMiddleware&#x27;,
+ &#x27;django.middleware.clickjacking.XFrameOptionsMiddleware&#x27;]
+
+
+
+Traceback (most recent call last):
+  File "/Users/zakaria/projects/antigravity/suhibe/venv/lib/python3.9/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/Users/zakaria/projects/antigravity/suhibe/venv/lib/python3.9/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/Users/zakaria/projects/antigravity/suhibe/core/views.py", line 196, in invoice_pdf
+    pdf = pisa.pisaDocument(
+  File "/Users/zakaria/projects/antigravity/suhibe/venv/lib/python3.9/site-packages/xhtml2pdf/document.py", line 196, in pisaDocument
+    doc.build(context.story)
+  File "/Users/zakaria/projects/antigravity/suhibe/venv/lib/python3.9/site-packages/reportlab/platypus/doctemplate.py", line 1083, in build
+    self.handle_flowable(flowables)
+  File "/Users/zakaria/projects/antigravity/suhibe/venv/lib/python3.9/site-packages/reportlab/platypus/doctemplate.py", line 932, in handle_flowable
+    if frame.add(f, canv, trySplit=self.allowSplitting):
+  File "/Users/zakaria/projects/antigravity/suhibe/venv/lib/python3.9/site-packages/reportlab/platypus/frames.py", line 158, in _add
+    w, h = flowable.wrap(aW, h)
+  File "/Users/zakaria/projects/antigravity/suhibe/venv/lib/python3.9/site-packages/xhtml2pdf/xhtml2pdf_reportlab.py", line 858, in wrap
+    return Table.wrap(self, availWidth, availHeight)
+  File "/Users/zakaria/projects/antigravity/suhibe/venv/lib/python3.9/site-packages/reportlab/platypus/tables.py", line 1354, in wrap
+    self._calc(availWidth, availHeight)
+  File "/Users/zakaria/projects/antigravity/suhibe/venv/lib/python3.9/site-packages/reportlab/platypus/tables.py", line 740, in _calc
+    self._calc_height(availHeight,availWidth,W=W)
+  File "/Users/zakaria/projects/antigravity/suhibe/venv/lib/python3.9/site-packages/reportlab/platypus/tables.py", line 664, in _calc_height
+    dW,t = self._listCellGeom(v,w or self._listValueWidth(v),s)
+  File "/Users/zakaria/projects/antigravity/suhibe/venv/lib/python3.9/site-packages/xhtml2pdf/xhtml2pdf_reportlab.py", line 810, in _listCellGeom
+    return Table._listCellGeom(self, V, w, s, W=W, H=H, aH=aH)
+  File "/Users/zakaria/projects/antigravity/suhibe/venv/lib/python3.9/site-packages/reportlab/platypus/tables.py", line 490, in _listCellGeom
+    raise ValueError(f&#x27;{self.identity()}: flowable given negative availWidth={aW} == width={w} - leftPadding={s.leftPadding} - rightPadding={s.rightPadding}&#x27;)
+  File "/Users/zakaria/projects/antigravity/suhibe/venv/lib/python3.9/site-packages/reportlab/platypus/tables.py", line 440, in identity
+    tallest = &#x27;(tallest row %d)&#x27; % int(max(rh))
+
+Exception Type: TypeError at /invoice/4/invoice.pdf
+Exception Value: int() argument must be a string, a bytes-like object or a number, not &#x27;NoneType&#x27;
+</textarea>
+  <br><br>
+  <input type="submit" value="Share this traceback on a public website">
+  </div>
+</form>
+
+</div>
+
+
+<div id="requestinfo">
+  <h2>Request information</h2>
+
+
+  
+    <h3 id="user-info">USER</h3>
+    <p>AnonymousUser</p>
+  
+
+  <h3 id="get-info">GET</h3>
+  
+    <p>No GET data</p>
+  
+
+  <h3 id="post-info">POST</h3>
+  
+    <p>No POST data</p>
+  
+
+  <h3 id="files-info">FILES</h3>
+  
+    <p>No FILES data</p>
+  
+
+  <h3 id="cookie-info">COOKIES</h3>
+  
+    <p>No cookie data</p>
+  
+
+  <h3 id="meta-info">META</h3>
+  <table class="req">
+    <thead>
+      <tr>
+        <th>Variable</th>
+        <th>Value</th>
+      </tr>
+    </thead>
+    <tbody>
+      
+        <tr>
+          <td>ANTIGRAVITY_CLI_ALIAS</td>
+          <td class="code"><pre>&#x27;agy&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>BUNDLED_DEBUGPY_PATH</td>
+          <td class="code"><pre>&#x27;/Users/zakaria/.antigravity/extensions/ms-python.debugpy-2025.18.0-darwin-arm64/bundled/libs/debugpy&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>COLORTERM</td>
+          <td class="code"><pre>&#x27;truecolor&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>COMMAND_MODE</td>
+          <td class="code"><pre>&#x27;unix2003&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>CONTENT_LENGTH</td>
+          <td class="code"><pre>&#x27;&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>CONTENT_TYPE</td>
+          <td class="code"><pre>&#x27;text/plain&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>DJANGO_SETTINGS_MODULE</td>
+          <td class="code"><pre>&#x27;oilsystem.settings&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>GATEWAY_INTERFACE</td>
+          <td class="code"><pre>&#x27;CGI/1.1&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>GIT_ASKPASS</td>
+          <td class="code"><pre>&#x27;********************&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>HOME</td>
+          <td class="code"><pre>&#x27;/Users/zakaria&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>HOMEBREW_CELLAR</td>
+          <td class="code"><pre>&#x27;/opt/homebrew/Cellar&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>HOMEBREW_PREFIX</td>
+          <td class="code"><pre>&#x27;/opt/homebrew&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>HOMEBREW_REPOSITORY</td>
+          <td class="code"><pre>&#x27;/opt/homebrew&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>HTTP_ACCEPT</td>
+          <td class="code"><pre>&#x27;*/*&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>HTTP_HOST</td>
+          <td class="code"><pre>&#x27;localhost:8000&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>HTTP_USER_AGENT</td>
+          <td class="code"><pre>&#x27;curl/7.80.0&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>INFOPATH</td>
+          <td class="code"><pre>&#x27;/opt/homebrew/share/info:/opt/homebrew/share/info:&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>LANG</td>
+          <td class="code"><pre>&#x27;C.UTF-8&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>LOGNAME</td>
+          <td class="code"><pre>&#x27;zakaria&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>MANPATH</td>
+          <td class="code"><pre>&#x27;/Users/zakaria/.nvm/versions/node/v20.19.1/share/man:/opt/local/share/man::/usr/share/man:/usr/local/share/man:/Users/zakaria/.nvm/versions/node/v20.19.1/share/man:/opt/local/share/man:&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>MallocNanoZone</td>
+          <td class="code"><pre>&#x27;0&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>NVM_BIN</td>
+          <td class="code"><pre>&#x27;/Users/zakaria/.nvm/versions/node/v20.19.1/bin&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>NVM_CD_FLAGS</td>
+          <td class="code"><pre>&#x27;-q&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>NVM_DIR</td>
+          <td class="code"><pre>&#x27;/Users/zakaria/.nvm&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>NVM_INC</td>
+          <td class="code"><pre>&#x27;/Users/zakaria/.nvm/versions/node/v20.19.1/include/node&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>OLDPWD</td>
+          <td class="code"><pre>&#x27;/Users/zakaria/projects/antigravity/suhibe&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>OSLogRateLimit</td>
+          <td class="code"><pre>&#x27;64&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>PATH</td>
+          <td class="code"><pre>&#x27;/Users/zakaria/.antigravity/antigravity/bin:/Users/zakaria/.antigravity/antigravity/bin:/Users/zakaria/.antigravity/antigravity/bin:/Users/zakaria/Library/Android/sdk/platform-tools:/Users/zakaria/flutter/bin:/Users/zakaria/miniforge3/bin:/Users/zakaria/.nvm/versions/node/v20.19.1/bin:/opt/homebrew/opt/ruby/bin:/Library/Frameworks/Python.framework/Versions/3.7/bin:/Library/Frameworks/Python.framework/Versions/3.9/bin:/opt/local/bin:/opt/local/sbin:/opt/homebrew/bin:/opt/homebrew/sbin:/Library/Frameworks/Python.framework/Versions/3.10/bin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/opt/pmk/env/global/bin:/Library/Apple/usr/bin:/usr/local/go/bin:/Users/zakaria/.antigravity/antigravity/bin:/Users/zakaria/Library/Android/sdk/platform-tools:/Users/zakaria/flutter/bin:/Users/zakaria/miniforge3/bin:/Users/zakaria/.nvm/versions/node/v20.19.1/bin:/opt/homebrew/opt/ruby/bin:/Library/Frameworks/Python.framework/Versions/3.7/bin:/Library/Frameworks/Python.framework/Versions/3.9/bin:/opt/local/bin:/opt/local/sbin:/Users/zakaria/.local/bin:/Users/zakaria/.antigravity/extensions/ms-python.debugpy-2025.18.0-darwin-arm64/bundled/scripts/noConfigScripts&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>PATH_INFO</td>
+          <td class="code"><pre>&#x27;/invoice/4/invoice.pdf&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>PWD</td>
+          <td class="code"><pre>&#x27;/Users/zakaria/projects/antigravity/suhibe&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>PYDEVD_DISABLE_FILE_VALIDATION</td>
+          <td class="code"><pre>&#x27;1&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>PYTHONSTARTUP</td>
+          <td class="code"><pre>(&#x27;/Users/zakaria/Library/Application &#x27;
+ &#x27;Support/Antigravity/User/workspaceStorage/d41267ca26a5a575781e9e3658c64eb3/ms-python.python/pythonrc.py&#x27;)</pre></td>
+        </tr>
+      
+        <tr>
+          <td>PYTHON_BASIC_REPL</td>
+          <td class="code"><pre>&#x27;1&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>QUERY_STRING</td>
+          <td class="code"><pre>&#x27;&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>REMOTE_ADDR</td>
+          <td class="code"><pre>&#x27;127.0.0.1&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>REMOTE_HOST</td>
+          <td class="code"><pre>&#x27;&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>REQUEST_METHOD</td>
+          <td class="code"><pre>&#x27;GET&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>RUN_MAIN</td>
+          <td class="code"><pre>&#x27;true&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SCRIPT_NAME</td>
+          <td class="code"><pre>&#x27;&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SERVER_NAME</td>
+          <td class="code"><pre>&#x27;1.0.0.127.in-addr.arpa&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SERVER_PORT</td>
+          <td class="code"><pre>&#x27;8000&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SERVER_PROTOCOL</td>
+          <td class="code"><pre>&#x27;HTTP/1.1&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SERVER_SOFTWARE</td>
+          <td class="code"><pre>&#x27;WSGIServer/0.2&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SHELL</td>
+          <td class="code"><pre>&#x27;/bin/zsh&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SHLVL</td>
+          <td class="code"><pre>&#x27;1&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SSH_AUTH_SOCK</td>
+          <td class="code"><pre>&#x27;/private/tmp/com.apple.launchd.EA0CldeSfx/Listeners&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>TERM</td>
+          <td class="code"><pre>&#x27;xterm-256color&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>TERM_PROGRAM</td>
+          <td class="code"><pre>&#x27;vscode&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>TERM_PROGRAM_VERSION</td>
+          <td class="code"><pre>&#x27;1.107.0&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>TMPDIR</td>
+          <td class="code"><pre>&#x27;/var/folders/1x/xmwnb5kx3t99y_j30rcf7hrm0000gn/T/&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>TZ</td>
+          <td class="code"><pre>&#x27;Asia/Riyadh&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>USER</td>
+          <td class="code"><pre>&#x27;zakaria&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>USER_ZDOTDIR</td>
+          <td class="code"><pre>&#x27;/Users/zakaria&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>VSCODE_DEBUGPY_ADAPTER_ENDPOINTS</td>
+          <td class="code"><pre>&#x27;/Users/zakaria/.antigravity/extensions/ms-python.debugpy-2025.18.0-darwin-arm64/.noConfigDebugAdapterEndpoints/endpoint-19a138110de4ebaa.txt&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>VSCODE_GIT_ASKPASS_EXTRA_ARGS</td>
+          <td class="code"><pre>&#x27;********************&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>VSCODE_GIT_ASKPASS_MAIN</td>
+          <td class="code"><pre>&#x27;********************&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>VSCODE_GIT_ASKPASS_NODE</td>
+          <td class="code"><pre>&#x27;********************&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>VSCODE_GIT_IPC_HANDLE</td>
+          <td class="code"><pre>&#x27;/var/folders/1x/xmwnb5kx3t99y_j30rcf7hrm0000gn/T/vscode-git-2b334dcdba.sock&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>VSCODE_INJECTION</td>
+          <td class="code"><pre>&#x27;1&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>VSCODE_PROFILE_INITIALIZED</td>
+          <td class="code"><pre>&#x27;1&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>VSCODE_PYTHON_AUTOACTIVATE_GUARD</td>
+          <td class="code"><pre>&#x27;1&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>XPC_FLAGS</td>
+          <td class="code"><pre>&#x27;0x0&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>XPC_SERVICE_NAME</td>
+          <td class="code"><pre>&#x27;0&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>ZDOTDIR</td>
+          <td class="code"><pre>&#x27;/Users/zakaria&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>_</td>
+          <td class="code"><pre>&#x27;/Users/zakaria/projects/antigravity/suhibe/./venv/bin/python&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>__CFBundleIdentifier</td>
+          <td class="code"><pre>&#x27;com.google.antigravity&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>__CF_USER_TEXT_ENCODING</td>
+          <td class="code"><pre>&#x27;0x1F5:0x0:0x0&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>wsgi.errors</td>
+          <td class="code"><pre>&lt;_io.TextIOWrapper name=&#x27;&lt;stderr&gt;&#x27; mode=&#x27;w&#x27; encoding=&#x27;utf-8&#x27;&gt;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>wsgi.file_wrapper</td>
+          <td class="code"><pre>&lt;class &#x27;wsgiref.util.FileWrapper&#x27;&gt;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>wsgi.input</td>
+          <td class="code"><pre>&lt;django.core.handlers.wsgi.LimitedStream object at 0x108248fa0&gt;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>wsgi.multiprocess</td>
+          <td class="code"><pre>False</pre></td>
+        </tr>
+      
+        <tr>
+          <td>wsgi.multithread</td>
+          <td class="code"><pre>True</pre></td>
+        </tr>
+      
+        <tr>
+          <td>wsgi.run_once</td>
+          <td class="code"><pre>False</pre></td>
+        </tr>
+      
+        <tr>
+          <td>wsgi.url_scheme</td>
+          <td class="code"><pre>&#x27;http&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>wsgi.version</td>
+          <td class="code"><pre>(1, 0)</pre></td>
+        </tr>
+      
+    </tbody>
+  </table>
+
+
+  <h3 id="settings-info">Settings</h3>
+  <h4>Using settings module <code>oilsystem.settings</code></h4>
+  <table class="req">
+    <thead>
+      <tr>
+        <th>Setting</th>
+        <th>Value</th>
+      </tr>
+    </thead>
+    <tbody>
+      
+        <tr>
+          <td>ABSOLUTE_URL_OVERRIDES</td>
+          <td class="code"><pre>{}</pre></td>
+        </tr>
+      
+        <tr>
+          <td>ADMINS</td>
+          <td class="code"><pre>[]</pre></td>
+        </tr>
+      
+        <tr>
+          <td>ALLOWED_HOSTS</td>
+          <td class="code"><pre>[]</pre></td>
+        </tr>
+      
+        <tr>
+          <td>APPEND_SLASH</td>
+          <td class="code"><pre>True</pre></td>
+        </tr>
+      
+        <tr>
+          <td>AUTHENTICATION_BACKENDS</td>
+          <td class="code"><pre>[&#x27;django.contrib.auth.backends.ModelBackend&#x27;]</pre></td>
+        </tr>
+      
+        <tr>
+          <td>AUTH_PASSWORD_VALIDATORS</td>
+          <td class="code"><pre>&#x27;********************&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>AUTH_USER_MODEL</td>
+          <td class="code"><pre>&#x27;auth.User&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>BASE_DIR</td>
+          <td class="code"><pre>PosixPath(&#x27;/Users/zakaria/projects/antigravity/suhibe&#x27;)</pre></td>
+        </tr>
+      
+        <tr>
+          <td>CACHES</td>
+          <td class="code"><pre>{&#x27;default&#x27;: {&#x27;BACKEND&#x27;: &#x27;django.core.cache.backends.locmem.LocMemCache&#x27;}}</pre></td>
+        </tr>
+      
+        <tr>
+          <td>CACHE_MIDDLEWARE_ALIAS</td>
+          <td class="code"><pre>&#x27;default&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>CACHE_MIDDLEWARE_KEY_PREFIX</td>
+          <td class="code"><pre>&#x27;********************&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>CACHE_MIDDLEWARE_SECONDS</td>
+          <td class="code"><pre>600</pre></td>
+        </tr>
+      
+        <tr>
+          <td>CSRF_COOKIE_AGE</td>
+          <td class="code"><pre>31449600</pre></td>
+        </tr>
+      
+        <tr>
+          <td>CSRF_COOKIE_DOMAIN</td>
+          <td class="code"><pre>None</pre></td>
+        </tr>
+      
+        <tr>
+          <td>CSRF_COOKIE_HTTPONLY</td>
+          <td class="code"><pre>False</pre></td>
+        </tr>
+      
+        <tr>
+          <td>CSRF_COOKIE_MASKED</td>
+          <td class="code"><pre>False</pre></td>
+        </tr>
+      
+        <tr>
+          <td>CSRF_COOKIE_NAME</td>
+          <td class="code"><pre>&#x27;csrftoken&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>CSRF_COOKIE_PATH</td>
+          <td class="code"><pre>&#x27;/&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>CSRF_COOKIE_SAMESITE</td>
+          <td class="code"><pre>&#x27;Lax&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>CSRF_COOKIE_SECURE</td>
+          <td class="code"><pre>False</pre></td>
+        </tr>
+      
+        <tr>
+          <td>CSRF_FAILURE_VIEW</td>
+          <td class="code"><pre>&#x27;django.views.csrf.csrf_failure&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>CSRF_HEADER_NAME</td>
+          <td class="code"><pre>&#x27;HTTP_X_CSRFTOKEN&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>CSRF_TRUSTED_ORIGINS</td>
+          <td class="code"><pre>[]</pre></td>
+        </tr>
+      
+        <tr>
+          <td>CSRF_USE_SESSIONS</td>
+          <td class="code"><pre>False</pre></td>
+        </tr>
+      
+        <tr>
+          <td>DATABASES</td>
+          <td class="code"><pre>{&#x27;default&#x27;: {&#x27;ATOMIC_REQUESTS&#x27;: False,
+             &#x27;AUTOCOMMIT&#x27;: True,
+             &#x27;CONN_HEALTH_CHECKS&#x27;: False,
+             &#x27;CONN_MAX_AGE&#x27;: 0,
+             &#x27;ENGINE&#x27;: &#x27;django.db.backends.sqlite3&#x27;,
+             &#x27;HOST&#x27;: &#x27;&#x27;,
+             &#x27;NAME&#x27;: PosixPath(&#x27;/Users/zakaria/projects/antigravity/suhibe/db.sqlite3&#x27;),
+             &#x27;OPTIONS&#x27;: {},
+             &#x27;PASSWORD&#x27;: &#x27;********************&#x27;,
+             &#x27;PORT&#x27;: &#x27;&#x27;,
+             &#x27;TEST&#x27;: {&#x27;CHARSET&#x27;: None,
+                      &#x27;COLLATION&#x27;: None,
+                      &#x27;MIGRATE&#x27;: True,
+                      &#x27;MIRROR&#x27;: None,
+                      &#x27;NAME&#x27;: None},
+             &#x27;TIME_ZONE&#x27;: None,
+             &#x27;USER&#x27;: &#x27;&#x27;}}</pre></td>
+        </tr>
+      
+        <tr>
+          <td>DATABASE_ROUTERS</td>
+          <td class="code"><pre>[]</pre></td>
+        </tr>
+      
+        <tr>
+          <td>DATA_UPLOAD_MAX_MEMORY_SIZE</td>
+          <td class="code"><pre>2621440</pre></td>
+        </tr>
+      
+        <tr>
+          <td>DATA_UPLOAD_MAX_NUMBER_FIELDS</td>
+          <td class="code"><pre>1000</pre></td>
+        </tr>
+      
+        <tr>
+          <td>DATA_UPLOAD_MAX_NUMBER_FILES</td>
+          <td class="code"><pre>100</pre></td>
+        </tr>
+      
+        <tr>
+          <td>DATETIME_FORMAT</td>
+          <td class="code"><pre>&#x27;N j, Y, P&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>DATETIME_INPUT_FORMATS</td>
+          <td class="code"><pre>[&#x27;%Y-%m-%d %H:%M:%S&#x27;,
+ &#x27;%Y-%m-%d %H:%M:%S.%f&#x27;,
+ &#x27;%Y-%m-%d %H:%M&#x27;,
+ &#x27;%m/%d/%Y %H:%M:%S&#x27;,
+ &#x27;%m/%d/%Y %H:%M:%S.%f&#x27;,
+ &#x27;%m/%d/%Y %H:%M&#x27;,
+ &#x27;%m/%d/%y %H:%M:%S&#x27;,
+ &#x27;%m/%d/%y %H:%M:%S.%f&#x27;,
+ &#x27;%m/%d/%y %H:%M&#x27;]</pre></td>
+        </tr>
+      
+        <tr>
+          <td>DATE_FORMAT</td>
+          <td class="code"><pre>&#x27;N j, Y&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>DATE_INPUT_FORMATS</td>
+          <td class="code"><pre>[&#x27;%Y-%m-%d&#x27;,
+ &#x27;%m/%d/%Y&#x27;,
+ &#x27;%m/%d/%y&#x27;,
+ &#x27;%b %d %Y&#x27;,
+ &#x27;%b %d, %Y&#x27;,
+ &#x27;%d %b %Y&#x27;,
+ &#x27;%d %b, %Y&#x27;,
+ &#x27;%B %d %Y&#x27;,
+ &#x27;%B %d, %Y&#x27;,
+ &#x27;%d %B %Y&#x27;,
+ &#x27;%d %B, %Y&#x27;]</pre></td>
+        </tr>
+      
+        <tr>
+          <td>DEBUG</td>
+          <td class="code"><pre>True</pre></td>
+        </tr>
+      
+        <tr>
+          <td>DEBUG_PROPAGATE_EXCEPTIONS</td>
+          <td class="code"><pre>False</pre></td>
+        </tr>
+      
+        <tr>
+          <td>DECIMAL_SEPARATOR</td>
+          <td class="code"><pre>&#x27;.&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>DEFAULT_AUTO_FIELD</td>
+          <td class="code"><pre>&#x27;django.db.models.BigAutoField&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>DEFAULT_CHARSET</td>
+          <td class="code"><pre>&#x27;utf-8&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>DEFAULT_EXCEPTION_REPORTER</td>
+          <td class="code"><pre>&#x27;django.views.debug.ExceptionReporter&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>DEFAULT_EXCEPTION_REPORTER_FILTER</td>
+          <td class="code"><pre>&#x27;django.views.debug.SafeExceptionReporterFilter&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>DEFAULT_FILE_STORAGE</td>
+          <td class="code"><pre>&#x27;django.core.files.storage.FileSystemStorage&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>DEFAULT_FROM_EMAIL</td>
+          <td class="code"><pre>&#x27;webmaster@localhost&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>DEFAULT_INDEX_TABLESPACE</td>
+          <td class="code"><pre>&#x27;&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>DEFAULT_TABLESPACE</td>
+          <td class="code"><pre>&#x27;&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>DISALLOWED_USER_AGENTS</td>
+          <td class="code"><pre>[]</pre></td>
+        </tr>
+      
+        <tr>
+          <td>EMAIL_BACKEND</td>
+          <td class="code"><pre>&#x27;django.core.mail.backends.smtp.EmailBackend&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>EMAIL_HOST</td>
+          <td class="code"><pre>&#x27;localhost&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>EMAIL_HOST_PASSWORD</td>
+          <td class="code"><pre>&#x27;********************&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>EMAIL_HOST_USER</td>
+          <td class="code"><pre>&#x27;&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>EMAIL_PORT</td>
+          <td class="code"><pre>25</pre></td>
+        </tr>
+      
+        <tr>
+          <td>EMAIL_SSL_CERTFILE</td>
+          <td class="code"><pre>None</pre></td>
+        </tr>
+      
+        <tr>
+          <td>EMAIL_SSL_KEYFILE</td>
+          <td class="code"><pre>&#x27;********************&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>EMAIL_SUBJECT_PREFIX</td>
+          <td class="code"><pre>&#x27;[Django] &#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>EMAIL_TIMEOUT</td>
+          <td class="code"><pre>None</pre></td>
+        </tr>
+      
+        <tr>
+          <td>EMAIL_USE_LOCALTIME</td>
+          <td class="code"><pre>False</pre></td>
+        </tr>
+      
+        <tr>
+          <td>EMAIL_USE_SSL</td>
+          <td class="code"><pre>False</pre></td>
+        </tr>
+      
+        <tr>
+          <td>EMAIL_USE_TLS</td>
+          <td class="code"><pre>False</pre></td>
+        </tr>
+      
+        <tr>
+          <td>FILE_UPLOAD_DIRECTORY_PERMISSIONS</td>
+          <td class="code"><pre>None</pre></td>
+        </tr>
+      
+        <tr>
+          <td>FILE_UPLOAD_HANDLERS</td>
+          <td class="code"><pre>[&#x27;django.core.files.uploadhandler.MemoryFileUploadHandler&#x27;,
+ &#x27;django.core.files.uploadhandler.TemporaryFileUploadHandler&#x27;]</pre></td>
+        </tr>
+      
+        <tr>
+          <td>FILE_UPLOAD_MAX_MEMORY_SIZE</td>
+          <td class="code"><pre>2621440</pre></td>
+        </tr>
+      
+        <tr>
+          <td>FILE_UPLOAD_PERMISSIONS</td>
+          <td class="code"><pre>420</pre></td>
+        </tr>
+      
+        <tr>
+          <td>FILE_UPLOAD_TEMP_DIR</td>
+          <td class="code"><pre>None</pre></td>
+        </tr>
+      
+        <tr>
+          <td>FIRST_DAY_OF_WEEK</td>
+          <td class="code"><pre>0</pre></td>
+        </tr>
+      
+        <tr>
+          <td>FIXTURE_DIRS</td>
+          <td class="code"><pre>[]</pre></td>
+        </tr>
+      
+        <tr>
+          <td>FORCE_SCRIPT_NAME</td>
+          <td class="code"><pre>None</pre></td>
+        </tr>
+      
+        <tr>
+          <td>FORMAT_MODULE_PATH</td>
+          <td class="code"><pre>None</pre></td>
+        </tr>
+      
+        <tr>
+          <td>FORM_RENDERER</td>
+          <td class="code"><pre>&#x27;django.forms.renderers.DjangoTemplates&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>IGNORABLE_404_URLS</td>
+          <td class="code"><pre>[]</pre></td>
+        </tr>
+      
+        <tr>
+          <td>INSTALLED_APPS</td>
+          <td class="code"><pre>[&#x27;django.contrib.admin&#x27;,
+ &#x27;django.contrib.auth&#x27;,
+ &#x27;django.contrib.contenttypes&#x27;,
+ &#x27;django.contrib.sessions&#x27;,
+ &#x27;django.contrib.messages&#x27;,
+ &#x27;django.contrib.staticfiles&#x27;,
+ &#x27;django_bootstrap5&#x27;,
+ &#x27;core&#x27;]</pre></td>
+        </tr>
+      
+        <tr>
+          <td>INTERNAL_IPS</td>
+          <td class="code"><pre>[]</pre></td>
+        </tr>
+      
+        <tr>
+          <td>LANGUAGES</td>
+          <td class="code"><pre>[(&#x27;af&#x27;, &#x27;Afrikaans&#x27;),
+ (&#x27;ar&#x27;, &#x27;Arabic&#x27;),
+ (&#x27;ar-dz&#x27;, &#x27;Algerian Arabic&#x27;),
+ (&#x27;ast&#x27;, &#x27;Asturian&#x27;),
+ (&#x27;az&#x27;, &#x27;Azerbaijani&#x27;),
+ (&#x27;bg&#x27;, &#x27;Bulgarian&#x27;),
+ (&#x27;be&#x27;, &#x27;Belarusian&#x27;),
+ (&#x27;bn&#x27;, &#x27;Bengali&#x27;),
+ (&#x27;br&#x27;, &#x27;Breton&#x27;),
+ (&#x27;bs&#x27;, &#x27;Bosnian&#x27;),
+ (&#x27;ca&#x27;, &#x27;Catalan&#x27;),
+ (&#x27;ckb&#x27;, &#x27;Central Kurdish (Sorani)&#x27;),
+ (&#x27;cs&#x27;, &#x27;Czech&#x27;),
+ (&#x27;cy&#x27;, &#x27;Welsh&#x27;),
+ (&#x27;da&#x27;, &#x27;Danish&#x27;),
+ (&#x27;de&#x27;, &#x27;German&#x27;),
+ (&#x27;dsb&#x27;, &#x27;Lower Sorbian&#x27;),
+ (&#x27;el&#x27;, &#x27;Greek&#x27;),
+ (&#x27;en&#x27;, &#x27;English&#x27;),
+ (&#x27;en-au&#x27;, &#x27;Australian English&#x27;),
+ (&#x27;en-gb&#x27;, &#x27;British English&#x27;),
+ (&#x27;eo&#x27;, &#x27;Esperanto&#x27;),
+ (&#x27;es&#x27;, &#x27;Spanish&#x27;),
+ (&#x27;es-ar&#x27;, &#x27;Argentinian Spanish&#x27;),
+ (&#x27;es-co&#x27;, &#x27;Colombian Spanish&#x27;),
+ (&#x27;es-mx&#x27;, &#x27;Mexican Spanish&#x27;),
+ (&#x27;es-ni&#x27;, &#x27;Nicaraguan Spanish&#x27;),
+ (&#x27;es-ve&#x27;, &#x27;Venezuelan Spanish&#x27;),
+ (&#x27;et&#x27;, &#x27;Estonian&#x27;),
+ (&#x27;eu&#x27;, &#x27;Basque&#x27;),
+ (&#x27;fa&#x27;, &#x27;Persian&#x27;),
+ (&#x27;fi&#x27;, &#x27;Finnish&#x27;),
+ (&#x27;fr&#x27;, &#x27;French&#x27;),
+ (&#x27;fy&#x27;, &#x27;Frisian&#x27;),
+ (&#x27;ga&#x27;, &#x27;Irish&#x27;),
+ (&#x27;gd&#x27;, &#x27;Scottish Gaelic&#x27;),
+ (&#x27;gl&#x27;, &#x27;Galician&#x27;),
+ (&#x27;he&#x27;, &#x27;Hebrew&#x27;),
+ (&#x27;hi&#x27;, &#x27;Hindi&#x27;),
+ (&#x27;hr&#x27;, &#x27;Croatian&#x27;),
+ (&#x27;hsb&#x27;, &#x27;Upper Sorbian&#x27;),
+ (&#x27;hu&#x27;, &#x27;Hungarian&#x27;),
+ (&#x27;hy&#x27;, &#x27;Armenian&#x27;),
+ (&#x27;ia&#x27;, &#x27;Interlingua&#x27;),
+ (&#x27;id&#x27;, &#x27;Indonesian&#x27;),
+ (&#x27;ig&#x27;, &#x27;Igbo&#x27;),
+ (&#x27;io&#x27;, &#x27;Ido&#x27;),
+ (&#x27;is&#x27;, &#x27;Icelandic&#x27;),
+ (&#x27;it&#x27;, &#x27;Italian&#x27;),
+ (&#x27;ja&#x27;, &#x27;Japanese&#x27;),
+ (&#x27;ka&#x27;, &#x27;Georgian&#x27;),
+ (&#x27;kab&#x27;, &#x27;Kabyle&#x27;),
+ (&#x27;kk&#x27;, &#x27;Kazakh&#x27;),
+ (&#x27;km&#x27;, &#x27;Khmer&#x27;),
+ (&#x27;kn&#x27;, &#x27;Kannada&#x27;),
+ (&#x27;ko&#x27;, &#x27;Korean&#x27;),
+ (&#x27;ky&#x27;, &#x27;Kyrgyz&#x27;),
+ (&#x27;lb&#x27;, &#x27;Luxembourgish&#x27;),
+ (&#x27;lt&#x27;, &#x27;Lithuanian&#x27;),
+ (&#x27;lv&#x27;, &#x27;Latvian&#x27;),
+ (&#x27;mk&#x27;, &#x27;Macedonian&#x27;),
+ (&#x27;ml&#x27;, &#x27;Malayalam&#x27;),
+ (&#x27;mn&#x27;, &#x27;Mongolian&#x27;),
+ (&#x27;mr&#x27;, &#x27;Marathi&#x27;),
+ (&#x27;ms&#x27;, &#x27;Malay&#x27;),
+ (&#x27;my&#x27;, &#x27;Burmese&#x27;),
+ (&#x27;nb&#x27;, &#x27;Norwegian Bokmål&#x27;),
+ (&#x27;ne&#x27;, &#x27;Nepali&#x27;),
+ (&#x27;nl&#x27;, &#x27;Dutch&#x27;),
+ (&#x27;nn&#x27;, &#x27;Norwegian Nynorsk&#x27;),
+ (&#x27;os&#x27;, &#x27;Ossetic&#x27;),
+ (&#x27;pa&#x27;, &#x27;Punjabi&#x27;),
+ (&#x27;pl&#x27;, &#x27;Polish&#x27;),
+ (&#x27;pt&#x27;, &#x27;Portuguese&#x27;),
+ (&#x27;pt-br&#x27;, &#x27;Brazilian Portuguese&#x27;),
+ (&#x27;ro&#x27;, &#x27;Romanian&#x27;),
+ (&#x27;ru&#x27;, &#x27;Russian&#x27;),
+ (&#x27;sk&#x27;, &#x27;Slovak&#x27;),
+ (&#x27;sl&#x27;, &#x27;Slovenian&#x27;),
+ (&#x27;sq&#x27;, &#x27;Albanian&#x27;),
+ (&#x27;sr&#x27;, &#x27;Serbian&#x27;),
+ (&#x27;sr-latn&#x27;, &#x27;Serbian Latin&#x27;),
+ (&#x27;sv&#x27;, &#x27;Swedish&#x27;),
+ (&#x27;sw&#x27;, &#x27;Swahili&#x27;),
+ (&#x27;ta&#x27;, &#x27;Tamil&#x27;),
+ (&#x27;te&#x27;, &#x27;Telugu&#x27;),
+ (&#x27;tg&#x27;, &#x27;Tajik&#x27;),
+ (&#x27;th&#x27;, &#x27;Thai&#x27;),
+ (&#x27;tk&#x27;, &#x27;Turkmen&#x27;),
+ (&#x27;tr&#x27;, &#x27;Turkish&#x27;),
+ (&#x27;tt&#x27;, &#x27;Tatar&#x27;),
+ (&#x27;udm&#x27;, &#x27;Udmurt&#x27;),
+ (&#x27;uk&#x27;, &#x27;Ukrainian&#x27;),
+ (&#x27;ur&#x27;, &#x27;Urdu&#x27;),
+ (&#x27;uz&#x27;, &#x27;Uzbek&#x27;),
+ (&#x27;vi&#x27;, &#x27;Vietnamese&#x27;),
+ (&#x27;zh-hans&#x27;, &#x27;Simplified Chinese&#x27;),
+ (&#x27;zh-hant&#x27;, &#x27;Traditional Chinese&#x27;)]</pre></td>
+        </tr>
+      
+        <tr>
+          <td>LANGUAGES_BIDI</td>
+          <td class="code"><pre>[&#x27;he&#x27;, &#x27;ar&#x27;, &#x27;ar-dz&#x27;, &#x27;ckb&#x27;, &#x27;fa&#x27;, &#x27;ur&#x27;]</pre></td>
+        </tr>
+      
+        <tr>
+          <td>LANGUAGE_CODE</td>
+          <td class="code"><pre>&#x27;ar&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>LANGUAGE_COOKIE_AGE</td>
+          <td class="code"><pre>None</pre></td>
+        </tr>
+      
+        <tr>
+          <td>LANGUAGE_COOKIE_DOMAIN</td>
+          <td class="code"><pre>None</pre></td>
+        </tr>
+      
+        <tr>
+          <td>LANGUAGE_COOKIE_HTTPONLY</td>
+          <td class="code"><pre>False</pre></td>
+        </tr>
+      
+        <tr>
+          <td>LANGUAGE_COOKIE_NAME</td>
+          <td class="code"><pre>&#x27;django_language&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>LANGUAGE_COOKIE_PATH</td>
+          <td class="code"><pre>&#x27;/&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>LANGUAGE_COOKIE_SAMESITE</td>
+          <td class="code"><pre>None</pre></td>
+        </tr>
+      
+        <tr>
+          <td>LANGUAGE_COOKIE_SECURE</td>
+          <td class="code"><pre>False</pre></td>
+        </tr>
+      
+        <tr>
+          <td>LOCALE_PATHS</td>
+          <td class="code"><pre>[]</pre></td>
+        </tr>
+      
+        <tr>
+          <td>LOGGING</td>
+          <td class="code"><pre>{}</pre></td>
+        </tr>
+      
+        <tr>
+          <td>LOGGING_CONFIG</td>
+          <td class="code"><pre>&#x27;logging.config.dictConfig&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>LOGIN_REDIRECT_URL</td>
+          <td class="code"><pre>&#x27;/accounts/profile/&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>LOGIN_URL</td>
+          <td class="code"><pre>&#x27;/accounts/login/&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>LOGOUT_REDIRECT_URL</td>
+          <td class="code"><pre>None</pre></td>
+        </tr>
+      
+        <tr>
+          <td>MANAGERS</td>
+          <td class="code"><pre>[]</pre></td>
+        </tr>
+      
+        <tr>
+          <td>MEDIA_ROOT</td>
+          <td class="code"><pre>PosixPath(&#x27;/Users/zakaria/projects/antigravity/suhibe/media&#x27;)</pre></td>
+        </tr>
+      
+        <tr>
+          <td>MEDIA_URL</td>
+          <td class="code"><pre>&#x27;/media/&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>MESSAGE_STORAGE</td>
+          <td class="code"><pre>&#x27;django.contrib.messages.storage.fallback.FallbackStorage&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>MESSAGE_TAGS</td>
+          <td class="code"><pre>{10: &#x27;secondary&#x27;, 20: &#x27;info&#x27;, 25: &#x27;success&#x27;, 30: &#x27;warning&#x27;, 40: &#x27;danger&#x27;}</pre></td>
+        </tr>
+      
+        <tr>
+          <td>MIDDLEWARE</td>
+          <td class="code"><pre>[&#x27;django.middleware.security.SecurityMiddleware&#x27;,
+ &#x27;django.contrib.sessions.middleware.SessionMiddleware&#x27;,
+ &#x27;django.middleware.common.CommonMiddleware&#x27;,
+ &#x27;django.middleware.csrf.CsrfViewMiddleware&#x27;,
+ &#x27;django.contrib.auth.middleware.AuthenticationMiddleware&#x27;,
+ &#x27;django.contrib.messages.middleware.MessageMiddleware&#x27;,
+ &#x27;django.middleware.clickjacking.XFrameOptionsMiddleware&#x27;]</pre></td>
+        </tr>
+      
+        <tr>
+          <td>MIGRATION_MODULES</td>
+          <td class="code"><pre>{}</pre></td>
+        </tr>
+      
+        <tr>
+          <td>MONTH_DAY_FORMAT</td>
+          <td class="code"><pre>&#x27;F j&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>NUMBER_GROUPING</td>
+          <td class="code"><pre>0</pre></td>
+        </tr>
+      
+        <tr>
+          <td>PASSWORD_HASHERS</td>
+          <td class="code"><pre>&#x27;********************&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>PASSWORD_RESET_TIMEOUT</td>
+          <td class="code"><pre>&#x27;********************&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>PREPEND_WWW</td>
+          <td class="code"><pre>False</pre></td>
+        </tr>
+      
+        <tr>
+          <td>ROOT_URLCONF</td>
+          <td class="code"><pre>&#x27;oilsystem.urls&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SECRET_KEY</td>
+          <td class="code"><pre>&#x27;********************&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SECRET_KEY_FALLBACKS</td>
+          <td class="code"><pre>&#x27;********************&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SECURE_CONTENT_TYPE_NOSNIFF</td>
+          <td class="code"><pre>True</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SECURE_CROSS_ORIGIN_OPENER_POLICY</td>
+          <td class="code"><pre>&#x27;same-origin&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SECURE_HSTS_INCLUDE_SUBDOMAINS</td>
+          <td class="code"><pre>False</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SECURE_HSTS_PRELOAD</td>
+          <td class="code"><pre>False</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SECURE_HSTS_SECONDS</td>
+          <td class="code"><pre>0</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SECURE_PROXY_SSL_HEADER</td>
+          <td class="code"><pre>None</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SECURE_REDIRECT_EXEMPT</td>
+          <td class="code"><pre>[]</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SECURE_REFERRER_POLICY</td>
+          <td class="code"><pre>&#x27;same-origin&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SECURE_SSL_HOST</td>
+          <td class="code"><pre>None</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SECURE_SSL_REDIRECT</td>
+          <td class="code"><pre>False</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SERVER_EMAIL</td>
+          <td class="code"><pre>&#x27;root@localhost&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SESSION_CACHE_ALIAS</td>
+          <td class="code"><pre>&#x27;default&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SESSION_COOKIE_AGE</td>
+          <td class="code"><pre>1209600</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SESSION_COOKIE_DOMAIN</td>
+          <td class="code"><pre>None</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SESSION_COOKIE_HTTPONLY</td>
+          <td class="code"><pre>True</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SESSION_COOKIE_NAME</td>
+          <td class="code"><pre>&#x27;sessionid&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SESSION_COOKIE_PATH</td>
+          <td class="code"><pre>&#x27;/&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SESSION_COOKIE_SAMESITE</td>
+          <td class="code"><pre>&#x27;Lax&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SESSION_COOKIE_SECURE</td>
+          <td class="code"><pre>False</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SESSION_ENGINE</td>
+          <td class="code"><pre>&#x27;django.contrib.sessions.backends.db&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SESSION_EXPIRE_AT_BROWSER_CLOSE</td>
+          <td class="code"><pre>False</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SESSION_FILE_PATH</td>
+          <td class="code"><pre>None</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SESSION_SAVE_EVERY_REQUEST</td>
+          <td class="code"><pre>False</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SESSION_SERIALIZER</td>
+          <td class="code"><pre>&#x27;django.contrib.sessions.serializers.JSONSerializer&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SETTINGS_MODULE</td>
+          <td class="code"><pre>&#x27;oilsystem.settings&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SHORT_DATETIME_FORMAT</td>
+          <td class="code"><pre>&#x27;m/d/Y P&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SHORT_DATE_FORMAT</td>
+          <td class="code"><pre>&#x27;m/d/Y&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SIGNING_BACKEND</td>
+          <td class="code"><pre>&#x27;django.core.signing.TimestampSigner&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SILENCED_SYSTEM_CHECKS</td>
+          <td class="code"><pre>[]</pre></td>
+        </tr>
+      
+        <tr>
+          <td>STATICFILES_DIRS</td>
+          <td class="code"><pre>[PosixPath(&#x27;/Users/zakaria/projects/antigravity/suhibe/static&#x27;)]</pre></td>
+        </tr>
+      
+        <tr>
+          <td>STATICFILES_FINDERS</td>
+          <td class="code"><pre>[&#x27;django.contrib.staticfiles.finders.FileSystemFinder&#x27;,
+ &#x27;django.contrib.staticfiles.finders.AppDirectoriesFinder&#x27;]</pre></td>
+        </tr>
+      
+        <tr>
+          <td>STATICFILES_STORAGE</td>
+          <td class="code"><pre>&#x27;django.contrib.staticfiles.storage.StaticFilesStorage&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>STATIC_ROOT</td>
+          <td class="code"><pre>PosixPath(&#x27;/Users/zakaria/projects/antigravity/suhibe/staticfiles&#x27;)</pre></td>
+        </tr>
+      
+        <tr>
+          <td>STATIC_URL</td>
+          <td class="code"><pre>&#x27;/static/&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>STORAGES</td>
+          <td class="code"><pre>{&#x27;default&#x27;: {&#x27;BACKEND&#x27;: &#x27;django.core.files.storage.FileSystemStorage&#x27;},
+ &#x27;staticfiles&#x27;: {&#x27;BACKEND&#x27;: &#x27;django.contrib.staticfiles.storage.StaticFilesStorage&#x27;}}</pre></td>
+        </tr>
+      
+        <tr>
+          <td>TEMPLATES</td>
+          <td class="code"><pre>[{&#x27;APP_DIRS&#x27;: True,
+  &#x27;BACKEND&#x27;: &#x27;django.template.backends.django.DjangoTemplates&#x27;,
+  &#x27;DIRS&#x27;: [PosixPath(&#x27;/Users/zakaria/projects/antigravity/suhibe/templates&#x27;)],
+  &#x27;OPTIONS&#x27;: {&#x27;context_processors&#x27;: [&#x27;django.template.context_processors.debug&#x27;,
+                                     &#x27;django.template.context_processors.request&#x27;,
+                                     &#x27;django.contrib.auth.context_processors.auth&#x27;,
+                                     &#x27;django.contrib.messages.context_processors.messages&#x27;]}}]</pre></td>
+        </tr>
+      
+        <tr>
+          <td>TEST_NON_SERIALIZED_APPS</td>
+          <td class="code"><pre>[]</pre></td>
+        </tr>
+      
+        <tr>
+          <td>TEST_RUNNER</td>
+          <td class="code"><pre>&#x27;django.test.runner.DiscoverRunner&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>THOUSAND_SEPARATOR</td>
+          <td class="code"><pre>&#x27;,&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>TIME_FORMAT</td>
+          <td class="code"><pre>&#x27;P&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>TIME_INPUT_FORMATS</td>
+          <td class="code"><pre>[&#x27;%H:%M:%S&#x27;, &#x27;%H:%M:%S.%f&#x27;, &#x27;%H:%M&#x27;]</pre></td>
+        </tr>
+      
+        <tr>
+          <td>TIME_ZONE</td>
+          <td class="code"><pre>&#x27;Asia/Riyadh&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>USE_DEPRECATED_PYTZ</td>
+          <td class="code"><pre>False</pre></td>
+        </tr>
+      
+        <tr>
+          <td>USE_I18N</td>
+          <td class="code"><pre>True</pre></td>
+        </tr>
+      
+        <tr>
+          <td>USE_L10N</td>
+          <td class="code"><pre>True</pre></td>
+        </tr>
+      
+        <tr>
+          <td>USE_THOUSAND_SEPARATOR</td>
+          <td class="code"><pre>False</pre></td>
+        </tr>
+      
+        <tr>
+          <td>USE_TZ</td>
+          <td class="code"><pre>True</pre></td>
+        </tr>
+      
+        <tr>
+          <td>USE_X_FORWARDED_HOST</td>
+          <td class="code"><pre>False</pre></td>
+        </tr>
+      
+        <tr>
+          <td>USE_X_FORWARDED_PORT</td>
+          <td class="code"><pre>False</pre></td>
+        </tr>
+      
+        <tr>
+          <td>WSGI_APPLICATION</td>
+          <td class="code"><pre>&#x27;oilsystem.wsgi.application&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>X_FRAME_OPTIONS</td>
+          <td class="code"><pre>&#x27;DENY&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>YEAR_MONTH_FORMAT</td>
+          <td class="code"><pre>&#x27;F Y&#x27;</pre></td>
+        </tr>
+      
+    </tbody>
+  </table>
+
+</div>
+
+  <div id="explanation">
+    <p>
+      You’re seeing this error because you have <code>DEBUG = True</code> in your
+      Django settings file. Change that to <code>False</code>, and Django will
+      display a standard page generated by the handler for this status code.
+    </p>
+  </div>
+
+</body>
+</html>

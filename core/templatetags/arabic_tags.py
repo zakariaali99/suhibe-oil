@@ -6,7 +6,10 @@ register = template.Library()
 
 @register.filter
 def reshape_arabic(text):
-    if text:
+    if not text:
+        return ""
+    try:
         reshaped_text = arabic_reshaper.reshape(str(text))
         return get_display(reshaped_text)
-    return text
+    except Exception:
+        return str(text)
