@@ -80,8 +80,7 @@
                         <div class="d-flex justify-content-between align-items-start mb-3">
                             <div class="flex-grow-1">
                                 <h6 class="mb-1 text-gold fw-bold">{{ item.product.name }}</h6>
-                                <small class="text-white-50">{{ item.product.company.name }} - {{
-                                    item.product.density.value }}</small>
+                                <small class="text-white-50">{{ item.product.company.name }} - {{ item.product.density.value }}</small>
                             </div>
                             <form action="{% url 'remove_from_cart' item.product.id %}" method="post" class="d-inline">
                                 {% csrf_token %}

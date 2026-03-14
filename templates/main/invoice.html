@@ -48,8 +48,7 @@
                             <div class="mb-2">
                                 <small class="text-muted d-block mb-1">طريقة الدفع:</small>
                                 <span class="badge bg-navy text-gold fs-6 px-3 py-2">
-                                    {% if invoice.payment_method == 'cash' %}نقداً (كاش){% elif invoice.payment_method
-                                    == 'card' %}بطاقة مصرفية{% else %}تحويل بنكي{% endif %}
+                                    {% if invoice.payment_method == 'cash' %}نقداً (كاش){% elif invoice.payment_method == 'card' %}بطاقة مصرفية{% else %}تحويل بنكي{% endif %}
                                 </span>
                             </div>
                             <div>
@@ -85,8 +84,7 @@
                                 <td class="p-4">
                                     {% if item.product %}
                                     <div class="fw-bold fs-5 text-navy">{{ item.product.name }}</div>
-                                    <small class="text-muted">{{ item.product.company.name }} — {{
-                                        item.product.density.value }}</small>
+                                    <small class="text-muted">{{ item.product.company.name }} — {{ item.product.density.value }}</small>
                                     {% else %}
                                     <span class="text-muted">منتج محذوف من النظام</span>
                                     {% endif %}

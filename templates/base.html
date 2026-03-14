@@ -39,11 +39,11 @@
         }
 
         .navbar {
-            background: rgba(26, 29, 46, 0.95) !important;
-            backdrop-filter: blur(12px);
-            border-bottom: 2px solid var(--oil-gold);
-            padding: 0.8rem 0;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            background: rgba(26, 29, 46, 0.98) !important;
+            backdrop-filter: blur(20px);
+            border-bottom: 3px solid var(--oil-gold);
+            padding: 1rem 0;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
         }
 
         .navbar-brand {
@@ -135,6 +135,21 @@
                 opacity: 1;
                 transform: translateY(0);
             }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--oil-bg);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--oil-navy-light);
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--oil-gold);
         }
 
         /* Monospace for currency/numbers */

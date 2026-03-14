@@ -6,6 +6,9 @@
 <div class="row g-4 align-items-start">
     <div class="col-12 mb-2">
         <div class="d-flex align-items-center justify-content-between">
+            <div class="position-absolute opacity-10" style="right: 10px; top: -10px; font-size: 5rem; pointer-events: none;">
+                <i class="bi bi-droplet-fill"></i>
+            </div>
             <div>
                 <h2 class="fw-bold text-navy mb-1"><i class="bi bi-building me-3 text-gold"></i>الشركات المصنعة</h2>
                 <p class="text-muted small mb-0">إضافة وتعديل بيانات الشركات والموردين</p>
@@ -130,8 +133,7 @@
                                                     <div class="modal-body p-4 py-5 text-center">
                                                         <i
                                                             class="bi bi-exclamation-triangle display-4 text-danger mb-4 d-block"></i>
-                                                        <p class="h5 text-navy mb-2">هل أنت متأكد من حذف <strong>{{
-                                                                company.name }}</strong>؟</p>
+                                                        <p class="h5 text-navy mb-2">هل أنت متأكد من حذف <strong>{{ company.name }}</strong>؟</p>
                                                         <p class="text-muted small">سيؤدي هذا الحذف إلى إزالة كافة
                                                             المنتجات المرتبطة بهذه الشركة أيضاً.</p>
                                                     </div>

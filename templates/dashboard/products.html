@@ -6,6 +6,9 @@
 <div class="row g-4 align-items-start">
     <div class="col-12 mb-2">
         <div class="d-flex align-items-center justify-content-between">
+            <div class="position-absolute opacity-10" style="right: 10px; top: -10px; font-size: 5rem; pointer-events: none;">
+                <i class="bi bi-box-seam"></i>
+            </div>
             <div>
                 <h2 class="fw-bold text-navy mb-1"><i class="bi bi-box-seam me-3 text-gold"></i>مستودع المنتجات</h2>
                 <p class="text-muted small mb-0">إضافة وتعديل الزيوت والهيدروليكيات المتوفرة في النظام</p>
@@ -143,9 +146,7 @@
                                                                 class="form-select border-2 bg-light py-2" required
                                                                 style="border-radius: 12px;">
                                                                 {% for company in companies %}
-                                                                <option value="{{ company.id }}" {% if
-                                                                    company.id==product.company.id %}selected{% endif
-                                                                    %}>{{ company.name }}</option>
+                                                                <option value="{{ company.id }}" {% if company.id == product.company.id %}selected{% endif %}>{{ company.name }}</option>
                                                                 {% endfor %}
                                                             </select>
                                                         </div>
@@ -156,9 +157,7 @@
                                                                 class="form-select border-2 bg-light py-2" required
                                                                 style="border-radius: 12px;">
                                                                 {% for density in densities %}
-                                                                <option value="{{ density.id }}" {% if
-                                                                    density.id==product.density.id %}selected{% endif
-                                                                    %}>{{ density.value }}</option>
+                                                                <option value="{{ density.id }}" {% if density.id == product.density.id %}selected{% endif %}>{{ density.value }}</option>
                                                                 {% endfor %}
                                                             </select>
                                                         </div>
@@ -189,8 +188,7 @@
                                                     <div class="modal-body p-4 py-5 text-center">
                                                         <i
                                                             class="bi bi-box-fill display-4 text-danger mb-4 d-block"></i>
-                                                        <p class="h5 text-navy mb-2">هل أنت متأكد من حذف <strong>{{
-                                                                product.name }}</strong>؟</p>
+                                                        <p class="h5 text-navy mb-2">هل أنت متأكد من حذف <strong>{{ product.name }}</strong>؟</p>
                                                         <p class="text-muted small">لن يتمكن الموظفون من اختيار هذا
                                                             المنتج في الفواتير الجديدة بعد حذفه.</p>
                                                     </div>

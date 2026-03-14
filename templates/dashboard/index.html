@@ -19,13 +19,13 @@
     <div class="row g-4 mb-5">
         <!-- Stat Item -->
         <div class="col-md-6 col-lg-3">
-            <div class="card h-100 border-0 stat-card" style="border-right: 5px solid #0d6efd !important;">
+            <div class="card h-100 border-0 stat-card" style="border-bottom: 5px solid var(--oil-navy) !important;">
                 <div class="card-body p-4">
                     <div class="d-flex align-items-center justify-content-between mb-3">
-                        <div class="stat-icon p-3 rounded-4 bg-primary bg-opacity-10 text-primary">
+                        <div class="stat-icon p-3 rounded-4" style="background: rgba(26, 29, 46, 0.05); color: var(--oil-navy);">
                             <i class="bi bi-building h3 mb-0"></i>
                         </div>
-                        <span class="badge bg-primary bg-opacity-10 text-primary px-3">الشركات</span>
+                        <span class="badge px-3" style="background: rgba(26, 29, 46, 0.05); color: var(--oil-navy);">الشركات</span>
                     </div>
                     <div class="display-5 fw-bold text-navy mb-1">{{ stats.companies }}</div>
                     <div class="text-muted small">إجمالي العلامات التجارية المسجلة</div>
@@ -36,13 +36,13 @@
 
         <!-- Stat Item -->
         <div class="col-md-6 col-lg-3">
-            <div class="card h-100 border-0 stat-card" style="border-right: 5px solid #198754 !important;">
+            <div class="card h-100 border-0 stat-card" style="border-bottom: 5px solid var(--oil-gold) !important;">
                 <div class="card-body p-4">
                     <div class="d-flex align-items-center justify-content-between mb-3">
-                        <div class="stat-icon p-3 rounded-4 bg-success bg-opacity-10 text-success">
+                        <div class="stat-icon p-3 rounded-4" style="background: rgba(212, 167, 69, 0.1); color: var(--oil-gold);">
                             <i class="bi bi-droplet h3 mb-0"></i>
                         </div>
-                        <span class="badge bg-success bg-opacity-10 text-success px-3">الكثافات</span>
+                        <span class="badge px-3" style="background: rgba(212, 167, 69, 0.1); color: var(--oil-gold);">الكثافات</span>
                     </div>
                     <div class="display-5 fw-bold text-navy mb-1">{{ stats.densities }}</div>
                     <div class="text-muted small">أنواع اللزوجة والكثافة المدعومة</div>
@@ -53,13 +53,13 @@
 
         <!-- Stat Item -->
         <div class="col-md-6 col-lg-3">
-            <div class="card h-100 border-0 stat-card" style="border-right: 5px solid #0dcaf0 !important;">
+            <div class="card h-100 border-0 stat-card" style="border-bottom: 5px solid var(--oil-gold) !important;">
                 <div class="card-body p-4">
                     <div class="d-flex align-items-center justify-content-between mb-3">
-                        <div class="stat-icon p-3 rounded-4 bg-info bg-opacity-10 text-info">
+                        <div class="stat-icon p-3 rounded-4" style="background: rgba(212, 167, 69, 0.1); color: var(--oil-gold);">
                             <i class="bi bi-box-seam h3 mb-0"></i>
                         </div>
-                        <span class="badge bg-info bg-opacity-10 text-info px-3">المنتجات</span>
+                        <span class="badge px-3" style="background: rgba(212, 167, 69, 0.1); color: var(--oil-gold);">المنتجات</span>
                     </div>
                     <div class="display-5 fw-bold text-navy mb-1">{{ stats.products }}</div>
                     <div class="text-muted small">إجمالي المنتجات المتوفرة للبيع</div>
@@ -70,19 +70,17 @@
 
         <!-- Stat Item -->
         <div class="col-md-6 col-lg-3">
-            <div class="card h-100 border-0 stat-card" style="border-right: 5px solid var(--oil-gold) !important;">
+            <div class="card h-100 border-0 stat-card" style="border-bottom: 5px solid var(--oil-navy) !important;">
                 <div class="card-body p-4">
                     <div class="d-flex align-items-center justify-content-between mb-3">
-                        <div class="stat-icon p-3 rounded-4"
-                            style="background: rgba(212, 167, 69, 0.1); color: var(--oil-gold);">
+                        <div class="stat-icon p-3 rounded-4" style="background: rgba(26, 29, 46, 0.05); color: var(--oil-navy);">
                             <i class="bi bi-file-earmark-text h3 mb-0"></i>
                         </div>
-                        <span class="badge px-3"
-                            style="background: rgba(212, 167, 69, 0.1); color: var(--oil-gold);">الفواتير</span>
+                        <span class="badge px-3" style="background: rgba(26, 29, 46, 0.05); color: var(--oil-navy);">الفواتير</span>
                     </div>
                     <div class="display-5 fw-bold text-navy mb-1">{{ stats.invoices }}</div>
                     <div class="text-muted small">إجمالي عمليات البيع المسجلة</div>
-                    <a href="{% url 'invoice_list' %}" class="stretched-link"></a>
+                    <a href="{% url 'invoice_list' %}" class="stretched_link"></a>
                 </div>
             </div>
         </div>
