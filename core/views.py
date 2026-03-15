@@ -203,7 +203,7 @@ def invoice_pdf(request, invoice_id):
     if not pdf.err:
         response = HttpResponse(result.getvalue(), content_type='application/pdf')
         filename = f"invoice_{invoice.id}.pdf"
-        response['Content-Disposition'] = f'attachment; filename="{filename}"'
+        response['Content-Disposition'] = f'inline; filename="{filename}"'
         return response
     return HttpResponse("Error generating PDF", status=500)
 

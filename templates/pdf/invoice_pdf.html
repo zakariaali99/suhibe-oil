@@ -6,7 +6,7 @@
     <style>
         @font-face {
             font-family: 'ArialUnicode';
-            src: url('fonts/ArialUnicode.ttf');
+            src: url('static/fonts/ArialUnicode.ttf');
         }
         @page {
             size: A4;
@@ -18,250 +18,155 @@
             padding: 0;
             color: #1a1d2e;
             direction: rtl;
-        }
-        
-        /* Layout Utilities */
-        .page-content {
-            padding: 40pt;
-        }
-
-        /* Header Design */
-        .header-main {
-            background-color: #1a1d2e;
-            padding: 40pt;
-            border-bottom: 8pt solid #d4a745;
-        }
-        
-        .header-title {
-            font-size: 32pt;
-            font-weight: bold;
-            color: #d4a745;
-            margin-bottom: 5pt;
-        }
-        
-        .header-subtitle {
-            font-size: 11pt;
-            color: #ffffff;
-            opacity: 0.8;
-        }
-
-        .invoice-number-badge {
-            background-color: #2a2e45;
-            padding: 8pt 15pt;
-            border-radius: 8pt;
-            color: #ffffff;
-            font-size: 14pt;
-            font-weight: bold;
-        }
-
-        /* Info Section */
-        .customer-card {
-            margin-top: 30pt;
-        }
-
-        .meta-group {
-            margin-bottom: 12pt;
-        }
-
-        .meta-label {
-            color: #64748b;
-            font-size: 9pt;
-            margin-bottom: 2pt;
-        }
-
-        .meta-value {
-            font-size: 16pt;
-            font-weight: bold;
-            color: #1a1d2e;
-        }
-
-        .status-box {
-            background-color: #f8fafc;
-            border: 1pt solid #e2e8f0;
-            border-radius: 12pt;
-            padding: 15pt;
-            margin-top: 20pt;
-        }
-
-        /* Items Table */
-        .items-table {
-            margin-top: 40pt;
-            border-collapse: collapse;
-        }
-
-        .items-table th {
-            border-bottom: 2pt solid #f1f5f9;
-            padding: 12pt 10pt;
-            font-size: 11pt;
-            font-weight: bold;
-            color: #1a1d2e;
-            text-align: right;
-        }
-
-        .items-table td {
-            padding: 15pt 10pt;
-            border-bottom: 1pt solid #f1f5f9;
             font-size: 11pt;
         }
 
-        .item-name {
-            font-size: 13pt;
-            font-weight: bold;
-            color: #1a1d2e;
-        }
+        /* Design Tokens */
+        .color-navy { color: #1a1d2e; }
+        .color-gold { color: #d4a745; }
+        .text-white { color: #ffffff; }
+        .bold { font-weight: bold; }
 
-        .item-details {
-            font-size: 9pt;
-            color: #64748b;
-            margin-top: 2pt;
-        }
-
-        .price-text {
-            font-weight: bold;
-        }
-
-        .currency-label {
-            font-size: 9pt;
-            color: #94a3b8;
-            margin-right: 3pt;
-        }
-
-        /* Totals */
-        .total-section {
-            margin-top: 50pt;
-        }
-
-        .total-title {
-            font-size: 20pt;
-            font-weight: bold;
-            color: #1a1d2e;
-        }
-
-        .total-amount {
-            font-size: 28pt;
-            font-weight: bold;
-            color: #d4a745;
-            text-align: left;
-        }
-
-        /* Colors & Styles */
-        .text-success { color: #10b981; }
-        .text-danger { color: #ef4444; }
-        .text-left { text-align: left; }
-        .text-right { text-align: right; }
-        .text-center { text-align: center; }
-
+        /* Tables */
+        table { width: 100%; border-collapse: collapse; border: 0; }
+        td { vertical-align: top; padding: 0; }
+        
     </style>
 </head>
 
 <body>
-    <!-- Premium Header -->
-    <div class="header-main">
-        <table width="100%">
-            <tr>
-                <td valign="middle">
-                    <div class="header-title">{{ "فاتورة مبيعات"|reshape_arabic }}</div>
-                    <div class="header-subtitle">{{ "نظام الزيوت والهيدروليك — ليبيا"|reshape_arabic }}</div>
-                </td>
-                <td align="left" valign="middle">
-                    <div class="invoice-number-badge">
-                        {{ "رقم:"|reshape_arabic }} #{{ invoice.id }}
-                    </div>
-                </td>
-            </tr>
-        </table>
-    </div>
+    <!-- Main Container Table -->
+    <table width="100%">
+        <tr>
+            <td>
+                <!-- HEADER: Navy Background -->
+                <table bgcolor="#1a1d2e" width="100%">
+                    <tr>
+                        <td style="padding: 25pt 40pt; border-bottom: 4pt solid #d4a745;">
+                            <table width="100%">
+                                <tr>
+                                    <td width="70%">
+                                        <div style="font-size: 28pt; font-weight: bold; color: #d4a745;">
+                                            {{ "فاتورة مبيعات"|reshape_arabic }}
+                                        </div>
+                                        <div style="font-size: 10pt; color: #ffffff; margin-top: 2pt;">
+                                            {{ "نظام الزيوت والهيدروليك — ليبيا"|reshape_arabic }}
+                                        </div>
+                                    </td>
+                                    <td width="30%" align="left">
+                                        <table bgcolor="#d4a745" style="border-radius: 4pt;">
+                                            <tr>
+                                                <td style="padding: 6pt 12pt; text-align: center;">
+                                                    <div style="color: #1a1d2e; font-size: 14pt; font-weight: bold;">
+                                                        {{ "رقم:"|reshape_arabic }} #{{ invoice.id }}
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
 
-    <div class="page-content">
-        <!-- Billing Info -->
-        <table width="100%">
-            <tr>
-                <td width="350" valign="top">
-                    <div class="meta-label">{{ "إلى السيد/السادة:"|reshape_arabic }}</div>
-                    <div class="meta-value" style="font-size: 22pt;">{{ invoice.customer_name|reshape_arabic }}</div>
-                    
-                    <div style="margin-top: 15pt;">
-                        <div class="meta-label">{{ "تاريخ الإصدار:"|reshape_arabic }}</div>
-                        <div class="meta-value" style="font-size: 14pt;">{{ invoice.date|date:"Y-m-d — H:i" }}</div>
-                    </div>
-                </td>
-                <td valign="top">
-                    <div class="status-box">
-                        <table width="100%">
-                            <tr>
-                                <td width="130">
-                                    <div class="meta-label">{{ "طريقة الدفع:"|reshape_arabic }}</div>
-                                    <div class="price-text" style="font-size: 11pt;">
-                                        {% if invoice.payment_method == 'cash' %}{{ "نقداً (كاش)"|reshape_arabic }}{% elif invoice.payment_method == 'card' %}{{ "بطاقة مصرفية"|reshape_arabic }}{% else %}{{ "تحويل بنكي"|reshape_arabic }}{% endif %}
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="meta-label">{{ "حالة الفاتورة:"|reshape_arabic }}</div>
-                                    <div class="fw-bold {% if invoice.is_paid %}text-success{% else %}text-danger{% endif %}">
-                                        {% if invoice.is_paid %}{{ "تم السداد"|reshape_arabic }}{% else %}{{ "في انتظار الدفع"|reshape_arabic }}{% endif %}
-                                    </div>
-                                </td>
-                            </tr>
-                        </table>
-                    </div>
-                </td>
-            </tr>
-        </table>
+                <!-- CONTENT WRAPPER -->
+                <table width="100%">
+                    <tr>
+                        <td style="padding: 25pt 40pt;">
+                            
+                            <!-- INFO BLOCK: Customer & Payment -->
+                            <table width="100%" style="margin-bottom: 25pt;">
+                                <tr>
+                                    <td width="60%">
+                                        <div style="color: #64748b; font-size: 9pt; margin-bottom: 2pt;">{{ "إلى السيد/السادة:"|reshape_arabic }}</div>
+                                        <div style="font-size: 18pt; font-weight: bold; color: #1a1d2e; margin-bottom: 12pt;">{{ invoice.customer_name|reshape_arabic }}</div>
+                                        
+                                        <div style="color: #64748b; font-size: 9pt; margin-bottom: 2pt;">{{ "تاريخ الإصدار:"|reshape_arabic }}</div>
+                                        <div style="font-size: 11pt; font-weight: bold;">{{ invoice.date|date:"Y-m-d — H:i" }}</div>
+                                    </td>
+                                    <td width="40%">
+                                        <table bgcolor="#f8fafc" style="border: 1pt solid #e2e8f0; border-radius: 8pt; width: 100%;">
+                                            <tr>
+                                                <td style="padding: 12pt;">
+                                                    <div style="color: #64748b; font-size: 8pt; margin-bottom: 5pt;">{{ "طريقة الدفع:"|reshape_arabic }}</div>
+                                                    <table bgcolor="#1a1d2e" style="border-radius: 3pt; width: 80pt;">
+                                                        <tr>
+                                                            <td style="padding: 3pt; color: #d4a745; font-size: 9pt; text-align: center; font-weight: bold;">
+                                                                {% if invoice.payment_method == 'cash' %}{{ "نقداً"|reshape_arabic }}{% elif invoice.payment_method == 'card' %}{{ "بطاقة"|reshape_arabic }}{% else %}{{ "تحويل"|reshape_arabic }}{% endif %}
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                    
+                                                    <div style="color: #64748b; font-size: 8pt; margin-top: 10pt; margin-bottom: 2pt;">{{ "حالة الفاتورة:"|reshape_arabic }}</div>
+                                                    {% if invoice.is_paid %}
+                                                    <div style="color: #10b981; font-weight: bold; font-size: 10pt;">{{ "تم السداد"|reshape_arabic }}</div>
+                                                    {% else %}
+                                                    <div style="color: #ef4444; font-weight: bold; font-size: 10pt;">{{ "في انتظار الدفع"|reshape_arabic }}</div>
+                                                    {% endif %}
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </table>
 
-        <!-- Table -->
-        <table class="items-table" width="100%">
-            <thead>
-                <tr>
-                    <th width="40" class="text-center">#</th>
-                    <th class="text-right">{{ "المنتج والمواصفات"|reshape_arabic }}</th>
-                    <th width="60" class="text-center">{{ "الكمية"|reshape_arabic }}</th>
-                    <th width="100" class="text-center">{{ "سعر الوحدة"|reshape_arabic }}</th>
-                    <th width="120" class="text-left">{{ "الإجمالي"|reshape_arabic }}</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for item in invoice.items.all %}
-                <tr>
-                    <td class="text-center" style="color: #94a3b8;">{{ forloop.counter }}</td>
-                    <td>
-                        {% if item.product %}
-                        <div class="item-name">{{ item.product.name|reshape_arabic }}</div>
-                        <div class="item-details">{{ item.product.company.name|reshape_arabic }} — {{ item.product.density.value|reshape_arabic }}</div>
-                        {% else %}
-                        <div class="item-name text-danger">{{ "منتج محذوف من النظام"|reshape_arabic }}</div>
-                        <div class="item-details">{{ "تم حذف بيانات المنتج من النظام"|reshape_arabic }}</div>
-                        {% endif %}
-                    </td>
-                    <td class="text-center fw-bold">{{ item.quantity }}</td>
-                    <td class="text-center">
-                        <span class="price-text">{{ item.unit_price }}</span>
-                        <span class="currency-label">{{ "د.ل"|reshape_arabic }}</span>
-                    </td>
-                    <td class="text-left">
-                        <span class="item-name">{{ item.subtotal }}</span>
-                        <span class="currency-label">{{ "د.ل"|reshape_arabic }}</span>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+                            <!-- ITEMS TABLE -->
+                            <table width="100%" style="border: 1pt solid #f1f5f9; border-radius: 8pt;">
+                                <thead bgcolor="#f8fafc">
+                                    <tr>
+                                        <th width="8%" style="padding: 10pt; border-bottom: 1pt solid #f1f5f9; text-align: center; color: #64748b; font-size: 9pt;">#</th>
+                                        <th width="52%" style="padding: 10pt; border-bottom: 1pt solid #f1f5f9; text-align: right; color: #1a1d2e; font-size: 9pt;">{{ "المنتج والمواصفات"|reshape_arabic }}</th>
+                                        <th width="10%" style="padding: 10pt; border-bottom: 1pt solid #f1f5f9; text-align: center; color: #1a1d2e; font-size: 9pt;">{{ "الكمية"|reshape_arabic }}</th>
+                                        <th width="15%" style="padding: 10pt; border-bottom: 1pt solid #f1f5f9; text-align: left; color: #1a1d2e; font-size: 9pt;">{{ "سعر الوحدة"|reshape_arabic }}</th>
+                                        <th width="15%" style="padding: 10pt; border-bottom: 1pt solid #f1f5f9; text-align: left; color: #1a1d2e; font-size: 9pt;">{{ "الإجمالي"|reshape_arabic }}</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for item in invoice.items.all %}
+                                    <tr>
+                                        <td style="padding: 12pt 10pt; border-bottom: 0.5pt solid #f1f5f9; text-align: center; color: #94a3b8;">{{ forloop.counter }}</td>
+                                        <td style="padding: 12pt 10pt; border-bottom: 0.5pt solid #f1f5f9;">
+                                            {% if item.product %}
+                                            <div style="font-weight: bold; font-size: 12pt; color: #1a1d2e; margin-bottom: 2pt;">{{ item.product.name|reshape_arabic }}</div>
+                                            <div style="font-size: 9pt; color: #64748b;">{{ item.product.company.name|reshape_arabic }} — {{ item.product.density.value|reshape_arabic }}</div>
+                                            {% else %}
+                                            <div style="color: #ef4444; font-size: 10pt;">{{ "منتج محذوف"|reshape_arabic }}</div>
+                                            {% endif %}
+                                        </td>
+                                        <td style="padding: 12pt 10pt; border-bottom: 0.5pt solid #f1f5f9; text-align: center; font-weight: bold; font-size: 11pt;">{{ item.quantity }}</td>
+                                        <td style="padding: 12pt 10pt; border-bottom: 0.5pt solid #f1f5f9; text-align: left;">
+                                            {{ item.unit_price }} <span style="font-size: 7pt; color: #94a3b8;">{{ "د.ل"|reshape_arabic }}</span>
+                                        </td>
+                                        <td style="padding: 12pt 10pt; border-bottom: 0.5pt solid #f1f5f9; text-align: left; font-weight: bold; color: #1a1d2e; font-size: 12pt;">
+                                            {{ item.subtotal }} <span style="font-size: 7pt; color: #94a3b8;">{{ "د.ل"|reshape_arabic }}</span>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                                <tfoot bgcolor="#f8fafc">
+                                    <tr>
+                                        <td colspan="3" style="padding: 15pt 10pt; text-align: right; font-size: 14pt; font-weight: bold; color: #1a1d2e;">
+                                            {{ "المجموع الكلي للفاتورة:"|reshape_arabic }}
+                                        </td>
+                                        <td colspan="2" style="padding: 15pt 10pt; text-align: left; font-size: 24pt; font-weight: bold; color: #d4a745;">
+                                            {{ invoice.total_amount }} <span style="font-size: 10pt; color: #1a1d2e;">{{ "دينار ليبي"|reshape_arabic }}</span>
+                                        </td>
+                                    </tr>
+                                </tfoot>
+                            </table>
 
-        <!-- Final Total -->
-        <table width="100%" class="total-section">
-            <tr>
-                <td valign="bottom" style="opacity: 0.5; font-size: 9pt;">
-                    {{ "شكرًا لتعاملكم معنا. نأمل رؤيتكم مرة أخرى."|reshape_arabic }}
-                </td>
-                <td align="left">
-                    <div class="total-title">{{ "المجموع الكلي للفاتورة:"|reshape_arabic }}</div>
-                    <div class="total-amount">
-                        {{ invoice.total_amount }}
-                        <span style="font-size: 14pt; color: #1a1d2e;">{{ "دينار ليبي"|reshape_arabic }}</span>
-                    </div>
-                </td>
-            </tr>
-        </table>
-    </div>
+                            <!-- FOOTER NOTE -->
+                            <div style="text-align: center; margin-top: 40pt; border-top: 1pt solid #f1f5f9; padding-top: 20pt; color: #64748b; font-size: 9pt;">
+                                {{ "شكرًا لتعاملكم معنا. نأمل رؤيتكم مرة أخرى."|reshape_arabic }}
+                            </div>
 
+                        </td>
+                    </tr>
+                </table>
+
+            </td>
+        </tr>
+    </table>
 </body>
 </html>
