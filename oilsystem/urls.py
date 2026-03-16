@@ -20,7 +20,11 @@ from django.urls import path, include # type: ignore
 from django.conf import settings # type: ignore
 from django.conf.urls.static import static # type: ignore
 
+from django.urls import re_path # type: ignore
+from django.views.static import serve # type: ignore
+
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("", include("core.urls")),
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    re_path(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT}),
+]
