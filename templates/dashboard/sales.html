@@ -107,7 +107,7 @@
                         </thead>
                         <tbody>
                             {% for invoice in invoices %}
-                            <tr class="border-bottom border-light sales-row" style="cursor: pointer; transition: background 0.2s;" onclick="window.location.href='{% url 'invoice_view' invoice.id %}';" onmouseover="this.classList.add('bg-light');" onmouseout="this.classList.remove('bg-light');">
+                            <tr class="border-bottom border-light sales-row" style="cursor: pointer; transition: background 0.2s;" data-href="{% url 'invoice_view' invoice.id %}">
                                 <td class="p-4 fw-bold">
                                     <span class="text-navy text-decoration-none">#{{ invoice.id }}</span>
                                 </td>
@@ -156,6 +156,14 @@
         [dateFrom, dateTo].forEach(input => {
             input.addEventListener('change', function() {
                 if (this.value) datePreset.value = '';
+            });
+        });
+
+        // Clickable rows
+        const rows = document.querySelectorAll('.sales-row');
+        rows.forEach(row => {
+            row.addEventListener('click', function() {
+                window.location.href = this.dataset.href;
             });
         });
     });
