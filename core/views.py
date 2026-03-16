@@ -604,6 +604,11 @@ def delete_invoice(request, pk):
 @require_POST
 def add_receipt(request, invoice_id):
     invoice = get_object_or_404(Invoice, id=invoice_id)
+    
+    if invoice.payment_status == 'paid' or invoice.remaining_balance <= 0:
+        messages.error(request, "الفاتورة خالصة بالكامل. لا يمكن إصدار إيصال قبض جديد.")
+        return redirect('invoice_view', invoice_id=invoice.id)
+        
     amount_str = request.POST.get('amount')
     notes = request.POST.get('notes', '').strip()
     
