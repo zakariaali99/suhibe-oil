@@ -5,7 +5,7 @@
 {% block content %}
 <div class="row g-4">
     <!-- Products Column -->
-    <div class="col-lg-8">
+    <div class="col-lg-8 col-12">
         <div class="search-panel mb-5 p-4 rounded-4 shadow-sm"
             style="background: white; border-right: 5px solid var(--oil-gold);">
             <form action="{% url 'product_list' %}" method="get" class="row g-3">
@@ -24,9 +24,9 @@
             </form>
         </div>
 
-        <div class="row g-4">
+        <div class="row g-3 g-md-4">
             {% for product in products %}
-            <div class="col-md-6 col-xl-4">
+            <div class="col-6 col-lg-4">
                 <div class="card h-100 border-0 product-card">
                     <div class="card-body p-4 d-flex flex-column h-100">
                         <div class="d-flex justify-content-between align-items-start mb-3">
@@ -42,7 +42,7 @@
                         </p>
 
                         <div class="product-icon-container mb-3 position-relative overflow-hidden rounded-4 bg-light border d-flex align-items-center justify-content-center"
-                            style="height: 180px;">
+                            style="height: 140px;">
                             {% if product.image %}
                                 <img src="{{ product.image.url }}" alt="{{ product.name }}" class="w-100 h-100 object-fit-cover transition-transform">
                             {% else %}
@@ -142,22 +142,27 @@
 </div>
 
 <!-- Mobile Drawer/Bottom Bar -->
-{% if cart_items %}
-<div
-    class="mobile-action-bar fixed-bottom d-lg-none bg-white p-3 border-top shadow-lg animate__animated animate__slideInUp">
+<div class="mobile-action-bar fixed-bottom d-lg-none bg-white p-3 border-top shadow-lg animate__animated animate__slideInUp">
     <div class="container d-flex justify-content-between align-items-center">
         <div class="cart-info">
             <h6 class="mb-0 fw-bold text-navy">السلة: {{ cart_total_qty }} قطع</h6>
+            {% if cart_items %}
             <form action="{% url 'clear_cart' %}" method="post" class="d-inline">
                 {% csrf_token %}
                 <button type="submit" class="btn btn-link btn-sm text-danger p-0 border-0">مسح</button>
             </form>
+            {% else %}
+            <small class="text-muted">فارغة</small>
+            {% endif %}
         </div>
+        {% if cart_items %}
         <a href="{% url 'checkout' %}" class="btn btn-gold px-4">إتمام الدفع</a>
+        {% else %}
+        <button class="btn btn-light px-4" disabled>المتجر</button>
+        {% endif %}
     </div>
 </div>
-<div class="d-lg-none" style="height: 100px;"></div>
-{% endif %}
+<div class="d-lg-none" style="height: 90px;"></div>
 
 {% endblock %}
 
@@ -189,6 +194,38 @@
 
     .border-white-10 {
         border-color: rgba(255, 255, 255, 0.1) !important;
+    }
+
+    @media (max-width: 768px) {
+        .search-panel {
+            padding: 1.5rem !important;
+            margin-bottom: 2rem !important;
+        }
+        
+        .product-card .card-body {
+            padding: 0.75rem !important;
+        }
+        
+        .product-card h5 {
+            font-size: 0.9rem;
+            height: 2.4em;
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+        }
+        
+        .product-card .badge {
+            font-size: 0.7rem;
+        }
+
+        .droplet-container {
+            padding: 0.5rem !important;
+        }
+
+        .droplet-container i {
+            font-size: 1rem !important;
+        }
     }
 </style>
 {% endblock %}
