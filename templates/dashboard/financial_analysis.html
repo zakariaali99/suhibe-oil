@@ -86,7 +86,7 @@
                 <p class="h2 fw-bold text-navy mb-0">{{ net_profit|floatformat:2 }} <small class="fs-6">د.ل</small></p>
                 <div class="mt-2">
                     <span class="badge {% if margin > 0 %}bg-success{% else %}bg-danger{% endif %} rounded-pill">
-                        {{ margin }}% هامش الربح
+                        {{ margin|floatformat:2 }}% هامش الربح
                     </span>
                 </div>
             </div>
