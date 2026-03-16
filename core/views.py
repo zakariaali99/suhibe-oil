@@ -1,18 +1,24 @@
 from django.shortcuts import render, redirect, get_object_or_404  # type: ignore
 from django.contrib import messages  # type: ignore
-from django.db.models import Q, Count  # type: ignore
+from django.db.models import Q, Count, Sum, F  # type: ignore
 from django.http import HttpResponse  # type: ignore
 from django.template.loader import render_to_string  # type: ignore
 from django.views.decorators.http import require_POST  # type: ignore
-from .models import Company, Density, Product, Invoice, InvoiceItem  # type: ignore
-from decimal import Decimal, InvalidOperation
+from django.contrib.auth import login, authenticate, logout # type: ignore
+from django.contrib.auth.decorators import login_required # type: ignore
+from django.contrib.auth.forms import AuthenticationForm # type: ignore
+from .models import Company, Density, Product, Invoice, InvoiceItem, InvoiceAudit, Receipt, AuditLog  # type: ignore
+from decimal import Decimal, InvalidOperation, ROUND_HALF_UP # type: ignore
 
 # PDF generation imports
 from xhtml2pdf import pisa  # type: ignore
 import io
 import os
+import csv
 from django.conf import settings  # type: ignore
 from django.contrib.staticfiles import finders  # type: ignore
+from django.utils import timezone
+from datetime import timedelta, datetime
 
 def link_callback(uri, rel):
     """
@@ -50,9 +56,10 @@ def link_callback(uri, rel):
 
 # --- POS Views ---
 
+@login_required
 def product_list(request):
     query = request.GET.get('q', '')
-    products = Product.objects.all().select_related('company', 'density')
+    products = Product.objects.filter(is_available=True).select_related('company', 'density')
     if query:
         products = products.filter(
             Q(name__icontains=query) | 
@@ -78,8 +85,14 @@ def product_list(request):
         'query': query,
     })
 
+@login_required
 @require_POST
 def add_to_cart(request, product_id):
+    product = get_object_or_404(Product, id=product_id)
+    if not product.is_available:
+        messages.error(request, "هذا المنتج غير متوفر حالياً.")
+        return redirect('product_list')
+        
     cart = request.session.get('cart', {})
     product_id_str = str(product_id)
     cart[product_id_str] = cart.get(product_id_str, 0) + 1
@@ -87,6 +100,7 @@ def add_to_cart(request, product_id):
     messages.success(request, "تمت إضافة المنتج للعربة.")
     return redirect('product_list')
 
+@login_required
 @require_POST
 def update_cart_qty(request, product_id, action):
     cart = request.session.get('cart', {})
@@ -101,6 +115,7 @@ def update_cart_qty(request, product_id, action):
     request.session['cart'] = cart
     return redirect('product_list')
 
+@login_required
 @require_POST
 def remove_from_cart(request, product_id):
     cart = request.session.get('cart', {})
@@ -111,11 +126,13 @@ def remove_from_cart(request, product_id):
         messages.info(request, "تمت إزالة المنتج من العربة.")
     return redirect('product_list')
 
+@login_required
 @require_POST
 def clear_cart(request):
     request.session['cart'] = {}
     return redirect('product_list')
 
+@login_required
 def checkout(request):
     cart = request.session.get('cart', {})
     if not cart:
@@ -123,54 +140,93 @@ def checkout(request):
         return redirect('product_list')
     
     products_in_cart = []
+    cart_to_cleanup = []
+    
     for pid, qty in cart.items():
-        prod = get_object_or_404(Product, id=pid)
-        products_in_cart.append({'product': prod, 'quantity': qty})
+        prod = Product.objects.filter(id=pid).first()
+        if prod:
+            products_in_cart.append({'product': prod, 'quantity': qty})
+        else:
+            cart_to_cleanup.append(pid)
+            
+    if cart_to_cleanup:
+        for pid in cart_to_cleanup:
+            del cart[pid]
+        request.session['cart'] = cart
+        messages.warning(request, "تمت إزالة بعض المنتجات من العربة لأنها لم تعد متوفرة في النظام.")
 
     if request.method == 'POST':
         customer_name = request.POST.get('customer_name', '').strip()
+        customer_phone = request.POST.get('customer_phone', '').strip()
         payment_method = request.POST.get('payment_method')
-        is_paid = request.POST.get('is_paid') == 'on'
         
         if not customer_name:
             messages.error(request, "يرجى إدخال اسم العميل.")
             return render(request, 'main/checkout.html', {'products_in_cart': products_in_cart})
 
+        # Basic phone validation (09XXXXXXXX, 10 digits)
+        import re
+        if customer_phone and not re.match(r'^09[0-9]{8}$', customer_phone):
+            messages.error(request, "رقم الهاتف غير صحيح. يجب أن يبدأ بـ 09 ويتكون من 10 أرقام.")
+            return render(request, 'main/checkout.html', {
+                'products_in_cart': products_in_cart,
+                'customer_name': customer_name,
+                'customer_phone': customer_phone
+            })
+
         try:
-            # Create Invoice
+            # Create Invoice (Default status is 'pending')
             invoice = Invoice.objects.create(
                 customer_name=customer_name,
+                customer_phone=customer_phone,
                 payment_method=payment_method,
-                is_paid=is_paid
+                payment_status='pending'
             )
             
             subtotals = []
+            profits = []
+
             for item in products_in_cart:
                 pid = str(item['product'].id)
                 price_str = request.POST.get(f'price_{pid}', '0').strip()
+                cost_str = request.POST.get(f'cost_{pid}', '0').strip()
                 qty_str = request.POST.get(f'qty_{pid}', '1').strip()
                 
                 try:
                     price = Decimal(price_str) if price_str else Decimal('0.00')
+                    cost = Decimal(cost_str) if cost_str else Decimal('0.00')
                 except InvalidOperation:
                     price = Decimal('0.00')
+                    cost = Decimal('0.00')
                 
                 qty = int(qty_str) if qty_str else 0
                 
                 if qty <= 0: continue
 
-                subtotal = price * qty
-                InvoiceItem.objects.create(
+                qty_decimal = Decimal(qty)
+                subtotal = price * qty_decimal
+                profit = (price - cost) * qty_decimal
+
+                ii = InvoiceItem.objects.create(
                     invoice=invoice,
                     product=item['product'],
                     quantity=qty,
                     unit_price=price,
-                    subtotal=subtotal
+                    cost_price=cost
                 )
                 subtotals.append(subtotal)
+                profits.append(profit)
             
-            invoice.total_amount = sum(subtotals, Decimal('0.00'))
+            invoice.total_amount = sum(subtotals) if subtotals else Decimal('0.00')
+            invoice.total_profit = sum(profits) if profits else Decimal('0.00')
             invoice.save()
+
+            # Audit Log
+            InvoiceAudit.objects.create(
+                invoice=invoice,
+                action="تم إنشاء الفاتورة",
+                details=f"بواسطة العميل: {invoice.customer_name} ({invoice.customer_phone})"
+            )
             
             # Clear cart
             request.session['cart'] = {}
@@ -184,10 +240,12 @@ def checkout(request):
         'products_in_cart': products_in_cart
     })
 
+@login_required
 def invoice_view(request, invoice_id):
     invoice = get_object_or_404(Invoice, id=invoice_id)
     return render(request, 'main/invoice.html', {'invoice': invoice})
 
+@login_required
 def invoice_pdf(request, invoice_id):
     invoice = get_object_or_404(Invoice, id=invoice_id)
     html_string = render_to_string('pdf/invoice_pdf.html', {'invoice': invoice, 'STATIC_URL': settings.STATIC_URL})
@@ -209,21 +267,24 @@ def invoice_pdf(request, invoice_id):
 
 # --- Dashboard Views ---
 
+@login_required
 def dashboard(request):
     stats = {
         'companies': Company.objects.count(),
         'densities': Density.objects.count(),
         'products': Product.objects.count(),
-        'invoices': Invoice.objects.count(),
+        'invoices': Invoice.objects.filter(is_deleted=False).count(),
     }
     return render(request, 'dashboard/index.html', {'stats': stats})
 
 # Companies
+@login_required
 def manage_companies(request):
     companies = Company.objects.all().order_by('-created_at')
     return render(request, 'dashboard/companies.html', {'companies': companies})
 
 @require_POST
+@login_required
 def add_company(request):
     name = request.POST.get('name', '').strip()
     if name:
@@ -234,6 +295,7 @@ def add_company(request):
     return redirect('manage_companies')
 
 @require_POST
+@login_required
 def edit_company(request, pk):
     company = get_object_or_404(Company, pk=pk)
     name = request.POST.get('name', '').strip()
@@ -244,17 +306,33 @@ def edit_company(request, pk):
     return redirect('manage_companies')
 
 @require_POST
+@login_required
 def delete_company(request, pk):
     company = get_object_or_404(Company, pk=pk)
+    
+    # Capture product names for audit
+    product_names = list(company.products.values_list('name', flat=True))
+    details = f"حذف الشركة: {company.name}. المنتجات المتأثرة: {', '.join(product_names)}"
+    
+    AuditLog.objects.create(
+        action="حذف شركة",
+        entity_type="Company",
+        entity_id=company.id,
+        details=details,
+        user=request.user.username
+    )
+    
     company.delete()
-    messages.info(request, "تم حذف الشركة.")
+    messages.info(request, "تم حذف الشركة بنجاح.")
     return redirect('manage_companies')
 
 # Densities
+@login_required
 def manage_densities(request):
     densities = Density.objects.all().order_by('-created_at')
     return render(request, 'dashboard/densities.html', {'densities': densities})
 
+@login_required
 @require_POST
 def add_density(request):
     value = request.POST.get('value', '').strip()
@@ -266,6 +344,7 @@ def add_density(request):
     return redirect('manage_densities')
 
 @require_POST
+@login_required
 def edit_density(request, pk):
     density = get_object_or_404(Density, pk=pk)
     value = request.POST.get('value', '').strip()
@@ -276,6 +355,7 @@ def edit_density(request, pk):
     return redirect('manage_densities')
 
 @require_POST
+@login_required
 def delete_density(request, pk):
     density = get_object_or_404(Density, pk=pk)
     density.delete()
@@ -283,6 +363,7 @@ def delete_density(request, pk):
     return redirect('manage_densities')
 
 # Products
+@login_required
 def manage_products(request):
     products = Product.objects.all().select_related('company', 'density').order_by('-created_at')
     companies = Company.objects.all()
@@ -293,33 +374,53 @@ def manage_products(request):
         'densities': densities
     })
 
+@login_required
 @require_POST
 def add_product(request):
     name = request.POST.get('name', '').strip()
     company_id = request.POST.get('company_id')
     density_id = request.POST.get('density_id')
+    image = request.FILES.get('image')
+    is_available = request.POST.get('is_available') == 'on'
+    
     if name and company_id and density_id:
-        Product.objects.create(name=name, company_id=company_id, density_id=density_id)
+        company = get_object_or_404(Company, id=company_id)
+        density = get_object_or_404(Density, id=density_id)
+        
+        Product.objects.create(
+            name=name,
+            company=company,
+            density=density,
+            image=image,
+            is_available=is_available
+        )
         messages.success(request, "تمت إضافة المنتج.")
     else:
         messages.error(request, "جميع الحقول مطلوبة.")
     return redirect('manage_products')
 
 @require_POST
+@login_required
 def edit_product(request, pk):
     product = get_object_or_404(Product, pk=pk)
     name = request.POST.get('name', '').strip()
     company_id = request.POST.get('company_id')
     density_id = request.POST.get('density_id')
+    image = request.FILES.get('image')
+    
     if name and company_id and density_id:
         product.name = name
         product.company_id = company_id
         product.density_id = density_id
+        product.is_available = request.POST.get('is_available') == 'on'
+        if image:
+            product.image = image
         product.save()
         messages.success(request, "تم تحديث المنتج.")
     return redirect('manage_products')
 
 @require_POST
+@login_required
 def delete_product(request, pk):
     product = get_object_or_404(Product, pk=pk)
     product.delete()
@@ -327,21 +428,64 @@ def delete_product(request, pk):
     return redirect('manage_products')
 
 # Invoices
+@login_required
 def invoice_list(request):
     query = request.GET.get('q')
     paid_filter = request.GET.get('paid')
     method_filter = request.GET.get('method')
+    date_preset = request.GET.get('date_preset')
+    date_from = request.GET.get('date_from')
+    date_to = request.GET.get('date_to')
     
-    invoices = Invoice.objects.all().order_by('-date')
+    invoices = Invoice.objects.filter(is_deleted=False).order_by('-date')
+    
+    # Date Filtering
+    today = timezone.now().date()
+    start_date = None
+    end_date = None
+
+    if date_preset:
+        if date_preset == 'today':
+            start_date = today
+        elif date_preset == 'yesterday':
+            start_date = today - timedelta(days=1)
+            end_date = start_date
+        elif date_preset == 'last_7':
+            start_date = today - timedelta(days=7)
+        elif date_preset == 'last_30':
+            start_date = today - timedelta(days=30)
+        elif date_preset == 'this_month':
+            start_date = today.replace(day=1)
+        elif date_preset == 'last_month':
+            last_month_end = today.replace(day=1) - timedelta(days=1)
+            start_date = last_month_end.replace(day=1)
+            end_date = last_month_end
+
+    if date_from:
+        try:
+            start_date = datetime.strptime(date_from, '%Y-%m-%d').date()
+        except ValueError:
+            pass
+    if date_to:
+        try:
+            end_date = datetime.strptime(date_to, '%Y-%m-%d').date()
+        except ValueError:
+            pass
+
+    if start_date:
+        invoices = invoices.filter(date__date__gte=start_date)
+    if end_date:
+        invoices = invoices.filter(date__date__lte=end_date)
     
     if query:
         invoices = invoices.filter(
             Q(customer_name__icontains=query) |
+            Q(customer_phone__icontains=query) |
             Q(id__icontains=query.replace('#', ''))
         )
     
     if paid_filter:
-        invoices = invoices.filter(is_paid=(paid_filter == '1'))
+        invoices = invoices.filter(payment_status=paid_filter)
         
     if method_filter:
         invoices = invoices.filter(payment_method=method_filter)
@@ -350,13 +494,408 @@ def invoice_list(request):
         'invoices': invoices,
         'query': query,
         'paid_filter': paid_filter,
-        'method_filter': method_filter
+        'method_filter': method_filter,
+        'date_preset': date_preset,
+        'date_from': date_from,
+        'date_to': date_to
     })
 
+@login_required
+def edit_invoice(request, pk):
+    invoice = get_object_or_404(Invoice, pk=pk, is_deleted=False)
+    
+    if request.method == 'POST':
+        customer_name = request.POST.get('customer_name', '').strip()
+        customer_phone = request.POST.get('customer_phone', '').strip()
+        payment_method = request.POST.get('payment_method')
+        date_str = request.POST.get('date')
+        
+        if customer_name:
+            # Audit log for changes
+            changes = []
+            if invoice.customer_name != customer_name:
+                changes.append(f"اسم العميل: {invoice.customer_name} -> {customer_name}")
+            if invoice.customer_phone != customer_phone:
+                changes.append(f"رقم الهاتف: {invoice.customer_phone} -> {customer_phone}")
+            
+            invoice.customer_name = customer_name
+            invoice.customer_phone = customer_phone
+            invoice.payment_method = payment_method
+            if date_str:
+                try:
+                    invoice.date = datetime.strptime(date_str, '%Y-%m-%dT%H:%M')
+                except ValueError: pass
+            
+            # Line item editing
+            subtotals = []
+            profits = []
+            for item in invoice.items.all():
+                qty = int(request.POST.get(f'qty_{item.id}', item.quantity))
+                price = Decimal(request.POST.get(f'price_{item.id}', item.unit_price))
+                cost = Decimal(request.POST.get(f'cost_{item.id}', item.cost_price))
+                
+                if item.quantity != qty or item.unit_price != price or item.cost_price != cost:
+                    changes.append(f"منتج {item.product.name}: تعديل (السعر: {item.unit_price}->{price}, التكلفة: {item.cost_price}->{cost}, الكمية: {item.quantity}->{qty})")
+                
+                item.quantity = qty
+                item.unit_price = price
+                item.cost_price = cost
+                item.save() # Triggers re-calc in model save()
+                
+                subtotals.append(item.subtotal)
+                profits.append(item.profit)
+            
+            invoice.total_amount = sum(subtotals) or Decimal('0.00')
+            invoice.total_profit = sum(profits) or Decimal('0.00')
+            invoice.save()
+            
+            if changes:
+                InvoiceAudit.objects.create(
+                    invoice=invoice,
+                    action="تعديل بيانات الفاتورة",
+                    details=" | ".join(changes)
+                )
+            
+            messages.success(request, "تم تحديث الفاتورة والأسعار.")
+            return redirect('invoice_list')
+        else:
+            messages.error(request, "اسم العميل مطلوب.")
+            
+    return render(request, 'dashboard/edit_invoice.html', {'invoice': invoice})
+
+@login_required
 @require_POST
-def toggle_invoice_paid(request, pk):
+def delete_invoice(request, pk):
     invoice = get_object_or_404(Invoice, pk=pk)
-    invoice.is_paid = not invoice.is_paid
+    invoice.is_deleted = True
+    invoice.deleted_at = timezone.now()
+    invoice.deleted_by = request.user.username
     invoice.save()
-    messages.success(request, "تم تحديث حالة الدفع.")
+    
+    InvoiceAudit.objects.create(
+        invoice=invoice,
+        action="حذف الفاتورة",
+        details=f"تم الحذف بواسطة {request.user.username} في {invoice.deleted_at}"
+    )
+
+    AuditLog.objects.create(
+        action="حذف فاتورة",
+        entity_type="Invoice",
+        entity_id=invoice.id,
+        details=f"بواسطة {request.user.username}. عميل: {invoice.customer_name}",
+        user=request.user.username
+    )
+    
+    messages.info(request, "تم حذف الفاتورة بنجاح.")
     return redirect('invoice_list')
+
+@login_required
+@require_POST
+def add_receipt(request, invoice_id):
+    invoice = get_object_or_404(Invoice, id=invoice_id)
+    amount_str = request.POST.get('amount')
+    notes = request.POST.get('notes', '').strip()
+    
+    try:
+        amount = Decimal(amount_str)
+        if amount <= 0:
+            messages.error(request, "يجب أن يكون المبلغ أكبر من صفر.")
+        elif amount > invoice.remaining_balance:
+            messages.error(request, f"لا يمكن تجاوز المبلغ المتبقي ({invoice.remaining_balance} د.ل).")
+        else:
+            receipt = Receipt.objects.create(
+                invoice=invoice,
+                amount=amount,
+                notes=notes
+            )
+            
+            # Auto-update status
+            if invoice.remaining_balance <= 0:
+                invoice.payment_status = 'paid'
+            elif invoice.payment_status == 'pending':
+                invoice.payment_status = 'unpaid' # Transition from pending once payment starts
+            invoice.save()
+            
+            InvoiceAudit.objects.create(
+                invoice=invoice,
+                action="إصدار إيصال قبض",
+                details=f"قيمة الإيصال: {amount} د.ل | المبلغ المتبقي: {invoice.remaining_balance} د.ل"
+            )
+            
+            messages.success(request, f"تم إصدار الإيصال بنجاح. المتبقي: {invoice.remaining_balance} د.ل")
+    except (InvalidOperation, ValueError):
+        messages.error(request, "خطأ في مبلغ الإيصال.")
+        
+    return redirect('invoice_view', invoice_id=invoice.id)
+
+@login_required
+def receipt_view(request, receipt_id):
+    receipt = get_object_or_404(Receipt, id=receipt_id)
+    return render(request, 'main/receipt_print.html', {'receipt': receipt})
+
+@login_required
+@require_POST
+def cancel_receipt(request, receipt_id):
+    receipt = get_object_or_404(Receipt, id=receipt_id)
+    invoice = receipt.invoice
+    receipt.is_cancelled = True
+    receipt.save()
+    
+    # Recalculate status
+    if invoice.payment_status == 'paid' and invoice.remaining_balance > 0:
+        invoice.payment_status = 'unpaid'
+    invoice.save()
+    
+    InvoiceAudit.objects.create(
+        invoice=invoice,
+        action="إلغاء إيصال قبض",
+        details=f"تم إلغاء الإيصال رقم {receipt.id} بقيمة {receipt.amount} د.ل | المبلغ المتبقي: {invoice.remaining_balance} د.ل"
+    )
+
+    AuditLog.objects.create(
+        action="إلغاء إيصال قبض",
+        entity_type="Receipt",
+        entity_id=receipt.id,
+        details=f"إلغاء إيصال بقيمة {receipt.amount} للفاتورة #{invoice.id}",
+        user=request.user.username
+    )
+    
+    messages.info(request, "تم إلغاء الإيصال وتحديث الرصيد.")
+    return redirect('invoice_view', invoice_id=invoice.id)
+
+@login_required
+@require_POST
+def delete_receipt(request, receipt_id):
+    receipt = get_object_or_404(Receipt, id=receipt_id)
+    invoice = receipt.invoice
+    amount = receipt.amount
+    
+    InvoiceAudit.objects.create(
+        invoice=invoice,
+        action="حذف إيصال قبض نهائياً",
+        details=f"تم حذف إيصال بقيمة {amount} د.ل"
+    )
+
+    AuditLog.objects.create(
+        action="حذف إيصال قبض نهائياً",
+        entity_type="Receipt",
+        entity_id=receipt_id,
+        details=f"حذف إيصال بقيمة {amount} للفاتورة #{invoice.id}",
+        user=request.user.username
+    )
+    
+    receipt.delete()
+    
+    # Recalculate status
+    if invoice.payment_status == 'paid' and invoice.remaining_balance > 0:
+        invoice.payment_status = 'unpaid'
+    invoice.save()
+    
+    messages.success(request, "تم حذف الإيصال نهائياً وتحديث الرصيد.")
+    return redirect('invoice_view', invoice_id=invoice.id)
+
+@login_required
+def sales_view(request):
+    query = request.GET.get('q')
+    date_preset = request.GET.get('date_preset')
+    date_from = request.GET.get('date_from')
+    date_to = request.GET.get('date_to')
+    
+    invoices = Invoice.objects.filter(is_deleted=False).order_by('-date')
+    
+    # Date Filtering (same logic as invoice_list)
+    today = timezone.now().date()
+    start_date = None
+    end_date = None
+
+    if date_preset:
+        if date_preset == 'today':
+            start_date = today
+        elif date_preset == 'yesterday':
+            start_date = today - timedelta(days=1)
+            end_date = start_date
+        elif date_preset == 'last_7':
+            start_date = today - timedelta(days=7)
+        elif date_preset == 'last_30':
+            start_date = today - timedelta(days=30)
+        elif date_preset == 'this_month':
+            start_date = today.replace(day=1)
+        elif date_preset == 'last_month':
+            last_month_end = today.replace(day=1) - timedelta(days=1)
+            start_date = last_month_end.replace(day=1)
+            end_date = last_month_end
+
+    if date_from:
+        try:
+            start_date = datetime.strptime(date_from, '%Y-%m-%d').date()
+        except ValueError: pass
+    if date_to:
+        try:
+            end_date = datetime.strptime(date_to, '%Y-%m-%d').date()
+        except ValueError: pass
+
+    if start_date:
+        invoices = invoices.filter(date__date__gte=start_date)
+    if end_date:
+        invoices = invoices.filter(date__date__lte=end_date)
+    
+    if query:
+        invoices = invoices.filter(
+            Q(customer_name__icontains=query) |
+            Q(customer_phone__icontains=query) |
+            Q(id__icontains=query.replace('#', ''))
+        )
+    
+    # Financial Summary
+    total_sales = Decimal('0.00')
+    total_cost = Decimal('0.00')
+
+    for inv in invoices:
+        if inv.payment_status != 'pending':
+            total_sales += inv.total_paid
+            inv_cost = sum((item.cost_price * item.quantity) for item in inv.items.all())
+            total_cost += inv_cost
+            
+    total_profit = total_sales - total_cost
+
+    return render(request, 'dashboard/sales.html', {
+        'invoices': invoices,
+        'total_sales': total_sales,
+        'total_profit': total_profit,
+        'query': query,
+        'date_preset': date_preset,
+        'date_from': date_from,
+        'date_to': date_to,
+    })
+
+import openpyxl # type: ignore
+from openpyxl.styles import Font, Alignment, PatternFill # type: ignore
+
+@login_required
+def export_sales_csv(request):
+    invoices = Invoice.objects.filter(is_deleted=False).order_by('-date')
+    
+    workbook = openpyxl.Workbook()
+    sheet = workbook.active
+    sheet.title = "Sales Report"
+    sheet.sheet_view.rightToLeft = True # For Arabic RTL display
+
+    headers = ['رقم الفاتورة', 'العميل', 'التاريخ', 'القيمة الإجمالية', 'المبلغ المدفوع (أرباح/مبيعات)', 'طريقة الدفع', 'الحالة']
+    sheet.append(headers)
+    
+    header_fill = PatternFill(start_color="1A1D2E", end_color="1A1D2E", fill_type="solid")
+    header_font = Font(color="D4A745", bold=True)
+    
+    for col_num, cell in enumerate(sheet[1], 1):
+        cell.fill = header_fill
+        cell.font = header_font
+        cell.alignment = Alignment(horizontal='center')
+        sheet.column_dimensions[openpyxl.utils.get_column_letter(col_num)].width = 20
+    
+    for inv in invoices:
+        if inv.payment_status == 'paid':
+            status = "خالص"
+        elif inv.payment_status == 'unpaid':
+            status = "غير خالص"
+        else:
+            status = "معلقة"
+            
+        method = "نقد" if inv.payment_method == 'cash' else "بطاقة" if inv.payment_method == 'card' else "تحويل"
+        
+        row_data = [
+            f"#{inv.id}",
+            inv.customer_name,
+            inv.date.strftime('%Y-%m-%d %H:%M'),
+            float(inv.total_amount),
+            float(inv.total_paid),
+            method,
+            status
+        ]
+        sheet.append(row_data)
+
+    for row in sheet.iter_rows(min_row=2):
+        for cell in row:
+            cell.alignment = Alignment(horizontal='center')
+
+    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    filename = f'sales_report_{timezone.now().strftime("%Y%m%d")}.xlsx'
+    response['Content-Disposition'] = f'attachment; filename="{filename}"'
+    
+    workbook.save(response)
+    return response
+
+@login_required
+def financial_analysis_view(request):
+    date_from = request.GET.get('date_from')
+    date_to = request.GET.get('date_to')
+    payment_method = request.GET.get('method')
+    
+    # Base queryset for non-deleted invoices, excluding pending ones
+    invoices_base = Invoice.objects.filter(is_deleted=False).exclude(payment_status='pending')
+    
+    # Filtering
+    if date_from:
+        invoices_base = invoices_base.filter(date__date__gte=date_from)
+    if date_to:
+        invoices_base = invoices_base.filter(date__date__lte=date_to)
+    if payment_method:
+        invoices_base = invoices_base.filter(payment_method=payment_method)
+    
+    # Calculations
+    # 1. Total Expenses (Always counted for non-deleted invoices)
+    expenses_data = InvoiceItem.objects.filter(invoice__in=invoices_base).aggregate(
+        total_expenses=Sum(F('cost_price') * F('quantity'))
+    )
+    total_expenses = expenses_data['total_expenses'] or Decimal('0.00')
+    
+    # 2. Total Revenue (ALL collected cash from non-canceled receipts of non-pending invoices)
+    receipts_data = Receipt.objects.filter(invoice__in=invoices_base, is_cancelled=False).aggregate(
+        total_revenue=Sum('amount')
+    )
+    total_revenue = receipts_data['total_revenue'] or Decimal('0.00')
+    
+    # 3. Net Profit (Actual Cash Collected - Total Inventory Cost)
+    # The user defined profit as Revenue - Expenses. This prevents partially paid invoices from misrepresenting cash flow.
+    net_profit = total_revenue - total_expenses
+    
+    # 4. Profit Margin
+    margin = Decimal('0.00')
+    if total_revenue > 0:
+        margin = (net_profit / total_revenue) * 100
+    
+    # Breakdown for charts/tables
+    context = {
+        'total_revenue': total_revenue,
+        'total_expenses': total_expenses,
+        'net_profit': net_profit,
+        'margin': margin.quantize(Decimal('0.01')),
+        'date_from': date_from,
+        'date_to': date_to,
+        'payment_method': payment_method,
+    }
+    
+    return render(request, 'dashboard/financial_analysis.html', context)
+
+def login_view(request):
+    if request.user.is_authenticated:
+        return redirect('dashboard')
+    if request.method == 'POST':
+        form = AuthenticationForm(request, data=request.POST)
+        if form.is_valid():
+            username = form.cleaned_data.get('username')
+            password = form.cleaned_data.get('password')
+            user = authenticate(username=username, password=password)
+            if user is not None:
+                login(request, user)
+                return redirect('dashboard')
+            else:
+                messages.error(request, "اسم المستخدم أو كلمة المرور غير صحيحة.")
+        else:
+            messages.error(request, "اسم المستخدم أو كلمة المرور غير صحيحة.")
+    else:
+        form = AuthenticationForm()
+    return render(request, 'registration/login.html', {'form': form})
+
+def logout_view(request):
+    logout(request)
+    return redirect('login')

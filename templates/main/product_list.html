@@ -41,6 +41,18 @@
                             <i class="bi bi-building me-1"></i>{{ product.company.name }}
                         </p>
 
+                        <div class="product-icon-container mb-3 position-relative overflow-hidden rounded-4 bg-light border d-flex align-items-center justify-content-center"
+                            style="height: 180px;">
+                            {% if product.image %}
+                                <img src="{{ product.image.url }}" alt="{{ product.name }}" class="w-100 h-100 object-fit-cover transition-transform">
+                            {% else %}
+                                <i class="bi bi-droplet-half display-1 text-gold opacity-50"></i>
+                                <div class="position-absolute top-0 end-0 p-3">
+                                    <span class="badge bg-gold text-navy fw-bold shadow-sm">NEW</span>
+                                </div>
+                            {% endif %}
+                        </div>
+
                         <div class="mt-auto d-grid">
                             <form action="{% url 'add_to_cart' product.id %}" method="post">
                                 {% csrf_token %}

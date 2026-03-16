@@ -97,21 +97,21 @@
                 <div class="row g-3">
                     <div class="col-sm-6 col-md-4">
                         <a href="{% url 'manage_companies' %}"
-                            class="btn btn-outline-navy w-100 py-4 d-flex flex-column align-items-center rounded-4">
+                            class="btn bg-navy text-white w-100 py-4 d-flex flex-column align-items-center rounded-4 shadow-sm border-0">
                             <i class="bi bi-plus-circle-fill mb-2 fs-3 text-gold"></i>
                             <span>إضافة شركة</span>
                         </a>
                     </div>
                     <div class="col-sm-6 col-md-4">
                         <a href="{% url 'manage_densities' %}"
-                            class="btn btn-outline-navy w-100 py-4 d-flex flex-column align-items-center rounded-4">
+                            class="btn bg-navy text-white w-100 py-4 d-flex flex-column align-items-center rounded-4 shadow-sm border-0">
                             <i class="bi bi-plus-square-fill mb-2 fs-3 text-gold"></i>
                             <span>إضافة كثافة</span>
                         </a>
                     </div>
                     <div class="col-sm-6 col-md-4">
                         <a href="{% url 'manage_products' %}"
-                            class="btn btn-outline-navy w-100 py-4 d-flex flex-column align-items-center rounded-4">
+                            class="btn bg-navy text-white w-100 py-4 d-flex flex-column align-items-center rounded-4 shadow-sm border-0">
                             <i class="bi bi-box-fill mb-2 fs-3 text-gold"></i>
                             <span>إضافة منتج</span>
                         </a>
@@ -124,10 +124,13 @@
                 <div class="position-absolute opacity-10" style="right: -30px; bottom: -30px; font-size: 15rem;">
                     <i class="bi bi-gear"></i>
                 </div>
-                <h4 class="fw-bold mb-3 z-1">تقارير المبيعات</h4>
-                <p class="text-white-50 small z-1 mb-4">يمكنك متابعة كافة الفواتير الصادرة وتفاصيلها من خلال قسم
-                    الفواتير المختص.</p>
-                <a href="{% url 'invoice_list' %}" class="btn btn-gold mt-auto z-1 w-100">سجل الفواتير</a>
+                <h4 class="fw-bold mb-3 z-1 text-white">تقارير وتحليلات</h4>
+                <p class="text-white-50 small z-1 mb-4">تابع أداء المبيعات والأرباح اليومية، وقم بتصدير التقارير المالية لبرنامج Excel بشكلاً مفصل.</p>
+                <div class="d-grid gap-2 z-1">
+                    <a href="{% url 'sales_view' %}" class="btn btn-gold w-100 fw-bold">سجل المبيعات</a>
+                    <a href="{% url 'financial_analysis' %}" class="btn btn-outline-light w-100 fw-bold border-2">تحليل المصاريف والأرباح</a>
+                    <a href="{% url 'invoice_list' %}" class="btn btn-outline-light border-0 opacity-75 btn-sm">أرشيف الفواتير</a>
+                </div>
             </div>
         </div>
     </div>

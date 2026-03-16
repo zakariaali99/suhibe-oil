@@ -11,6 +11,14 @@ urlpatterns = [
     path('checkout/', views.checkout, name='checkout'),
     path('invoice/<int:invoice_id>/', views.invoice_view, name='invoice_view'),
     path('invoice/<int:invoice_id>/invoice.pdf', views.invoice_pdf, name='invoice_pdf'),
+    path('invoice/<int:invoice_id>/receipt/add/', views.add_receipt, name='add_receipt'),
+    path('receipt/<int:receipt_id>/', views.receipt_view, name='receipt_view'),
+    path('receipt/<int:receipt_id>/cancel/', views.cancel_receipt, name='cancel_receipt'),
+    path('receipt/<int:receipt_id>/delete/', views.delete_receipt, name='delete_receipt'),
+
+    # Authentication
+    path('login/', views.login_view, name='login'),
+    path('logout/', views.logout_view, name='logout'),
 
     # Dashboard
     path('manage/', views.dashboard, name='dashboard'),
@@ -31,5 +39,10 @@ urlpatterns = [
     path('manage/products/delete/<int:pk>/', views.delete_product, name='delete_product'),
     
     path('manage/invoices/', views.invoice_list, name='invoice_list'),
-    path('manage/invoices/<int:pk>/toggle-paid/', views.toggle_invoice_paid, name='toggle_invoice_paid'),
+    path('manage/invoices/<int:pk>/edit/', views.edit_invoice, name='edit_invoice'),
+    path('manage/invoices/<int:pk>/delete/', views.delete_invoice, name='delete_invoice'),
+    
+    path('manage/sales/', views.sales_view, name='sales_view'),
+    path('manage/financial-analysis/', views.financial_analysis_view, name='financial_analysis'),
+    path('manage/sales/export/', views.export_sales_csv, name='export_sales_csv'),
 ]

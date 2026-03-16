@@ -1,0 +1,174 @@
+{% extends 'base.html' %}
+
+{% block title %}تعديل فاتورة #{{ invoice.id }} - نظام الزيوت{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-10">
+        <div class="d-flex align-items-center justify-content-between mb-4">
+            <div>
+                <h2 class="fw-bold text-navy mb-1"><i class="bi bi-pencil-square me-3 text-gold"></i>تعديل الفاتورة #{{ invoice.id }}</h2>
+                <p class="text-muted small mb-0">تحديث بيانات العميل، حالة الدفع، أو التاريخ</p>
+            </div>
+            <a href="{% url 'invoice_list' %}" class="btn btn-outline-secondary btn-sm rounded-pill px-3">إلغاء والعودة</a>
+        </div>
+
+        <div class="row g-4">
+            <!-- Edit Form -->
+            <div class="col-12">
+                <div class="card border-0 shadow-sm rounded-4 p-4 mb-4">
+                    <form method="post" id="editInvoiceForm">
+                        {% csrf_token %}
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-4">
+                                <label class="form-label fw-bold text-navy small">اسم العميل</label>
+                                <input type="text" name="customer_name" class="form-control form-control-lg border-2" 
+                                    value="{{ invoice.customer_name }}" required style="border-radius: 12px;">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label fw-bold text-navy small">رقم الهاتف</label>
+                                <input type="tel" name="customer_phone" class="form-control form-control-lg border-2" 
+                                    value="{{ invoice.customer_phone }}" placeholder="09XXXXXXXX" pattern="09[0-9]{8}" maxlength="10" style="border-radius: 12px;">
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label fw-bold text-navy small">طريقة الدفع</label>
+                                <select name="payment_method" class="form-select form-control-lg border-2" style="border-radius: 12px;">
+                                    <option value="cash" {% if invoice.payment_method == 'cash' %}selected{% endif %}>نقد</option>
+                                    <option value="card" {% if invoice.payment_method == 'card' %}selected{% endif %}>بطاقة</option>
+                                    <option value="transfer" {% if invoice.payment_method == 'transfer' %}selected{% endif %}>تحويل</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label fw-bold text-navy small">التاريخ</label>
+                                <input type="datetime-local" name="date" class="form-control form-control-lg border-2" 
+                                    value="{{ invoice.date|date:'Y-m-d\TH:i' }}" style="border-radius: 12px;">
+                            </div>
+                        </div>
+
+                        <div class="alert alert-info py-2 small border-0 shadow-sm rounded-3 mb-4">
+                            <i class="bi bi-info-circle-fill me-2"></i>
+                            ملاحظة: حالة الفاتورة الحالية هي 
+                            <span class="badge {% if invoice.payment_status == 'paid' %}bg-success{% elif invoice.payment_status == 'pending' %}bg-warning{% else %}bg-danger{% endif %} mx-1">
+                                {{ invoice.get_payment_status_display }}
+                            </span>
+                            . يتم تحديث الحالة تلقائياً عبر إيصالات القبض.
+                        </div>
+
+                        <h6 class="fw-bold text-navy mb-3"><i class="bi bi-list-ul me-2"></i>تعديل المنتجات والأسعار</h6>
+                        <div class="table-responsive rounded-3 border mb-4">
+                            <table class="table table-hover align-middle mb-0">
+                                <thead class="bg-light small fw-bold text-navy">
+                                    <tr>
+                                        <th class="p-3">المنتج</th>
+                                        <th class="text-center">الكمية</th>
+                                        <th class="text-center">سعر الشراء (د.ل)</th>
+                                        <th class="text-center">سعر البيع (د.ل)</th>
+                                        <th class="text-end p-3">الإجمالي</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for item in invoice.items.all %}
+                                    <tr class="item-row">
+                                        <td class="p-3">
+                                            <div class="fw-bold">{{ item.product.name }}</div>
+                                            <div class="text-muted extra-small">{{ item.product.company.name }}</div>
+                                        </td>
+                                        <td style="width: 100px;">
+                                            <input type="number" name="qty_{{ item.id }}" value="{{ item.quantity }}" min="1" 
+                                                class="form-control form-control-sm text-center qty-input fw-bold border-0 bg-light">
+                                        </td>
+                                        <td style="width: 130px;">
+                                            <input type="number" step="0.01" name="cost_{{ item.id }}" value="{{ item.cost_price }}" 
+                                                class="form-control form-control-sm text-center cost-input border-0 bg-light">
+                                        </td>
+                                        <td style="width: 130px;">
+                                            <input type="number" step="0.01" name="price_{{ item.id }}" value="{{ item.unit_price }}" 
+                                                class="form-control form-control-sm text-center price-input fw-bold border-0 bg-white shadow-sm">
+                                        </td>
+                                        <td class="text-end p-3 fw-bold text-navy row-total">{{ item.subtotal }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                                <tfoot class="bg-light fw-bold">
+                                    <tr>
+                                        <td colspan="4" class="p-3 text-start">إجمالي الفاتورة الجديد:</td>
+                                        <td class="text-end p-3 text-navy fs-5" id="finalTotal">{{ invoice.total_amount }} د.ل</td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center mt-4">
+                            <button type="submit" class="btn btn-gold px-5 py-3 fw-bold rounded-pill shadow">حفظ كافة التغييرات والأسعار</button>
+                            <a href="{% url 'invoice_list' %}" class="btn btn-light rounded-pill px-4">إلغاء وتجاهل</a>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Audit Log (Moved to full width bottom) -->
+                <div class="card border-0 shadow-sm rounded-4 p-4 bg-white">
+                    <h6 class="fw-bold text-navy mb-4 border-bottom pb-2"><i class="bi bi-journal-text me-2 text-gold"></i>سجل التغييرات الكامل (Audit Trail)</h6>
+                    <div class="audit-log small" style="max-height: 400px; overflow-y: auto;">
+                        {% for log in invoice.audit_logs.all|dictsortreversed:"timestamp" %}
+                        <div class="audit-item border-start border-gold border-3 ps-3 mb-4">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="fw-bold text-navy fs-6">{{ log.action }}</span>
+                                <span class="text-muted px-2 bg-light rounded" style="font-size: 0.7rem;">{{ log.timestamp|date:"Y-m-d H:i" }}</span>
+                            </div>
+                            {% if log.details %}
+                            <div class="mt-2 text-secondary bg-light p-2 rounded-3" style="font-size: 0.8rem; line-height: 1.5;">
+                                {{ log.details|linebreaksbr }}
+                            </div>
+                            {% endif %}
+                        </div>
+                        {% empty %}
+                        <p class="text-muted text-center py-4">لا توجد سجلات تغييرات بعد</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const rows = document.querySelectorAll('.item-row');
+        const finalTotalDisplay = document.getElementById('finalTotal');
+
+        function calculateTotal() {
+            let finalTotal = 0;
+            rows.forEach(row => {
+                const qtyInput = row.querySelector('.qty-input');
+                const priceInput = row.querySelector('.price-input');
+                const rowTotalDisplay = row.querySelector('.row-total');
+
+                const qty = parseFloat(qtyInput.value) || 0;
+                const price = parseFloat(priceInput.value) || 0;
+                const subtotal = qty * price;
+
+                rowTotalDisplay.textContent = subtotal.toFixed(2);
+                finalTotal += subtotal;
+            });
+            finalTotalDisplay.textContent = finalTotal.toFixed(2) + ' د.ل';
+        }
+
+        document.querySelectorAll('.qty-input, .price-input').forEach(input => {
+            input.addEventListener('input', calculateTotal);
+        });
+    });
+</script>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .border-2 { border-width: 2px !important; }
+    .form-control:focus, .form-select:focus {
+        border-color: var(--oil-gold);
+        box-shadow: none;
+    }
+    .audit-item:last-child { margin-bottom: 0 !important; }
+</style>
+{% endblock %}

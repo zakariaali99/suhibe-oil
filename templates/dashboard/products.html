@@ -13,63 +13,17 @@
                 <h2 class="fw-bold text-navy mb-1"><i class="bi bi-box-seam me-3 text-gold"></i>مستودع المنتجات</h2>
                 <p class="text-muted small mb-0">إضافة وتعديل الزيوت والهيدروليكيات المتوفرة في النظام</p>
             </div>
-            <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary btn-sm rounded-pill px-3">العودة للوحة
-                الإدارة</a>
-        </div>
-    </div>
-
-    <!-- Add Product Form -->
-    <div class="col-lg-3">
-        <div class="card border-0 shadow-sm sticky-top" style="top: 100px;">
-            <div class="card-header bg-navy p-4 d-flex align-items-center">
-                <i class="bi bi-box-fill text-gold fs-4 me-3"></i>
-                <h5 class="mb-0 text-white fw-bold text-nowrap">إضافة منتج</h5>
-            </div>
-            <div class="card-body p-4">
-                {% if companies and densities %}
-                <form action="{% url 'add_product' %}" method="post">
-                    {% csrf_token %}
-                    <div class="mb-3">
-                        <label class="form-label fw-bold text-navy small">اسم المنتج</label>
-                        <input type="text" name="name" class="form-control border-2 bg-light bg-opacity-50"
-                            placeholder="مثلاً: Edge, Magnatec" required style="border-radius: 12px;">
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label fw-bold text-navy small">الشركة المصنعة</label>
-                        <select name="company_id" class="form-select border-2 bg-light bg-opacity-50 py-2" required
-                            style="border-radius: 12px;">
-                            {% for company in companies %}
-                            <option value="{{ company.id }}">{{ company.name }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <div class="mb-4">
-                        <label class="form-label fw-bold text-navy small">درجة الكثافة</label>
-                        <select name="density_id" class="form-select border-2 bg-light bg-opacity-50 py-2" required
-                            style="border-radius: 12px;">
-                            {% for density in densities %}
-                            <option value="{{ density.id }}">{{ density.value }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <button type="submit" class="btn btn-gold w-100 py-3 shadow-sm">حفظ المنتج</button>
-                </form>
-                {% else %}
-                <div class="text-center p-3 rounded-4 bg-warning bg-opacity-10 border border-warning border-opacity-25">
-                    <i class="bi bi-exclamation-triangle text-warning fs-3 mb-2 d-block"></i>
-                    <p class="small text-muted mb-3">يجب إضافة شركة واحدة وكثافة واحدة على الأقل قبل إضافة المنتجات.</p>
-                    <div class="d-grid gap-2">
-                        <a href="{% url 'manage_companies' %}" class="btn btn-primary btn-sm rounded-3">إضافة شركة</a>
-                        <a href="{% url 'manage_densities' %}" class="btn btn-primary btn-sm rounded-3">إضافة كثافة</a>
-                    </div>
-                </div>
-                {% endif %}
+            <div class="d-flex gap-2">
+                <button class="btn btn-navy btn-sm rounded-pill px-3 shadow-sm" data-bs-toggle="modal" data-bs-target="#addProductModal">
+                    <i class="bi bi-plus-lg me-1"></i>إضافة منتج
+                </button>
+                <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary btn-sm rounded-pill px-3">العودة للوحة الإدارة</a>
             </div>
         </div>
     </div>
 
-    <!-- Products List -->
-    <div class="col-lg-9">
+    <!-- Products List (Full Width) -->
+    <div class="col-12">
         <div class="card border-0 shadow-sm overflow-hidden">
             <div class="card-header bg-white p-4 border-bottom d-flex justify-content-between align-items-center">
                 <h5 class="mb-0 fw-bold text-navy">قائمة الزيوت المسجلة</h5>
@@ -90,9 +44,13 @@
                             <tr class="border-bottom border-light">
                                 <td class="p-4">
                                     <div class="d-flex align-items-center">
-                                        <div class="product-icon me-3 bg-navy text-gold rounded-3 d-flex align-items-center justify-content-center fw-bold"
+                                        <div class="product-icon me-3 bg-navy text-gold rounded-3 d-flex align-items-center justify-content-center fw-bold overflow-hidden"
                                             style="width: 48px; height: 48px;">
-                                            <i class="bi bi-droplet-fill"></i>
+                                            {% if product.image %}
+                                                <img src="{{ product.image.url }}" alt="{{ product.name }}" class="w-100 h-100 object-fit-cover">
+                                            {% else %}
+                                                <i class="bi bi-droplet-fill"></i>
+                                            {% endif %}
                                         </div>
                                         <div>
                                             <div class="h6 mb-0 fw-bold text-navy">{{ product.name }}</div>
@@ -138,12 +96,77 @@
 
 <!-- Modal Section at Bottom -->
 <div class="modals-container">
+    <!-- Add Modal -->
+    <div class="modal fade" id="addProductModal" tabindex="-1" aria-labelledby="addProductModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+                <form action="{% url 'add_product' %}" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="modal-header bg-navy p-4">
+                        <h5 class="modal-title fw-bold text-gold" id="addProductModalLabel">إضافة منتج جديد</h5>
+                        <button type="button" class="btn-close btn-close-white ms-0 me-auto" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body p-4 text-end bg-white">
+                        {% if companies and densities %}
+                        <div class="mb-3">
+                            <label class="form-label fw-bold text-navy small mb-2">اسم المنتج</label>
+                            <input type="text" name="name" class="form-control form-control-lg border-2 bg-light bg-opacity-50" placeholder="مثلاً: Edge, Magnatec..." required autofocus style="border-radius: 12px;">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold text-navy small mb-2">الشركة المصنعة</label>
+                            <select name="company_id" class="form-select border-2 bg-light bg-opacity-50 py-2" required style="border-radius: 12px;">
+                                {% for company in companies %}
+                                <option value="{{ company.id }}">{{ company.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold text-navy small mb-2">درجة الكثافة</label>
+                            <select name="density_id" class="form-select border-2 bg-light bg-opacity-50 py-2" required style="border-radius: 12px;">
+                                {% for density in densities %}
+                                <option value="{{ density.id }}">{{ density.value }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold text-navy small mb-2">صورة المنتج</label>
+                            <input type="file" name="image" class="form-control border-2 bg-light bg-opacity-50" accept="image/*" style="border-radius: 12px;">
+                            <small class="text-muted mt-1 d-block">يفضل صورة مربعة، الحد الأقصى 5 ميجابايت.</small>
+                        </div>
+                        <div class="mb-0">
+                            <div class="form-check form-switch p-0 d-flex align-items-center gap-3">
+                                <label class="form-check-label fw-bold text-navy" for="is_v">حالة التوفر بالمحل</label>
+                                <input class="form-check-input ms-0" type="checkbox" id="is_v" name="is_available" checked style="width: 2.5rem; height: 1.25rem;">
+                            </div>
+                        </div>
+                        {% else %}
+                        <div class="text-center p-4">
+                            <i class="bi bi-exclamation-triangle text-warning display-4 mb-3"></i>
+                            <p class="h6 text-muted mb-4">يجب إضافة شركة واحدة وكثافة واحدة على الأقل قبل إضافة المنتجات.</p>
+                            <div class="d-grid gap-2">
+                                <a href="{% url 'manage_companies' %}" class="btn btn-navy rounded-pill">إدارة الشركات</a>
+                                <a href="{% url 'manage_densities' %}" class="btn btn-navy rounded-pill">إدارة الكثافات</a>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% if companies and densities %}
+                    <div class="modal-footer border-0 p-4 pt-0 gap-2">
+                        <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">إلغاء</button>
+                        <button type="submit" class="btn btn-gold rounded-pill px-4 shadow-sm">حفظ وإضافة</button>
+                    </div>
+                    {% endif %}
+                </form>
+            </div>
+        </div>
+    </div>
+
     {% for product in products %}
     <!-- Edit Modal -->
     <div class="modal fade" id="editModal{{ product.id }}" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
-                <form action="{% url 'edit_product' product.pk %}" method="post">
+                <form action="{% url 'edit_product' product.pk %}" method="post" enctype="multipart/form-data">
                     {% csrf_token %}
                     <div class="modal-header bg-navy p-4">
                         <h5 class="modal-title fw-bold text-gold">تعديل بيانات المنتج</h5>
@@ -169,6 +192,21 @@
                                 <option value="{{ density.id }}" {% if density.id == product.density.id %}selected{% endif %}>{{ density.value }}</option>
                                 {% endfor %}
                             </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold text-navy small mb-2">صورة المنتج</label>
+                            {% if product.image %}
+                            <div class="mb-2">
+                                <img src="{{ product.image.url }}" alt="" class="rounded-3 border" style="width: 60px; height: 60px; object-fit: cover;">
+                            </div>
+                            {% endif %}
+                            <input type="file" name="image" class="form-control border-2 bg-light bg-opacity-50" accept="image/*" style="border-radius: 12px;">
+                        </div>
+                        <div class="mb-0">
+                            <div class="form-check form-switch p-0 d-flex align-items-center gap-3">
+                                <label class="form-check-label fw-bold text-navy" for="is_v_{{ product.id }}">حالة التوفر بلمحل</label>
+                                <input class="form-check-input ms-0" type="checkbox" id="is_v_{{ product.id }}" name="is_available" {% if product.is_available %}checked{% endif %} style="width: 2.5rem; height: 1.25rem;">
+                            </div>
                         </div>
                     </div>
                     <div class="modal-footer border-0 p-4 pt-0 gap-2">

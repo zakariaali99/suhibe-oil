@@ -1,5 +1,5 @@
 from django.contrib import admin  # type: ignore
-from .models import Company, Density, Product, Invoice, InvoiceItem  # type: ignore
+from .models import Company, Density, Product, Invoice, InvoiceItem, AuditLog, Receipt, InvoiceAudit  # type: ignore
 
 @admin.register(Company)
 class CompanyAdmin(admin.ModelAdmin):
@@ -23,7 +23,21 @@ class InvoiceItemInline(admin.TabularInline):
 
 @admin.register(Invoice)
 class InvoiceAdmin(admin.ModelAdmin):
-    list_display = ('id', 'customer_name', 'date', 'total_amount', 'payment_method', 'is_paid')
-    list_filter = ('payment_method', 'is_paid', 'date')
-    search_fields = ('customer_name', 'id')
+    list_display = ('id', 'customer_name', 'customer_phone', 'date', 'total_amount', 'payment_method', 'payment_status')
+    list_filter = ('payment_method', 'payment_status', 'date', 'is_deleted')
+    search_fields = ('customer_name', 'customer_phone', 'id')
     inlines = [InvoiceItemInline]
+
+@admin.register(AuditLog)
+class AuditLogAdmin(admin.ModelAdmin):
+    list_display = ('action', 'entity_type', 'entity_id', 'user', 'timestamp')
+    list_filter = ('entity_type', 'timestamp', 'user')
+
+@admin.register(Receipt)
+class ReceiptAdmin(admin.ModelAdmin):
+    list_display = ('id', 'invoice', 'amount', 'date', 'is_cancelled')
+    list_filter = ('is_cancelled', 'date')
+
+@admin.register(InvoiceAudit)
+class InvoiceAuditAdmin(admin.ModelAdmin):
+    list_display = ('invoice', 'action', 'timestamp')

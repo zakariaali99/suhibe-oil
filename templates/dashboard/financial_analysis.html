@@ -1,0 +1,144 @@
+{% extends 'base.html' %}
+
+{% block title %}التحليل المالي - نظام الزيوت{% endblock %}
+
+{% block content %}
+<div class="row g-4 mb-4">
+    <div class="col-12">
+        <div class="d-flex align-items-center justify-content-between bg-white p-4 rounded-4 shadow-sm">
+            <div>
+                <h2 class="fw-bold text-navy mb-1"><i class="bi bi-graph-up-arrow me-3 text-gold"></i>التحليل المالي الشامل</h2>
+                <p class="text-muted small mb-0">متابعة المصاريف، الإيرادات، وصافي الأرباح بناءً على الفواتير المستلمة</p>
+            </div>
+            <div>
+                <span class="badge bg-light text-black border px-3 py-2">تحديث مباشر <i class="bi bi-clock-history ms-1"></i></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filter Bar -->
+    <div class="col-12">
+        <form method="get" class="card border-0 shadow-sm p-4 rounded-4 bg-light bg-opacity-50">
+            <div class="row g-3 align-items-end">
+                <div class="col-md-3">
+                    <label class="form-label small fw-bold text-navy">من تاريخ</label>
+                    <input type="date" name="date_from" class="form-control" value="{{ date_from }}">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label small fw-bold text-navy">إلى تاريخ</label>
+                    <input type="date" name="date_to" class="form-control" value="{{ date_to }}">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label small fw-bold text-navy">طريقة الدفع</label>
+                    <select name="method" class="form-select">
+                        <option value="">الكل</option>
+                        <option value="cash" {% if payment_method == 'cash' %}selected{% endif %}>نقداً (كاش)</option>
+                        <option value="card" {% if payment_method == 'card' %}selected{% endif %}>بطاقة</option>
+                        <option value="transfer" {% if payment_method == 'transfer' %}selected{% endif %}>تحويل</option>
+                    </select>
+                </div>
+                <div class="col-md-3 d-flex gap-2">
+                    <button type="submit" class="btn btn-navy w-100 rounded-3">
+                        <i class="bi bi-filter me-2"></i>تطبيق الفلتر
+                    </button>
+                    <a href="{% url 'financial_analysis' %}" class="btn btn-outline-secondary rounded-3">إعادة</a>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- KPI Cards -->
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm rounded-4 h-100 overflow-hidden">
+            <div class="card-body p-4 text-center">
+                <div class="p-3 bg-danger bg-opacity-10 text-danger d-inline-block rounded-circle mb-3">
+                    <i class="bi bi-cart-dash fs-2"></i>
+                </div>
+                <h6 class="text-muted fw-bold">إجمالي المصاريف</h6>
+                <p class="h2 fw-bold text-navy mb-0">{{ total_expenses|floatformat:2 }} <small class="fs-6">د.ل</small></p>
+                <small class="text-secondary mt-2 d-block">إجمالي تكاليف الشراء لجميع الفواتير</small>
+            </div>
+            <div class="bg-danger py-1"></div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm rounded-4 h-100 overflow-hidden">
+            <div class="card-body p-4 text-center">
+                <div class="p-3 bg-success bg-opacity-10 text-success d-inline-block rounded-circle mb-3">
+                    <i class="bi bi-cash-coin fs-2"></i>
+                </div>
+                <h6 class="text-muted fw-bold">إجمالي الإيرادات (المستلمة)</h6>
+                <p class="h2 fw-bold text-navy mb-0">{{ total_revenue|floatformat:2 }} <small class="fs-6">د.ل</small></p>
+                <small class="text-secondary mt-2 d-block">المبالغ المستلمة من الفواتير (خالص)</small>
+            </div>
+            <div class="bg-success py-1"></div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm rounded-4 h-100 overflow-hidden">
+            <div class="card-body p-4 text-center">
+                <div class="p-3 bg-gold bg-opacity-10 text-gold d-inline-block rounded-circle mb-3" style="color: var(--oil-gold) !important;">
+                    <i class="bi bi-trophy fs-2"></i>
+                </div>
+                <h6 class="text-muted fw-bold">صافي الأرباح</h6>
+                <p class="h2 fw-bold text-navy mb-0">{{ net_profit|floatformat:2 }} <small class="fs-6">د.ل</small></p>
+                <div class="mt-2">
+                    <span class="badge {% if margin > 0 %}bg-success{% else %}bg-danger{% endif %} rounded-pill">
+                        {{ margin }}% هامش الربح
+                    </span>
+                </div>
+            </div>
+            <div class="bg-gold py-1" style="background-color: var(--oil-gold) !important;"></div>
+        </div>
+    </div>
+
+    <!-- Analysis Breakdown -->
+    <div class="col-12 mt-2">
+        <div class="card border-0 shadow-sm rounded-4">
+            <div class="card-header bg-white p-4 border-0">
+                <h5 class="fw-bold text-navy mb-0"><i class="bi bi-info-circle me-2 text-gold"></i>تفاصيل الحساب المالي</h5>
+            </div>
+            <div class="card-body p-4 pt-0">
+                <div class="alert alert-info border-0 bg-light rounded-4 p-4">
+                    <ul class="mb-0 text-navy">
+                        <li class="mb-2"><strong>المصاريف (Expenses):</strong> يتم حسابها من مجموع (سعر الشراء × الكمية) لجميع الفواتير غير المعلّقة في النظام. الفواتير المعلّقة لا يتم احتساب إيراداتها أو مصاريفها.</li>
+                        <li class="mb-2"><strong>الإيرادات (Revenue):</strong> يتم احتسابها فقط من الفواتير التي تم سدادها بالكامل (خالص).</li>
+                        <li><strong>صافي الربح (Net Profit):</strong> يتم استخلاصه بطرح إجمالي المصاريف من إجمالي الإيرادات المحصلة.</li>
+                    </ul>
+                </div>
+                
+                <div class="row text-center mt-5">
+                    <div class="col-md-4">
+                        <div class="p-4 rounded-4 bg-light">
+                            <h4 class="fw-bold">{{ total_revenue|floatformat:2 }}</h4>
+                            <small class="text-muted">إيرادات محصلة (+)</small>
+                        </div>
+                    </div>
+                    <div class="col-md-4 d-flex align-items-center justify-content-center">
+                        <i class="bi bi-dash-lg fs-1 text-muted"></i>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="p-4 rounded-4 bg-light">
+                            <h4 class="fw-bold text-danger">{{ total_expenses|floatformat:2 }}</h4>
+                            <small class="text-muted">تكاليف بضاعة (–)</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .bg-gold {
+        background-color: var(--oil-gold) !important;
+    }
+    .text-gold {
+        color: var(--oil-gold) !important;
+    }
+</style>
+{% endblock %}
