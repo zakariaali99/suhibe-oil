@@ -142,8 +142,8 @@
 </div>
 
 <!-- Mobile Drawer/Bottom Bar -->
-<div class="mobile-action-bar fixed-bottom d-lg-none bg-white p-3 border-top shadow-lg animate__animated animate__slideInUp">
-    <div class="container d-flex justify-content-between align-items-center">
+<div class="mobile-action-bar fixed-bottom d-lg-none bg-white p-3 border-top shadow-lg" style="max-width: 100vw; overflow: hidden;">
+    <div class="d-flex justify-content-between align-items-center px-2">
         <div class="cart-info">
             <h6 class="mb-0 fw-bold text-navy">السلة: {{ cart_total_qty }} قطع</h6>
             {% if cart_items %}
