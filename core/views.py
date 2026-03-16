@@ -175,12 +175,13 @@ def checkout(request):
             })
 
         try:
-            # Create Invoice (Default status is 'pending')
+            initial_status = request.POST.get('initial_status', 'pending')
+            # Create Invoice
             invoice = Invoice.objects.create(
                 customer_name=customer_name,
                 customer_phone=customer_phone,
                 payment_method=payment_method,
-                payment_status='pending'
+                payment_status=initial_status
             )
             
             subtotals = []
@@ -219,6 +220,16 @@ def checkout(request):
             
             invoice.total_amount = sum(subtotals) if subtotals else Decimal('0.00')
             invoice.total_profit = sum(profits) if profits else Decimal('0.00')
+            
+            # Immediately add a receipt if it was fully paid at checkout
+            if initial_status == 'paid' and invoice.total_amount > 0:
+                payment_type_name = 'نقداً' if payment_method == 'cash' else 'بطاقة' if payment_method == 'card' else 'تحويل'
+                Receipt.objects.create(
+                    invoice=invoice,
+                    amount=invoice.total_amount,
+                    notes=f"دفع كامل عند الـإصدار ({payment_type_name})"
+                )
+                
             invoice.save()
 
             # Audit Log

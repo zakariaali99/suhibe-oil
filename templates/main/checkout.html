@@ -132,10 +132,10 @@
                         </div>
                     </div>
                     <div class="col-lg-5">
-                        <div class="p-4 rounded-4 bg-light border border-2 border-dashed text-center">
+                        <div class="p-4 rounded-4 bg-light border border-2 border-dashed text-center h-100 d-flex flex-column justify-content-center">
                             <p class="mb-0 fw-bold text-navy small">
                                 <i class="bi bi-info-circle-fill me-2 text-primary"></i>
-                                ملاحظة: سيتم إصدار الفاتورة بحالة <span class="text-danger">"معلّقة"</span>. يتم تأكيد الدفع لاحقاً عبر إضافة إيصالات القبض.
+                                يمكنك إصدار الفاتورة كـ <strong class="text-success">"خالصة"</strong> مباشرة، أو كـ <strong class="text-warning text-dark">"معلّقة"</strong> إذا لم يتم الدفع بعد.
                             </p>
                         </div>
                     </div>
@@ -143,13 +143,19 @@
 
                 <div class="mt-5 pt-4 border-top">
                     <div class="row g-3">
-                        <div class="col-md-8">
-                            <button type="submit" class="btn btn-gold btn-lg w-100 py-3 text-uppercase shadow-lg">إصدار
-                                الفاتورة والطباعة <i class="bi bi-file-earmark-pdf-fill ms-2"></i></button>
+                        <div class="col-md-4">
+                            <button type="submit" name="initial_status" value="paid" class="btn btn-success btn-lg w-100 py-3 shadow-sm fw-bold">
+                                الفاتورة خالصة <i class="bi bi-check-circle-fill ms-2"></i>
+                            </button>
+                        </div>
+                        <div class="col-md-4">
+                            <button type="submit" name="initial_status" value="pending" class="btn btn-warning text-dark border-0 btn-lg w-100 py-3 shadow-sm fw-bold" style="background-color: var(--oil-gold);">
+                                الفاتورة معلّقة (أجل) <i class="bi bi-clock-fill ms-2"></i>
+                            </button>
                         </div>
                         <div class="col-md-4">
                             <a href="{% url 'product_list' %}"
-                                class="btn btn-outline-secondary btn-lg w-100 py-3">إلغاء</a>
+                                class="btn btn-outline-secondary btn-lg w-100 py-3 fw-bold">إلغاء والعودة</a>
                         </div>
                     </div>
                 </div>
