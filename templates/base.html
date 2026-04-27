@@ -3,297 +3,166 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}نظام بيع الزيوت{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>{% block title %}نظام سحيبة{% endblock %}</title>
+    
     <!-- Bootstrap RTL CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.rtl.min.css">
+    
     <!-- Google Fonts: Cairo & Tajawal -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@200..1000&family=Tajawal:wght@200..900&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+    
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <style>
-        :root {
-            --oil-navy: #1a1d2e;
-            --oil-navy-light: #252838;
-            --oil-gold: #d4a745;
-            --oil-gold-hover: #b88a2d;
-            --oil-bg: #faf9f6;
-            --oil-card-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04);
-            --oil-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        html {
-            overflow-x: hidden;
-        }
-
-        body {
-            font-family: 'Cairo', 'Tajawal', sans-serif;
-            background-color: var(--oil-bg);
-            color: var(--oil-navy);
-            overflow-x: hidden;
-            letter-spacing: -0.2px;
-            max-width: 100vw;
-        }
-
-        ::selection {
-            background-color: var(--oil-gold);
-            color: white;
-        }
-
-        .navbar {
-            background: rgba(26, 29, 46, 0.98) !important;
-            backdrop-filter: blur(20px);
-            border-bottom: 3px solid var(--oil-gold);
-            padding: 1rem 0;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-            max-width: 100vw;
-        }
-
-        .navbar-brand {
-            font-weight: 800;
-            font-size: 1.6rem;
-            color: var(--oil-gold) !important;
-        }
-
-        .nav-link {
-            font-weight: 600;
-            transition: var(--oil-transition);
-        }
-
-        .nav-link:hover {
-            color: var(--oil-gold) !important;
-        }
-
-        .card {
-            border: none;
-            border-radius: 20px;
-            box-shadow: var(--oil-card-shadow);
-            transition: var(--oil-transition);
-            background: white;
-            overflow: hidden;
-        }
-
-        .card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-        }
-
-        .btn {
-            border-radius: 12px;
-            padding: 0.7rem 1.5rem;
-            font-weight: 700;
-            transition: var(--oil-transition);
-            text-transform: uppercase;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, var(--oil-navy) 0%, var(--oil-navy-light) 100%);
-            border: none;
-            color: var(--oil-gold);
-        }
-
-        .btn-primary:hover {
-            background: var(--oil-gold);
-            color: var(--oil-navy);
-            transform: scale(1.02);
-        }
-
-        .btn-gold {
-            background: linear-gradient(135deg, var(--oil-gold) 0%, #fae0a2 100%);
-            border: none;
-            color: var(--oil-navy);
-        }
-
-        .btn-gold:hover {
-            background: var(--oil-navy);
-            color: var(--oil-gold);
-            transform: scale(1.02);
-        }
-
-        .alert {
-            border-radius: 15px;
-            border: none;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            font-weight: 600;
-            z-index: 2000;
-            position: relative;
-            backdrop-filter: blur(10px);
-        }
-
-        .badge {
-            border-radius: 8px;
-            padding: 0.5em 0.8em;
-            font-weight: 700;
-        }
-
-        /* Page Transitions */
-        .fade-in {
-            animation: fadeIn 0.5s ease-in;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: var(--oil-bg);
-        }
-        ::-webkit-scrollbar-thumb {
-            background: var(--oil-navy-light);
-            border-radius: 10px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: var(--oil-gold);
-        }
-
-        .currency {
-            font-family: 'monospace';
-            font-weight: 700;
-            color: var(--oil-gold);
-        }
-
-        /* Modal Transparency Fix */
-        .modal-content {
-            background-color: #ffffff !important;
-            opacity: 1 !important;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
-            z-index: 1060 !important;
-        }
-        .modal-backdrop.show {
-            opacity: 0.7 !important;
-            backdrop-filter: blur(4px);
-        }
-        /* Optimization for Low-End / Mobile Devices */
-        @media (max-width: 768px) {
-            * {
-                backdrop-filter: none !important;
-                -webkit-backdrop-filter: none !important;
-                box-shadow: none !important;
-                transition: none !important;
-            }
-            .navbar {
-                box-shadow: 0 2px 10px rgba(0,0,0,0.1) !important;
-            }
-            .card {
-                box-shadow: 0 2px 10px rgba(0,0,0,0.05) !important;
-                transform: none !important;
-            }
-            .card:hover {
-                transform: none !important;
-            }
-            .btn:hover {
-                transform: none !important;
-            }
-        }
-    </style>
+    
+    <!-- Design System CSS -->
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    
     {% block extra_css %}{% endblock %}
 </head>
 
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark mb-5 sticky-top">
-        <div class="container">
-            <a class="navbar-brand d-flex align-items-center" href="{% url 'product_list' %}">
-                <i class="bi bi-droplet-fill me-2" style="font-size: 1.8rem;"></i>
-                <span>نظام الزيوت</span>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <a href="{% url 'product_list' %}" class="sidebar-brand">
+                <i class="bi bi-droplet-fill"></i>
+                <span>نظام سحيبة</span>
             </a>
-            <button class="navbar-toggler border-0" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar">
-                <span class="navbar-toggler-icon"></span>
-            </button>
             
-            <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasNavbar" style="background-color: var(--oil-navy);">
-                <div class="offcanvas-header border-bottom" style="border-color: rgba(212, 167, 69, 0.2) !important;">
-                    <a class="navbar-brand d-flex align-items-center mb-0" href="{% url 'product_list' %}">
-                        <i class="bi bi-droplet-fill me-2" style="font-size: 1.5rem;"></i>
-                        <span class="fs-5">نظام الزيوت</span>
-                    </a>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-                </div>
-                <div class="offcanvas-body">
-                    <ul class="navbar-nav me-auto mb-4 mb-lg-0">
-                        <li class="nav-item">
-                            <a class="nav-link px-3" href="{% url 'product_list' %}"><i class="bi bi-cart4 me-1"></i> نقطة البيع (POS)</a>
-                        </li>
-                        {% if user.is_authenticated %}
-                        <li class="nav-item">
-                            <a class="nav-link px-3" href="{% url 'invoice_list' %}"><i class="bi bi-file-earmark-text me-1"></i> إدارة الفواتير</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link px-3" href="{% url 'sales_view' %}"><i class="bi bi-graph-up me-1"></i> التقارير المالية</a>
-                        </li>
-                        {% endif %}
-                    </ul>
-                    <div class="d-flex flex-column flex-lg-row align-items-lg-center gap-3 mt-auto mt-lg-0">
-                        {% if user.is_authenticated %}
-                        <a href="{% url 'dashboard' %}"
-                            class="btn btn-outline-light btn-sm border-0 d-flex align-items-center justify-content-center py-2 py-lg-1">
-                            <i class="bi bi-grid-fill me-2 color-gold"></i>لوحة التحكم
-                        </a>
-                        <a href="{% url 'logout' %}" class="btn btn-danger btn-sm rounded-pill px-3 py-2 py-lg-1 shadow-sm w-100 w-lg-auto d-flex align-items-center justify-content-center">
-                            <i class="bi bi-box-arrow-right me-1"></i>خروج
-                        </a>
-                        {% else %}
-                        <a href="{% url 'login' %}" class="btn btn-gold btn-sm rounded-pill px-4 py-2 py-lg-1 shadow-sm fw-bold w-100 w-lg-auto text-center">
-                            <i class="bi bi-person-circle me-1"></i>تسجيل الدخول
-                        </a>
-                        {% endif %}
+            <nav class="sidebar-nav">
+                <a href="{% url 'dashboard' %}" class="nav-item-custom {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
+                    <i class="bi bi-grid-fill"></i>
+                    <span>لوحة التحكم</span>
+                </a>
+                <a href="{% url 'product_list' %}" class="nav-item-custom {% if request.resolver_match.url_name == 'product_list' %}active{% endif %}">
+                    <i class="bi bi-cart-fill"></i>
+                    <span>المتجر (POS)</span>
+                </a>
+                <a href="{% url 'manage_products' %}" class="nav-item-custom {% if request.resolver_match.url_name == 'manage_products' %}active{% endif %}">
+                    <i class="bi bi-box-seam-fill"></i>
+                    <span>المخزون</span>
+                </a>
+                <a href="{% url 'invoice_list' %}" class="nav-item-custom {% if 'invoice' in request.path %}active{% endif %}">
+                    <i class="bi bi-file-earmark-text-fill"></i>
+                    <span>الفواتير</span>
+                </a>
+                <a href="{% url 'purchase_list' %}" class="nav-item-custom {% if 'purchase' in request.path %}active{% endif %}">
+                    <i class="bi bi-wallet2"></i>
+                    <span>المشتريات</span>
+                </a>
+                <a href="{% url 'debt_list' %}" class="nav-item-custom {% if 'debt' in request.path %}active{% endif %}">
+                    <i class="bi bi-person-exclamation"></i>
+                    <span>الديون</span>
+                </a>
+                <a href="{% url 'manage_users' %}" class="nav-item-custom {% if 'user' in request.path %}active{% endif %}">
+                    <i class="bi bi-people-fill"></i>
+                    <span>المستخدمين</span>
+                </a>
+                <a href="{% url 'sales_view' %}" class="nav-item-custom {% if 'sales' in request.path or 'financial' in request.path %}active{% endif %}">
+                    <i class="bi bi-graph-up-arrow"></i>
+                    <span>التقارير</span>
+                </a>
+            </nav>
+            
+            <div class="sidebar-footer">
+                {% if user.is_authenticated %}
+                <a href="{% url 'logout' %}" class="nav-item-custom text-danger">
+                    <i class="bi bi-box-arrow-right"></i>
+                    <span>تسجيل الخروج</span>
+                </a>
+                {% endif %}
+            </div>
+        </aside>
+
+        <!-- Main Wrapper -->
+        <main class="main-wrapper">
+            <!-- Header -->
+            <header class="top-header">
+                <div class="d-flex align-items-center">
+                    <button class="mobile-toggle me-3" id="sidebarToggle">
+                        <i class="bi bi-list"></i>
+                    </button>
+                    <div class="d-none d-md-flex align-items-center bg-light rounded-pill px-3 py-1" style="width: 260px;">
+                        <i class="bi bi-search text-muted me-2" style="font-size:0.85rem;"></i>
+                        <input type="text" class="form-control border-0 bg-transparent p-0" placeholder="بحث سريع..." style="font-size:0.85rem;">
                     </div>
                 </div>
+                
+                <div class="d-flex align-items-center gap-2">
+                    <div class="d-none d-sm-block text-start">
+                        <small class="text-muted d-block" style="font-size: 0.7rem;">مرحباً،</small>
+                        <span class="fw-bold text-navy" style="font-size:0.85rem;">{{ user.username|default:"ضيف" }}</span>
+                    </div>
+                    <div class="bg-navy text-gold rounded-circle d-flex align-items-center justify-content-center fw-bold" style="width: 36px; height: 36px; font-size:0.85rem;">
+                        {{ user.username|first|upper|default:"G" }}
+                    </div>
+                </div>
+            </header>
+
+            <!-- Page Content -->
+            <div class="content-body fade-in">
+                {% if messages %}
+                <div class="mb-3">
+                    {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show shadow-sm border-0 rounded-3 py-2 px-3" role="alert" style="font-size:0.875rem;">
+                        <i class="bi bi-info-circle-fill me-2"></i>{{ message }}
+                        <button type="button" class="btn-close ms-0 me-auto" data-bs-dismiss="alert" style="font-size:0.7rem;"></button>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                {% block content %}{% endblock %}
             </div>
-        </div>
-    </nav>
+        </main>
 
-    <div class="container pb-5 fade-in">
-        {% if messages %}
-        {% for message in messages %}
-        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-            <i class="bi bi-info-circle-fill me-2"></i>{{ message }}
-            <button type="button" class="btn-close ms-0 me-auto" data-bs-dismiss="alert"></button>
-        </div>
-        {% endfor %}
-        {% endif %}
-
-        {% block content %}{% endblock %}
+        <!-- Mobile Bottom Tabs -->
+        <nav class="bottom-tabs d-lg-none">
+            <a href="{% url 'dashboard' %}" class="tab-item {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
+                <i class="bi bi-grid-fill"></i>
+                <span>الرئيسية</span>
+            </a>
+            <a href="{% url 'product_list' %}" class="tab-item {% if request.resolver_match.url_name == 'product_list' %}active{% endif %}">
+                <i class="bi bi-cart-fill"></i>
+                <span>POS</span>
+            </a>
+            <a href="{% url 'invoice_list' %}" class="tab-item {% if 'invoice' in request.path %}active{% endif %}">
+                <i class="bi bi-receipt"></i>
+                <span>فواتير</span>
+            </a>
+            <a href="{% url 'purchase_list' %}" class="tab-item {% if 'purchase' in request.path %}active{% endif %}">
+                <i class="bi bi-wallet2"></i>
+                <span>مشتريات</span>
+            </a>
+            <a href="{% url 'debt_list' %}" class="tab-item {% if 'debt' in request.path %}active{% endif %}">
+                <i class="bi bi-person-exclamation"></i>
+                <span>ديون</span>
+            </a>
+        </nav>
     </div>
 
-    <!-- Bootstrap JS -->
+    <!-- Bootstrap JS & jQuery -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     
-    <!-- Instant Navigation Prefetching & UI Feedback -->
-    <script src="//instant.page/5.2.0" type="module" integrity="sha384-jnZyxPjiipYXnSU0ygqeac2q7CVYMbh84q0uHVRRxm3jGcgO-O5+tLz36xof5/B0"></script>
+    <!-- Sidebar Toggle + Overlay -->
     <script>
-        document.addEventListener('submit', function(e) {
-            const submitBtn = e.submitter;
-            if (submitBtn && submitBtn.tagName === 'BUTTON') {
-                // Ensure button value is still sent to Django if it had one
-                if (submitBtn.name) {
-                    const hidden = document.createElement('input');
-                    hidden.type = 'hidden';
-                    hidden.name = submitBtn.name;
-                    hidden.value = submitBtn.value;
-                    e.target.appendChild(hidden);
-                }
-                
-                // Show loading state immediately to feel responsive
-                submitBtn.dataset.original = submitBtn.innerHTML;
-                submitBtn.style.pointerEvents = 'none';
-                submitBtn.classList.add('opacity-75');
-                submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span> جاري التنفيذ...';
+        document.getElementById('sidebarToggle').addEventListener('click', function() {
+            document.getElementById('sidebar').classList.toggle('show');
+        });
+        
+        document.addEventListener('click', function(e) {
+            const sidebar = document.getElementById('sidebar');
+            const toggle = document.getElementById('sidebarToggle');
+            if (window.innerWidth < 992 && 
+                sidebar.classList.contains('show') && 
+                !sidebar.contains(e.target) && 
+                !toggle.contains(e.target)) {
+                sidebar.classList.remove('show');
             }
         });
     </script>

@@ -1,0 +1,135 @@
+{% extends 'base.html' %}
+
+{% block title %}تفاصيل عملية الشراء - نظام سحيبة{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-xl-9">
+        <!-- Page Header -->
+        <div class="d-flex justify-content-between align-items-center mb-4 page-header-flex">
+            <div>
+                <h4 class="fw-bold text-navy mb-1">تفاصيل عملية الشراء <span class="num">#{{ purchase.id }}</span></h4>
+                <p class="text-muted small mb-0">سجل كامل للمنتجات والمدفوعات الخاصة بهذه العملية</p>
+            </div>
+            <div class="d-flex gap-2">
+                <a href="{% url 'purchase_list' %}" class="btn btn-outline-navy btn-sm rounded-pill px-3">
+                    <i class="bi bi-arrow-right me-1"></i>العودة للقائمة
+                </a>
+                <button onclick="window.print()" class="btn btn-light btn-sm rounded-pill px-3 d-none d-sm-block">
+                    <i class="bi bi-printer me-1"></i>طباعة
+                </button>
+            </div>
+        </div>
+
+        <!-- Info Cards -->
+        <div class="row g-3 mb-4">
+            <div class="col-md-4 col-12">
+                <div class="card-custom p-3 h-100">
+                    <label class="small text-muted fw-bold mb-2 d-block">معلومات المورد:</label>
+                    <div class="h5 fw-bold text-navy mb-1">{{ purchase.supplier_name|default:"مصروف متنوع" }}</div>
+                    <span class="badge badge-soft-primary rounded-pill">{{ purchase.get_expense_type_display }}</span>
+                </div>
+            </div>
+            <div class="col-md-4 col-12">
+                <div class="card-custom p-3 h-100">
+                    <label class="small text-muted fw-bold mb-2 d-block">التاريخ والمستخدم:</label>
+                    <div class="fw-bold text-navy mb-1 num">{{ purchase.date|date:"Y-m-d H:i" }}</div>
+                    <div class="small text-muted">بواسطة: {{ purchase.created_by|default:"System" }}</div>
+                </div>
+            </div>
+            <div class="col-md-4 col-12">
+                <div class="card-custom p-3 h-100">
+                    <label class="small text-muted fw-bold mb-2 d-block">حالة الدفع:</label>
+                    {% if purchase.payment_status == 'paid' %}
+                    <div class="h5 fw-bold text-success mb-1">خالصة تماماً</div>
+                    {% else %}
+                    <div class="h5 fw-bold text-danger mb-1">متبقي: <span class="num">{{ purchase.remaining_balance }}</span> د.ل</div>
+                    {% endif %}
+                    <div class="progress mt-2" style="height: 6px;">
+                        <div class="progress-bar bg-success" style="width: {% widthratio purchase.total_paid purchase.total_amount 100 %}%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Items Table -->
+        <div class="card-custom p-0 overflow-hidden mb-4">
+            <div class="bg-light p-3 border-bottom d-flex justify-content-between align-items-center">
+                <h6 class="mb-0 fw-bold text-navy">المنتجات المشتراة</h6>
+                <span class="badge bg-navy rounded-pill num">{{ purchase.items.count }}</span>
+            </div>
+            
+            <div class="desktop-only-table">
+                <div class="table-responsive">
+                    <table class="table table-custom align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th>المنتج</th>
+                                <th class="text-center">سعر التكلفة</th>
+                                <th class="text-center">الكمية</th>
+                                <th class="text-start">الإجمالي</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in purchase.items.all %}
+                            <tr>
+                                <td>
+                                    <div class="fw-bold text-navy">{{ item.product.name }}</div>
+                                    <div class="small text-muted">{{ item.product.company.name }}</div>
+                                </td>
+                                <td class="text-center num">{{ item.unit_cost }} د.ل</td>
+                                <td class="text-center fw-bold num">{{ item.quantity }}</td>
+                                <td class="text-start fw-bold text-navy num">{{ item.subtotal }} د.ل</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                        <tfoot class="bg-navy text-white">
+                            <tr>
+                                <td colspan="3" class="text-start py-3 fw-bold">إجمالي فاتورة الشراء:</td>
+                                <td class="text-start py-3 fw-bold text-gold h5 mb-0 num">{{ purchase.total_amount }} د.ل</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- Mobile Card List -->
+            <div class="mobile-card-list p-2 bg-light">
+                {% for item in purchase.items.all %}
+                <div class="mobile-card-item shadow-sm mb-2 p-3">
+                    <div class="mc-header border-bottom pb-2 mb-2">
+                        <div>
+                            <div class="fw-bold text-navy">{{ item.product.name }}</div>
+                            <div class="text-muted small">{{ item.product.company.name }}</div>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-between mb-1">
+                        <span class="small text-muted">التكلفة</span>
+                        <span class="num">{{ item.unit_cost }} د.ل</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-1">
+                        <span class="small text-muted">الكمية</span>
+                        <span class="fw-bold num">{{ item.quantity }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <span class="small text-navy fw-bold">الإجمالي</span>
+                        <span class="fw-bold text-navy num">{{ item.subtotal }} د.ل</span>
+                    </div>
+                </div>
+                {% endfor %}
+                <div class="p-3 bg-navy text-white rounded-3 mt-2 d-flex justify-content-between align-items-center">
+                    <span class="fw-bold">الإجمالي:</span>
+                    <span class="h5 mb-0 text-gold fw-bold num">{{ purchase.total_amount }} د.ل</span>
+                </div>
+            </div>
+        </div>
+
+        {% if purchase.notes %}
+        <div class="card-custom">
+            <label class="small text-muted fw-bold mb-1">ملاحظات:</label>
+            <p class="mb-0">{{ purchase.notes }}</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

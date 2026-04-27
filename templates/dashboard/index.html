@@ -1,171 +1,144 @@
 {% extends 'base.html' %}
 
-{% block title %}لوحة التحكم - نظام الزيوت{% endblock %}
+{% block title %}لوحة التحكم - نظام سحيبة{% endblock %}
 
 {% block content %}
 <div class="dashboard-wrapper">
-    <div class="d-flex justify-content-between align-items-center mb-5">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center page-header-flex mb-3">
         <div>
-            <h1 class="fw-bold text-navy mb-1"><i class="bi bi-speedometer2 me-3 text-gold"></i>مركز الإدارة</h1>
-            <p class="text-muted mb-0">نظرة عامة على أداء نظام مبيعات الزيوت</p>
+            <h4 class="fw-bold text-navy mb-1">مركز التحكم والتحليلات</h4>
+            <p class="text-muted small mb-0">نظرة شاملة على أداء المتجر والوضع المالي</p>
         </div>
-        <div class="d-flex gap-2">
-            <a href="{% url 'product_list' %}" class="btn btn-outline-navy"><i class="bi bi-shop me-2"></i>عرض
-                المتجر</a>
-        </div>
-    </div>
-
-    <!-- Stats Grid -->
-    <div class="row g-4 mb-5">
-        <!-- Stat Item -->
-        <div class="col-md-6 col-lg-3">
-            <div class="card h-100 border-0 stat-card" style="border-bottom: 5px solid var(--oil-navy) !important;">
-                <div class="card-body p-4">
-                    <div class="d-flex align-items-center justify-content-between mb-3">
-                        <div class="stat-icon p-3 rounded-4" style="background: rgba(26, 29, 46, 0.05); color: var(--oil-navy);">
-                            <i class="bi bi-building h3 mb-0"></i>
-                        </div>
-                        <span class="badge px-3" style="background: rgba(26, 29, 46, 0.05); color: var(--oil-navy);">الشركات</span>
-                    </div>
-                    <div class="display-5 fw-bold text-navy mb-1">{{ stats.companies }}</div>
-                    <div class="text-muted small">إجمالي العلامات التجارية المسجلة</div>
-                    <a href="{% url 'manage_companies' %}" class="stretched-link"></a>
-                </div>
-            </div>
-        </div>
-
-        <!-- Stat Item -->
-        <div class="col-md-6 col-lg-3">
-            <div class="card h-100 border-0 stat-card" style="border-bottom: 5px solid var(--oil-gold) !important;">
-                <div class="card-body p-4">
-                    <div class="d-flex align-items-center justify-content-between mb-3">
-                        <div class="stat-icon p-3 rounded-4" style="background: rgba(212, 167, 69, 0.1); color: var(--oil-gold);">
-                            <i class="bi bi-droplet h3 mb-0"></i>
-                        </div>
-                        <span class="badge px-3" style="background: rgba(212, 167, 69, 0.1); color: var(--oil-gold);">الكثافات</span>
-                    </div>
-                    <div class="display-5 fw-bold text-navy mb-1">{{ stats.densities }}</div>
-                    <div class="text-muted small">أنواع اللزوجة والكثافة المدعومة</div>
-                    <a href="{% url 'manage_densities' %}" class="stretched-link"></a>
-                </div>
-            </div>
-        </div>
-
-        <!-- Stat Item -->
-        <div class="col-md-6 col-lg-3">
-            <div class="card h-100 border-0 stat-card" style="border-bottom: 5px solid var(--oil-gold) !important;">
-                <div class="card-body p-4">
-                    <div class="d-flex align-items-center justify-content-between mb-3">
-                        <div class="stat-icon p-3 rounded-4" style="background: rgba(212, 167, 69, 0.1); color: var(--oil-gold);">
-                            <i class="bi bi-box-seam h3 mb-0"></i>
-                        </div>
-                        <span class="badge px-3" style="background: rgba(212, 167, 69, 0.1); color: var(--oil-gold);">المنتجات</span>
-                    </div>
-                    <div class="display-5 fw-bold text-navy mb-1">{{ stats.products }}</div>
-                    <div class="text-muted small">إجمالي المنتجات المتوفرة للبيع</div>
-                    <a href="{% url 'manage_products' %}" class="stretched-link"></a>
-                </div>
-            </div>
-        </div>
-
-        <!-- Stat Item -->
-        <div class="col-md-6 col-lg-3">
-            <div class="card h-100 border-0 stat-card" style="border-bottom: 5px solid var(--oil-navy) !important;">
-                <div class="card-body p-4">
-                    <div class="d-flex align-items-center justify-content-between mb-3">
-                        <div class="stat-icon p-3 rounded-4" style="background: rgba(26, 29, 46, 0.05); color: var(--oil-navy);">
-                            <i class="bi bi-file-earmark-text h3 mb-0"></i>
-                        </div>
-                        <span class="badge px-3" style="background: rgba(26, 29, 46, 0.05); color: var(--oil-navy);">الفواتير</span>
-                    </div>
-                    <div class="display-5 fw-bold text-navy mb-1">{{ stats.invoices }}</div>
-                    <div class="text-muted small">إجمالي عمليات البيع المسجلة</div>
-                    <a href="{% url 'invoice_list' %}" class="stretched_link"></a>
-                </div>
+        <div class="d-none d-md-block">
+            <div class="bg-white p-2 rounded-pill shadow-sm px-3 small fw-bold text-navy border">
+                <i class="bi bi-calendar3 me-2 text-gold"></i>{% now "l, d F Y" %}
             </div>
         </div>
     </div>
 
-    <!-- Quick Actions Row -->
-    <div class="row g-4">
+    <!-- Financial KPIs -->
+    <div class="row g-3 mb-4 kpi-grid">
+        <div class="col-6 col-lg-3">
+            <div class="card-custom p-3 bg-navy text-white h-100 position-relative overflow-hidden">
+                <div class="z-1 position-relative">
+                    <div class="small opacity-75 mb-1" style="font-size:0.75rem;">إجمالي المبيعات</div>
+                    <div class="h4 fw-bold text-gold mb-0 num">{{ stats.total_revenue }} <small class="fs-6">د.ل</small></div>
+                </div>
+                <i class="bi bi-cash-coin position-absolute end-0 bottom-0 mb-n2 me-n2 display-3 opacity-10"></i>
+            </div>
+        </div>
+        <div class="col-6 col-lg-3">
+            <div class="card-custom p-3 bg-white border-start border-4 border-gold h-100">
+                <div class="small text-muted mb-1" style="font-size:0.75rem;">صافي الأرباح</div>
+                <div class="h4 fw-bold text-navy mb-0 num">{{ stats.total_net_profit }} <small class="fs-6 text-muted">د.ل</small></div>
+                <div class="mt-1 small text-success"><i class="bi bi-graph-up-arrow me-1"></i>أداء إيجابي</div>
+            </div>
+        </div>
+        <div class="col-6 col-lg-3">
+            <div class="card-custom p-3 bg-white border-start border-4 h-100" style="border-color: #6366f1 !important;">
+                <div class="small text-muted mb-1" style="font-size:0.75rem;">قيمة المخزون</div>
+                <div class="h4 fw-bold text-navy mb-0 num">{{ stats.stock_value }} <small class="fs-6 text-muted">د.ل</small></div>
+                <div class="mt-1 small text-muted"><i class="bi bi-box-seam me-1"></i>رأس المال</div>
+            </div>
+        </div>
+        <div class="col-6 col-lg-3">
+            <div class="card-custom p-3 bg-white border-start border-4 border-danger h-100">
+                <div class="small text-muted mb-1" style="font-size:0.75rem;">ديون العملاء</div>
+                <div class="h4 fw-bold text-danger mb-0 num">{{ stats.customer_debt }} <small class="fs-6 text-muted">د.ل</small></div>
+                <div class="mt-1 small text-muted"><i class="bi bi-exclamation-triangle me-1"></i>تتطلب متابعة</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-3 mb-3">
+        <!-- Quick Actions -->
         <div class="col-lg-8">
-            <div class="card border-0 h-100 p-4 p-md-5">
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h4 class="fw-bold text-navy mb-0">إجراءات سريعة</h4>
-                    <i class="bi bi-lightning-charge-fill text-gold fs-4"></i>
-                </div>
-                <div class="row g-3">
-                    <div class="col-sm-6 col-md-4">
-                        <a href="{% url 'manage_companies' %}"
-                            class="btn bg-navy text-white w-100 py-4 d-flex flex-column align-items-center rounded-4 shadow-sm border-0">
-                            <i class="bi bi-plus-circle-fill mb-2 fs-3 text-gold"></i>
-                            <span>إضافة شركة</span>
+            <div class="card-custom p-3 h-100">
+                <h6 class="fw-bold text-navy mb-3"><i class="bi bi-grid-fill me-2 text-gold"></i>الإدارة السريعة</h6>
+                <div class="row g-2">
+                    <div class="col-4 col-md-4">
+                        <a href="{% url 'product_list' %}" class="quick-action-card text-center p-3 rounded-3 text-decoration-none d-block bg-light">
+                            <i class="bi bi-cart-plus fs-3 text-navy mb-1 d-block"></i>
+                            <span class="fw-bold text-navy" style="font-size:0.75rem;">بيع جديد</span>
                         </a>
                     </div>
-                    <div class="col-sm-6 col-md-4">
-                        <a href="{% url 'manage_densities' %}"
-                            class="btn bg-navy text-white w-100 py-4 d-flex flex-column align-items-center rounded-4 shadow-sm border-0">
-                            <i class="bi bi-plus-square-fill mb-2 fs-3 text-gold"></i>
-                            <span>إضافة كثافة</span>
+                    <div class="col-4 col-md-4">
+                        <a href="{% url 'create_purchase' %}" class="quick-action-card text-center p-3 rounded-3 text-decoration-none d-block bg-light">
+                            <i class="bi bi-plus-square fs-3 text-navy mb-1 d-block"></i>
+                            <span class="fw-bold text-navy" style="font-size:0.75rem;">مشتريات</span>
                         </a>
                     </div>
-                    <div class="col-sm-6 col-md-4">
-                        <a href="{% url 'manage_products' %}"
-                            class="btn bg-navy text-white w-100 py-4 d-flex flex-column align-items-center rounded-4 shadow-sm border-0">
-                            <i class="bi bi-box-fill mb-2 fs-3 text-gold"></i>
-                            <span>إضافة منتج</span>
+                    <div class="col-4 col-md-4">
+                        <a href="{% url 'manage_products' %}" class="quick-action-card text-center p-3 rounded-3 text-decoration-none d-block bg-light">
+                            <i class="bi bi-box-seam fs-3 text-navy mb-1 d-block"></i>
+                            <span class="fw-bold text-navy" style="font-size:0.75rem;">المنتجات</span>
+                        </a>
+                    </div>
+                    <div class="col-4 col-md-4">
+                        <a href="{% url 'debt_list' %}" class="quick-action-card text-center p-3 rounded-3 text-decoration-none d-block bg-light">
+                            <i class="bi bi-wallet2 fs-3 text-navy mb-1 d-block"></i>
+                            <span class="fw-bold text-navy" style="font-size:0.75rem;">الديون</span>
+                        </a>
+                    </div>
+                    <div class="col-4 col-md-4">
+                        <a href="{% url 'sales_view' %}" class="quick-action-card text-center p-3 rounded-3 text-decoration-none d-block bg-light">
+                            <i class="bi bi-receipt fs-3 text-navy mb-1 d-block"></i>
+                            <span class="fw-bold text-navy" style="font-size:0.75rem;">المبيعات</span>
+                        </a>
+                    </div>
+                    <div class="col-4 col-md-4">
+                        <a href="{% url 'financial_analysis' %}" class="quick-action-card text-center p-3 rounded-3 text-decoration-none d-block bg-light">
+                            <i class="bi bi-graph-up fs-3 text-navy mb-1 d-block"></i>
+                            <span class="fw-bold text-navy" style="font-size:0.75rem;">الأرباح</span>
                         </a>
                     </div>
                 </div>
             </div>
         </div>
+
+        <!-- System Summary -->
         <div class="col-lg-4">
-            <div class="card border-0 h-100 bg-navy text-gold p-4 position-relative overflow-hidden">
-                <div class="position-absolute opacity-10" style="right: -30px; bottom: -30px; font-size: 15rem;">
-                    <i class="bi bi-gear"></i>
+            <div class="card-custom p-3 h-100 bg-light">
+                <h6 class="fw-bold text-navy mb-3"><i class="bi bi-info-circle-fill me-2 text-gold"></i>حالة النظام</h6>
+                
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="small text-muted">الشركات:</span>
+                    <span class="badge bg-navy rounded-pill num">{{ stats.companies }}</span>
                 </div>
-                <h4 class="fw-bold mb-3 z-1 text-white">تقارير وتحليلات</h4>
-                <p class="text-white-50 small z-1 mb-4">تابع أداء المبيعات والأرباح اليومية، وقم بتصدير التقارير المالية لبرنامج Excel بشكلاً مفصل.</p>
-                <div class="d-grid gap-2 z-1">
-                    <a href="{% url 'sales_view' %}" class="btn btn-gold w-100 fw-bold">سجل المبيعات</a>
-                    <a href="{% url 'financial_analysis' %}" class="btn btn-outline-light w-100 fw-bold border-2">تحليل المصاريف والأرباح</a>
-                    <a href="{% url 'invoice_list' %}" class="btn btn-outline-light border-0 opacity-75 btn-sm">أرشيف الفواتير</a>
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="small text-muted">الأصناف:</span>
+                    <span class="badge bg-navy rounded-pill num">{{ stats.products }}</span>
+                </div>
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="small text-muted">الفواتير:</span>
+                    <span class="badge bg-navy rounded-pill num">{{ stats.invoices }}</span>
+                </div>
+                
+                <hr class="my-3">
+                
+                <div class="alert alert-warning border-0 rounded-3 mb-0 small py-2 px-3">
+                    <i class="bi bi-exclamation-triangle-fill me-1"></i>
+                    التزامات مالية: <strong class="num">{{ stats.company_debt }} د.ل</strong>
                 </div>
             </div>
         </div>
     </div>
 </div>
-
 {% endblock %}
 
 {% block extra_css %}
 <style>
-    .stat-card {
-        border-radius: 20px;
+    .quick-action-card {
+        transition: var(--oil-transition);
     }
-
-    .stat-card:hover {
-        transform: translateY(-5px);
+    .quick-action-card:hover {
+        background-color: var(--oil-gold) !important;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.06);
     }
-
-    .bg-navy {
-        background-color: var(--oil-navy) !important;
-    }
-
-    .text-navy {
+    .quick-action-card:hover i, .quick-action-card:hover span {
         color: var(--oil-navy) !important;
-    }
-
-    .btn-outline-navy {
-        border-color: rgba(26, 29, 46, 0.1);
-        color: var(--oil-navy);
-        background: var(--oil-bg);
-    }
-
-    .btn-outline-navy:hover {
-        border-color: var(--oil-navy);
-        background: var(--oil-navy);
-        color: var(--oil-gold);
     }
 </style>
 {% endblock %}

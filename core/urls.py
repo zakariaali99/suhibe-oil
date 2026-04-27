@@ -45,4 +45,14 @@ urlpatterns = [
     path('manage/sales/', views.sales_view, name='sales_view'),
     path('manage/financial-analysis/', views.financial_analysis_view, name='financial_analysis'),
     path('manage/sales/export/', views.export_sales_csv, name='export_sales_csv'),
+
+    # New Features
+    path('manage/purchases/', views.internal_purchase_list, name='purchase_list'),
+    path('manage/purchases/create/', views.create_internal_purchase, name='create_purchase'),
+    path('manage/purchases/<int:pk>/', views.internal_purchase_detail, name='purchase_detail'),
+    path('manage/purchases/<int:pk>/pay/', views.record_purchase_payment, name='record_purchase_payment'),
+    path('manage/debts/', views.debt_list, name='debt_list'),
+    path('manage/users/', views.manage_users, name='manage_users'),
+    path('manage/users/add/', views.add_user, name='add_user'),
+    path('manage/users/delete/<int:pk>/', views.delete_user, name='delete_user'),
 ]

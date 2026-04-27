@@ -5,10 +5,7 @@
 {% block content %}
 <div class="row g-4 align-items-start">
     <div class="col-12 mb-2">
-        <div class="d-flex align-items-center justify-content-between">
-            <div class="position-absolute opacity-10" style="right: 10px; top: -10px; font-size: 5rem; pointer-events: none;">
-                <i class="bi bi-droplet-fill"></i>
-            </div>
+        <div class="d-flex align-items-center justify-content-between page-header-flex">
             <div>
                 <h2 class="fw-bold text-navy mb-1"><i class="bi bi-building me-3 text-gold"></i>الشركات المصنعة</h2>
                 <p class="text-muted small mb-0">إضافة وتعديل بيانات الشركات والموردين</p>
@@ -17,19 +14,20 @@
                 <button class="btn btn-navy btn-sm rounded-pill px-3 shadow-sm" data-bs-toggle="modal" data-bs-target="#addCompanyModal">
                     <i class="bi bi-plus-lg me-1"></i>إضافة شركة
                 </button>
-                <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary btn-sm rounded-pill px-3">العودة للوحة الإدارة</a>
             </div>
         </div>
     </div>
 
-    <!-- Companies List (Full Width) -->
+    <!-- Companies List -->
     <div class="col-12">
-        <div class="card border-0 shadow-sm overflow-hidden">
+        <div class="card shadow-sm overflow-hidden">
             <div class="card-header bg-white p-4 border-bottom d-flex justify-content-between align-items-center">
                 <h5 class="mb-0 fw-bold text-navy">قائمة الشركات المسجلة</h5>
-                <span class="badge bg-light text-navy border px-3 py-2">{{ companies|length }} شركة</span>
+                <span class="badge bg-light text-navy border px-3 py-2 num">{{ companies|length }}</span>
             </div>
-            <div class="card-body p-0">
+            
+            <!-- Desktop Table -->
+            <div class="card-body p-0 desktop-only-table">
                 <div class="table-responsive">
                     <table class="table table-hover align-middle mb-0">
                         <thead class="bg-light text-navy small text-uppercase fw-bold">
@@ -42,7 +40,7 @@
                         <tbody>
                             {% for company in companies %}
                             <tr class="border-bottom border-light">
-                                <td class="p-4 text-muted fw-bold">#{{ company.id }}</td>
+                                <td class="p-4 text-muted fw-bold num">#{{ company.id }}</td>
                                 <td class="p-4">
                                     <div class="d-flex align-items-center">
                                         <div class="company-initial me-3 bg-navy text-gold rounded-3 d-flex align-items-center justify-content-center fw-bold"
@@ -77,6 +75,33 @@
                         </tbody>
                     </table>
                 </div>
+            </div>
+
+            <!-- Mobile Card List -->
+            <div class="mobile-card-list p-3 bg-light">
+                {% for company in companies %}
+                <div class="mobile-card-item shadow-sm">
+                    <div class="mc-header align-items-center">
+                        <div class="d-flex align-items-center">
+                            <div class="company-initial me-3 bg-navy text-gold rounded-3 d-flex align-items-center justify-content-center fw-bold"
+                                style="width: 40px; height: 40px; font-size: 1.2rem;">
+                                {{ company.name|slice:":1"|upper }}
+                            </div>
+                            <span class="h6 mb-0 fw-bold text-navy">{{ company.name }}</span>
+                        </div>
+                        <span class="badge bg-light text-navy border num">#{{ company.id }}</span>
+                    </div>
+                    <div class="mc-actions mt-3">
+                        <button class="btn btn-sm btn-outline-info rounded-pill flex-fill" data-bs-toggle="modal" data-bs-target="#editModal{{ company.id }}">تعديل</button>
+                        <button class="btn btn-sm btn-outline-danger rounded-pill flex-fill" data-bs-toggle="modal" data-bs-target="#deleteModal{{ company.id }}">حذف</button>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="text-center py-5">
+                    <div class="text-muted opacity-50 mb-3"><i class="bi bi-building-fill-exclamation display-3"></i></div>
+                    <p class="h6 text-muted">لا توجد شركات مسجلة</p>
+                </div>
+                {% endfor %}
             </div>
         </div>
     </div>
@@ -156,7 +181,7 @@
                         
                         {% if company.products.exists %}
                         <div class="text-start mb-4 p-3 bg-light rounded-3 small">
-                            <p class="fw-bold text-danger mb-2"><i class="bi bi-info-circle me-1"></i>المنتجات التي سيتم حذفها ({{ company.products.count }}):</p>
+                            <p class="fw-bold text-danger mb-2"><i class="bi bi-info-circle me-1"></i>المنتجات التي سيتم حذفها (<span class="num">{{ company.products.count }}</span>):</p>
                             <ul class="mb-0 ps-3 text-muted">
                                 {% for product in company.products.all %}
                                 <li>{{ product.name }}</li>

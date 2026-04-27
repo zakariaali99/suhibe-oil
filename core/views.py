@@ -7,8 +7,8 @@ from django.views.decorators.http import require_POST  # type: ignore
 from django.contrib.auth import login, authenticate, logout # type: ignore
 from django.contrib.auth.decorators import login_required # type: ignore
 from django.contrib.auth.forms import AuthenticationForm # type: ignore
-from .models import Company, Density, Product, Invoice, InvoiceItem, InvoiceAudit, Receipt, AuditLog  # type: ignore
-from decimal import Decimal, InvalidOperation, ROUND_HALF_UP # type: ignore
+from .models import Company, Density, Product, Invoice, InvoiceItem, InvoiceAudit, Receipt, AuditLog, InternalPurchase, InternalPurchaseItem
+from decimal import Decimal, InvalidOperation, ROUND_HALF_UP
 
 # PDF generation imports
 from xhtml2pdf import pisa  # type: ignore
@@ -59,7 +59,11 @@ def link_callback(uri, rel):
 @login_required
 def product_list(request):
     query = request.GET.get('q', '')
+    company_id = request.GET.get('company')
+    density_id = request.GET.get('density')
+    
     products = Product.objects.filter(is_available=True).select_related('company', 'density')
+    
     if query:
         products = products.filter(
             Q(name__icontains=query) | 
@@ -67,22 +71,34 @@ def product_list(request):
             Q(density__value__icontains=query)
         )
     
+    if company_id:
+        products = products.filter(company_id=company_id)
+    if density_id:
+        products = products.filter(density_id=density_id)
+    
     cart = request.session.get('cart', {})
     cart_items = []
     cart_total_qty = 0
-    for pid, qty in cart.items():
-        try:
-            prod = Product.objects.get(id=pid)
-            cart_items.append({'product': prod, 'quantity': qty})
-            cart_total_qty += qty
-        except Product.DoesNotExist:
-            continue
+    if cart:
+        cart_products = {p.id: p for p in Product.objects.filter(id__in=cart.keys())}
+        for pid, qty in cart.items():
+            prod = cart_products.get(int(pid))
+            if prod:
+                cart_items.append({'product': prod, 'quantity': qty})
+                cart_total_qty += qty
+
+    companies = Company.objects.annotate(product_count=Count('products')).filter(product_count__gt=0)
+    densities = Density.objects.annotate(product_count=Count('products')).filter(product_count__gt=0)
 
     return render(request, 'main/product_list.html', {
         'products': products,
         'cart_items': cart_items,
         'cart_total_qty': cart_total_qty,
         'query': query,
+        'selected_company': company_id,
+        'selected_density': density_id,
+        'companies': companies,
+        'densities': densities,
     })
 
 @login_required
@@ -164,7 +180,6 @@ def checkout(request):
             messages.error(request, "يرجى إدخال اسم العميل.")
             return render(request, 'main/checkout.html', {'products_in_cart': products_in_cart})
 
-        # Basic phone validation (09XXXXXXXX, 10 digits)
         import re
         if customer_phone and not re.match(r'^09[0-9]{8}$', customer_phone):
             messages.error(request, "رقم الهاتف غير صحيح. يجب أن يبدأ بـ 09 ويتكون من 10 أرقام.")
@@ -188,21 +203,16 @@ def checkout(request):
             profits = []
 
             for item in products_in_cart:
-                pid = str(item['product'].id)
-                price_str = request.POST.get(f'price_{pid}', '0').strip()
-                cost_str = request.POST.get(f'cost_{pid}', '0').strip()
-                qty_str = request.POST.get(f'qty_{pid}', '1').strip()
-                
-                try:
-                    price = Decimal(price_str) if price_str else Decimal('0.00')
-                    cost = Decimal(cost_str) if cost_str else Decimal('0.00')
-                except InvalidOperation:
-                    price = Decimal('0.00')
-                    cost = Decimal('0.00')
-                
+                prod = item['product']
+                pid = str(prod.id)
+                qty_str = request.POST.get(f'qty_{pid}', str(item['quantity'])).strip()
                 qty = int(qty_str) if qty_str else 0
                 
                 if qty <= 0: continue
+
+                # Auto-pull prices from product
+                price = prod.price
+                cost = prod.cost
 
                 qty_decimal = Decimal(qty)
                 subtotal = price * qty_decimal
@@ -210,41 +220,43 @@ def checkout(request):
 
                 ii = InvoiceItem.objects.create(
                     invoice=invoice,
-                    product=item['product'],
+                    product=prod,
                     quantity=qty,
                     unit_price=price,
                     cost_price=cost
                 )
+                
+                # Update Stock
+                prod.stock_quantity = F('stock_quantity') - qty
+                prod.save()
+                
                 subtotals.append(subtotal)
                 profits.append(profit)
             
             invoice.total_amount = sum(subtotals) if subtotals else Decimal('0.00')
             invoice.total_profit = sum(profits) if profits else Decimal('0.00')
             
-            # Immediately add a receipt if it was fully paid at checkout
             if initial_status == 'paid' and invoice.total_amount > 0:
                 payment_type_name = 'نقداً' if payment_method == 'cash' else 'بطاقة' if payment_method == 'card' else 'تحويل'
                 Receipt.objects.create(
                     invoice=invoice,
                     amount=invoice.total_amount,
-                    notes=f"دفع كامل عند الـإصدار ({payment_type_name})"
+                    notes=f"دفع كامل عند الإصدار ({payment_type_name})"
                 )
                 
             invoice.save()
 
-            # Audit Log
             InvoiceAudit.objects.create(
                 invoice=invoice,
                 action="تم إنشاء الفاتورة",
                 details=f"بواسطة العميل: {invoice.customer_name} ({invoice.customer_phone})"
             )
             
-            # Clear cart
             request.session['cart'] = {}
             return redirect('invoice_view', invoice_id=invoice.id)
             
         except (InvalidOperation, ValueError):
-            messages.error(request, "خطأ في القيم المدخلة (الأسعار أو الكميات).")
+            messages.error(request, "خطأ في القيم المدخلة.")
             return render(request, 'main/checkout.html', {'products_in_cart': products_in_cart})
 
     return render(request, 'main/checkout.html', {
@@ -280,12 +292,38 @@ def invoice_pdf(request, invoice_id):
 
 @login_required
 def dashboard(request):
+    # KPIs
+    total_revenue = Receipt.objects.filter(is_cancelled=False).aggregate(total=Sum('amount'))['total'] or Decimal('0.00')
+    total_net_profit = Invoice.objects.filter(is_deleted=False).aggregate(total=Sum('total_profit'))['total'] or Decimal('0.00')
+    
+    # Stock Value (Current Cost * Stock Qty)
+    stock_value = Product.objects.all().aggregate(
+        total=Sum(F('cost') * F('stock_quantity'))
+    )['total'] or Decimal('0.00')
+    
+    # Debts (Optimized aggregation)
+    unpaid_invoices_agg = Invoice.objects.filter(is_deleted=False).exclude(payment_status='paid')
+    total_due = unpaid_invoices_agg.aggregate(total=Sum('total_amount'))['total'] or Decimal('0.00')
+    total_received = Receipt.objects.filter(invoice__in=unpaid_invoices_agg, is_cancelled=False).aggregate(total=Sum('amount'))['total'] or Decimal('0.00')
+    customer_debt = total_due - total_received
+    
+    unpaid_purchases_agg = InternalPurchase.objects.exclude(payment_status='paid')
+    total_purch_due = unpaid_purchases_agg.aggregate(total=Sum('total_amount'))['total'] or Decimal('0.00')
+    total_purch_paid = unpaid_purchases_agg.aggregate(total=Sum('total_paid'))['total'] or Decimal('0.00')
+    company_debt = total_purch_due - total_purch_paid
+
     stats = {
         'companies': Company.objects.count(),
         'densities': Density.objects.count(),
         'products': Product.objects.count(),
         'invoices': Invoice.objects.filter(is_deleted=False).count(),
+        'total_revenue': total_revenue,
+        'total_net_profit': total_net_profit,
+        'stock_value': stock_value,
+        'customer_debt': customer_debt,
+        'company_debt': company_debt,
     }
+    
     return render(request, 'dashboard/index.html', {'stats': stats})
 
 # Companies
@@ -393,6 +431,9 @@ def add_product(request):
     density_id = request.POST.get('density_id')
     image = request.FILES.get('image')
     is_available = request.POST.get('is_available') == 'on'
+    price = request.POST.get('price', '0')
+    cost = request.POST.get('cost', '0')
+    stock_quantity = request.POST.get('stock_quantity', '0')
     
     if name and company_id and density_id:
         company = get_object_or_404(Company, id=company_id)
@@ -403,7 +444,10 @@ def add_product(request):
             company=company,
             density=density,
             image=image,
-            is_available=is_available
+            is_available=is_available,
+            price=Decimal(price or '0'),
+            cost=Decimal(cost or '0'),
+            stock_quantity=int(stock_quantity or 0),
         )
         messages.success(request, "تمت إضافة المنتج.")
     else:
@@ -418,12 +462,19 @@ def edit_product(request, pk):
     company_id = request.POST.get('company_id')
     density_id = request.POST.get('density_id')
     image = request.FILES.get('image')
+    price = request.POST.get('price', '0')
+    cost = request.POST.get('cost', '0')
+    stock_quantity = request.POST.get('stock_quantity')
     
     if name and company_id and density_id:
         product.name = name
         product.company_id = company_id
         product.density_id = density_id
         product.is_available = request.POST.get('is_available') == 'on'
+        product.price = Decimal(price or '0')
+        product.cost = Decimal(cost or '0')
+        if stock_quantity is not None:
+            product.stock_quantity = int(stock_quantity or 0)
         if image:
             product.image = image
         product.save()
@@ -447,8 +498,7 @@ def invoice_list(request):
     date_preset = request.GET.get('date_preset')
     date_from = request.GET.get('date_from')
     date_to = request.GET.get('date_to')
-    
-    invoices = Invoice.objects.filter(is_deleted=False).order_by('-date')
+    invoices = Invoice.objects.filter(is_deleted=False).select_related().prefetch_related('receipts').order_by('-date')
     
     # Date Filtering
     today = timezone.now().date()
@@ -762,15 +812,13 @@ def sales_view(request):
             Q(id__icontains=query.replace('#', ''))
         )
     
-    # Financial Summary
-    total_sales = Decimal('0.00')
+    # Financial Summary (Optimized)
+    invoices_for_calc = invoices.exclude(payment_status='pending').prefetch_related('items')
+    total_sales = Receipt.objects.filter(invoice__in=invoices_for_calc, is_cancelled=False).aggregate(total=Sum('amount'))['total'] or Decimal('0.00')
+    
     total_cost = Decimal('0.00')
-
-    for inv in invoices:
-        if inv.payment_status != 'pending':
-            total_sales += inv.total_paid
-            inv_cost = sum((item.cost_price * item.quantity) for item in inv.items.all())
-            total_cost += inv_cost
+    for inv in invoices_for_calc:
+        total_cost += sum((item.cost_price * item.quantity) for item in inv.items.all())
             
     total_profit = total_sales - total_cost
 
@@ -870,9 +918,20 @@ def financial_analysis_view(request):
     )
     total_revenue = receipts_data['total_revenue'] or Decimal('0.00')
     
-    # 3. Net Profit (Actual Cash Collected - Total Inventory Cost)
-    # The user defined profit as Revenue - Expenses. This prevents partially paid invoices from misrepresenting cash flow.
-    net_profit = total_revenue - total_expenses
+    # 3. Internal Purchases (Company & Personal Expenses)
+    purchases_base = InternalPurchase.objects.all()
+    if date_from:
+        purchases_base = purchases_base.filter(date__date__gte=date_from)
+    if date_to:
+        purchases_base = purchases_base.filter(date__date__lte=date_to)
+        
+    company_expenses = purchases_base.filter(expense_type='company').aggregate(total=Sum('total_amount'))['total'] or Decimal('0.00')
+    personal_expenses = purchases_base.filter(expense_type='personal').aggregate(total=Sum('total_amount'))['total'] or Decimal('0.00')
+
+    # 4. Net Profit (Actual Cash Collected - Inventory Cost - Company Expenses)
+    # COGS (total_expenses) is already calculated from InvoiceItems.
+    # We subtract company overhead/expenses to get the true net profit.
+    net_profit = total_revenue - total_expenses - company_expenses
     
     # 4. Profit Margin
     margin = Decimal('0.00')
@@ -883,6 +942,8 @@ def financial_analysis_view(request):
     context = {
         'total_revenue': total_revenue,
         'total_expenses': total_expenses,
+        'company_expenses': company_expenses,
+        'personal_expenses': personal_expenses,
         'net_profit': net_profit,
         'margin': margin.quantize(Decimal('0.01')),
         'date_from': date_from,
@@ -915,3 +976,183 @@ def login_view(request):
 def logout_view(request):
     logout(request)
     return redirect('login')
+
+# --- New Feature Views ---
+
+@login_required
+def internal_purchase_list(request):
+    expense_type = request.GET.get('type')
+    purchases = InternalPurchase.objects.all().prefetch_related('items__product').order_by('-date')
+    if expense_type:
+        purchases = purchases.filter(expense_type=expense_type)
+    return render(request, 'dashboard/purchases.html', {
+        'purchases': purchases,
+        'expense_type': expense_type
+    })
+
+@login_required
+def create_internal_purchase(request):
+    if request.method == 'POST':
+        supplier_name = request.POST.get('supplier_name', '').strip()
+        expense_type = request.POST.get('expense_type', 'company')
+        payment_status = request.POST.get('payment_status', 'unpaid')
+        notes = request.POST.get('notes', '').strip()
+        
+        purchase = InternalPurchase.objects.create(
+            supplier_name=supplier_name,
+            expense_type=expense_type,
+            payment_status=payment_status,
+            notes=notes,
+            created_by=request.user.username
+        )
+        
+        p_ids = request.POST.getlist('product_id')
+        qtys = request.POST.getlist('quantity')
+        costs = request.POST.getlist('unit_cost')
+        
+        total_amount = Decimal('0.00')
+        
+        for i in range(len(p_ids)):
+            if not p_ids[i] or not qtys[i] or not costs[i]: continue
+            
+            try:
+                prod = get_object_or_404(Product, id=p_ids[i])
+                qty = int(qtys[i])
+                unit_cost = Decimal(costs[i])
+                subtotal = qty * unit_cost
+                
+                InternalPurchaseItem.objects.create(
+                    purchase=purchase,
+                    product=prod,
+                    quantity=qty,
+                    unit_cost=unit_cost,
+                    subtotal=subtotal
+                )
+                
+                # Weighted Average Cost Calculation
+                old_qty = prod.stock_quantity
+                old_cost = prod.cost
+                
+                new_qty = old_qty + qty
+                if new_qty > 0:
+                    # (Old Total Cost + New Purchase Cost) / New Total Quantity
+                    new_cost = ((old_cost * Decimal(old_qty)) + (unit_cost * Decimal(qty))) / Decimal(new_qty)
+                    prod.cost = new_cost.quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
+                
+                prod.stock_quantity = new_qty
+                prod.save()
+                total_amount += subtotal
+                
+            except (ValueError, InvalidOperation):
+                continue
+        
+        purchase.total_amount = total_amount
+        if payment_status == 'paid':
+            purchase.total_paid = total_amount
+        purchase.save()
+        
+        messages.success(request, "تم تسجيل الشراء وتحديث المخزون بنجاح.")
+        return redirect('purchase_list')
+        
+    products = Product.objects.all().order_by('name')
+    return render(request, 'dashboard/create_purchase.html', {'products': products})
+
+@login_required
+def internal_purchase_detail(request, pk):
+    purchase = get_object_or_404(InternalPurchase, pk=pk)
+    return render(request, 'dashboard/purchase_detail.html', {'purchase': purchase})
+
+@login_required
+def debt_list(request):
+    # 1. Customer Debts (What others owe us)
+    unpaid_invoices = Invoice.objects.filter(is_deleted=False).exclude(payment_status='paid').prefetch_related('receipts')
+    
+    customer_map = {}
+    for inv in unpaid_invoices:
+        key = (inv.customer_name, inv.customer_phone)
+        if key not in customer_map:
+            customer_map[key] = {
+                'name': inv.customer_name, 
+                'phone': inv.customer_phone, 
+                'total_balance': Decimal('0.00'),
+                'invoice_count': 0
+            }
+        customer_map[key]['total_balance'] += inv.remaining_balance
+        customer_map[key]['invoice_count'] += 1
+        
+    # 2. Company Debts (What we owe to suppliers)
+    supplier_debts = InternalPurchase.objects.exclude(payment_status='paid').order_by('-date')
+    
+    total_customer_debt = sum(d['total_balance'] for d in customer_map.values())
+    total_company_debt = sum(p.remaining_balance for p in supplier_debts)
+    
+    return render(request, 'dashboard/debts.html', {
+        'customer_debtors': customer_map.values(),
+        'supplier_debts': supplier_debts,
+        'total_customer_debt': total_customer_debt,
+        'total_company_debt': total_company_debt
+    })
+
+@login_required
+@require_POST
+def record_purchase_payment(request, pk):
+    purchase = get_object_or_404(InternalPurchase, pk=pk)
+    amount_str = request.POST.get('amount')
+    try:
+        amount = Decimal(amount_str)
+        if amount > purchase.remaining_balance:
+            messages.error(request, "المبلغ المدفوع يتجاوز الرصيد المتبقي.")
+        else:
+            purchase.total_paid += amount
+            if purchase.remaining_balance <= 0:
+                purchase.payment_status = 'paid'
+            elif purchase.total_paid > 0:
+                purchase.payment_status = 'unpaid' # still unpaid but has progress
+            purchase.save()
+            messages.success(request, "تم تسجيل الدفعة بنجاح.")
+    except (InvalidOperation, ValueError):
+        messages.error(request, "خطأ في قيمة المبلغ.")
+    return redirect('purchase_list')
+
+from django.contrib.auth.models import User
+from django.contrib.admin.views.decorators import staff_member_required
+
+@login_required
+@staff_member_required
+def manage_users(request):
+    users = User.objects.all().order_by('-date_joined')
+    return render(request, 'dashboard/users.html', {'users': users})
+
+@login_required
+@staff_member_required
+@require_POST
+def add_user(request):
+    username = request.POST.get('username')
+    email = request.POST.get('email', '')
+    password = request.POST.get('password')
+    is_admin = request.POST.get('is_admin') == 'on'
+    
+    if User.objects.filter(username=username).exists():
+        messages.error(request, "اسم المستخدم موجود مسبقاً.")
+    else:
+        user = User.objects.create_user(username=username, email=email, password=password)
+        if is_admin:
+            user.is_staff = True
+            user.is_superuser = True
+        user.save()
+        messages.success(request, f"تم إضافة المستخدم {username} بنجاح.")
+    
+    return redirect('manage_users')
+
+@login_required
+@staff_member_required
+@require_POST
+def delete_user(request, pk):
+    user_to_delete = get_object_or_404(User, pk=pk)
+    if user_to_delete == request.user:
+        messages.error(request, "لا يمكنك حذف حسابك الحالي.")
+    else:
+        username = user_to_delete.username
+        user_to_delete.delete()
+        messages.success(request, f"تم حذف المستخدم {username} بنجاح.")
+    return redirect('manage_users')

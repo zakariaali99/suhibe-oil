@@ -1,0 +1,179 @@
+{% extends 'base.html' %}
+
+{% block title %}المشتريات - نظام سحيبة{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center page-header-flex mb-3">
+    <div>
+        <h4 class="fw-bold text-navy mb-1"><i class="bi bi-wallet2 me-2 text-gold"></i>المشتريات والمصاريف</h4>
+        <p class="text-muted small mb-0">إدارة مشتريات المخزون والمصاريف التشغيلية</p>
+    </div>
+    <a href="{% url 'create_purchase' %}" class="btn btn-navy rounded-pill px-3 shadow-sm">
+        <i class="bi bi-plus-lg me-1"></i>شراء جديد
+    </a>
+</div>
+
+<!-- Filter Chips -->
+<div class="d-flex gap-2 mb-3 overflow-x-auto pb-1 custom-scrollbar">
+    <a href="{% url 'purchase_list' %}" class="btn btn-sm {% if not expense_type %}btn-navy{% else %}btn-outline-navy{% endif %} rounded-pill px-3 text-nowrap">الكل</a>
+    <a href="?type=company" class="btn btn-sm {% if expense_type == 'company' %}btn-navy{% else %}btn-outline-navy{% endif %} rounded-pill px-3 text-nowrap">مصاريف الشركة</a>
+    <a href="?type=personal" class="btn btn-sm {% if expense_type == 'personal' %}btn-navy{% else %}btn-outline-navy{% endif %} rounded-pill px-3 text-nowrap">مصاريف شخصية</a>
+</div>
+
+<!-- Desktop Table -->
+<div class="card-custom p-0 overflow-hidden desktop-only-table">
+    <div class="table-responsive">
+        <table class="table table-custom align-middle mb-0">
+            <thead>
+                <tr>
+                    <th>التاريخ</th>
+                    <th>المورد</th>
+                    <th>النوع</th>
+                    <th class="text-center">قيمة الشركة</th>
+                    <th class="text-center">قيمة شخصية</th>
+                    <th class="text-center">المدفوع</th>
+                    <th class="text-center">المتبقي</th>
+                    <th class="text-center">الحالة</th>
+                    <th class="text-start">إجراءات</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for purchase in purchases %}
+                <tr>
+                    <td>
+                        <div class="fw-bold text-navy small">{{ purchase.date|date:"Y-m-d" }}</div>
+                        <div class="text-muted" style="font-size: 0.7rem;">{{ purchase.date|date:"H:i" }}</div>
+                    </td>
+                    <td>
+                        <div class="fw-bold text-navy">{{ purchase.supplier_name|default:"مصروف متنوع" }}</div>
+                        {% if purchase.notes %}
+                        <div class="small text-muted text-truncate" style="max-width: 180px;">{{ purchase.notes }}</div>
+                        {% endif %}
+                    </td>
+                    <td class="text-center fw-bold num">
+                        {% if purchase.expense_type == 'company' %}{{ purchase.total_amount }} د.ل{% else %}-{% endif %}
+                    </td>
+                    <td class="text-center fw-bold num">
+                        {% if purchase.expense_type == 'personal' %}{{ purchase.total_amount }} د.ل{% else %}-{% endif %}
+                    </td>
+                    <td class="text-center text-success num">{{ purchase.total_paid }} د.ل</td>
+                    <td class="text-center text-danger fw-bold num">{{ purchase.remaining_balance }} د.ل</td>
+                    <td class="text-center">
+                        {% if purchase.payment_status == 'paid' %}
+                        <span class="badge badge-soft-success rounded-pill">خالص</span>
+                        {% elif purchase.total_paid > 0 %}
+                        <span class="badge badge-soft-warning rounded-pill">جزئي</span>
+                        {% else %}
+                        <span class="badge badge-soft-danger rounded-pill">غير خالص</span>
+                        {% endif %}
+                    </td>
+                    <td class="text-start">
+                        <div class="dropdown">
+                            <button class="btn btn-light btn-sm rounded-circle shadow-sm" data-bs-toggle="dropdown">
+                                <i class="bi bi-three-dots-vertical"></i>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end border-0 shadow-lg rounded-3">
+                                <li><a class="dropdown-item py-2" href="{% url 'purchase_detail' purchase.id %}"><i class="bi bi-eye me-2"></i>عرض</a></li>
+                                {% if purchase.remaining_balance > 0 %}
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item py-2 text-success" href="#" data-bs-toggle="modal" data-bs-target="#payModal{{ purchase.id }}"><i class="bi bi-cash me-2"></i>تسجيل دفعة</a></li>
+                                {% endif %}
+                            </ul>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="8" class="text-center py-5">
+                        <i class="bi bi-inbox fs-1 d-block mb-2 opacity-25"></i>
+                        <p class="text-muted mb-0">لا توجد عمليات شراء</p>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Mobile Card List -->
+<div class="mobile-card-list">
+    {% for purchase in purchases %}
+    <div class="mobile-card-item">
+        <div class="mc-header">
+            <div>
+                <div class="fw-bold text-navy">{{ purchase.supplier_name|default:"مصروف متنوع" }}</div>
+                <div class="text-muted" style="font-size:0.75rem;">{{ purchase.date|date:"Y-m-d" }} · 
+                    {% if purchase.expense_type == 'company' %}شركة{% else %}شخصي{% endif %}
+                </div>
+            </div>
+            {% if purchase.payment_status == 'paid' %}
+            <span class="badge badge-soft-success rounded-pill">خالص</span>
+            {% elif purchase.total_paid > 0 %}
+            <span class="badge badge-soft-warning rounded-pill">جزئي</span>
+            {% else %}
+            <span class="badge badge-soft-danger rounded-pill">غير خالص</span>
+            {% endif %}
+        </div>
+        <div class="mc-row">
+            <span class="mc-label">الإجمالي</span>
+            <span class="mc-value num">{{ purchase.total_amount }} د.ل</span>
+        </div>
+        <div class="mc-row">
+            <span class="mc-label">المدفوع</span>
+            <span class="mc-value text-success num">{{ purchase.total_paid }} د.ل</span>
+        </div>
+        <div class="mc-row">
+            <span class="mc-label">المتبقي</span>
+            <span class="mc-value text-danger num">{{ purchase.remaining_balance }} د.ل</span>
+        </div>
+        <div class="mc-actions">
+            <a href="{% url 'purchase_detail' purchase.id %}" class="btn btn-sm btn-outline-navy rounded-pill flex-fill">تفاصيل</a>
+            {% if purchase.remaining_balance > 0 %}
+            <button class="btn btn-sm btn-navy rounded-pill flex-fill" data-bs-toggle="modal" data-bs-target="#payModal{{ purchase.id }}">
+                <i class="bi bi-cash me-1"></i>دفعة
+            </button>
+            {% endif %}
+        </div>
+    </div>
+    {% empty %}
+    <div class="text-center py-5 text-muted">
+        <i class="bi bi-inbox fs-1 d-block mb-2 opacity-25"></i>
+        <p>لا توجد عمليات شراء</p>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Payment Modals -->
+{% for purchase in purchases %}
+{% if purchase.remaining_balance > 0 %}
+<div class="modal fade" id="payModal{{ purchase.id }}" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 rounded-4 shadow">
+            <form action="{% url 'record_purchase_payment' purchase.id %}" method="post">
+                {% csrf_token %}
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="modal-title fw-bold text-navy">تسجيل دفعة</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body py-4">
+                    <div class="text-center mb-3">
+                        <div class="small text-muted">المتبقي</div>
+                        <div class="h3 fw-bold text-danger num">{{ purchase.remaining_balance }} د.ل</div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">المبلغ:</label>
+                        <input type="number" step="0.01" name="amount" class="form-control form-control-lg" max="{{ purchase.remaining_balance }}" placeholder="0.00" required>
+                    </div>
+                </div>
+                <div class="modal-footer border-0 pt-0">
+                    <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">إلغاء</button>
+                    <button type="submit" class="btn btn-navy rounded-pill px-4">تأكيد</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endfor %}
+
+{% endblock %}

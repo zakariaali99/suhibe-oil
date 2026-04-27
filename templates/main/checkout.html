@@ -1,231 +1,252 @@
 {% extends 'base.html' %}
 
-{% block title %}إتمام الدفع - نظام الزيوت{% endblock %}
+{% block title %}إتمام الطلب - نظام سحيبة{% endblock %}
 
 {% block content %}
-<div class="row justify-content-center g-4">
-    <div class="col-xl-9">
-        <div class="checkout-header text-center mb-5">
-            <h2 class="fw-bold text-navy mb-2">مراجعة الفاتورة</h2>
-            <p class="text-muted">يرجى مراجعة المنتجات وتأكيد بيانات العميل</p>
-            <div class="stepper d-flex justify-content-center mt-4">
-                <div class="step active d-flex flex-column align-items-center mx-4">
-                    <div class="step-icon bg-navy text-gold rounded-circle d-flex align-items-center justify-content-center mb-2"
-                        style="width: 40px; height: 40px;">1</div>
-                    <span class="small fw-bold">البيانات</span>
+<div class="row justify-content-center">
+    <div class="col-xl-10 col-12">
+        <!-- Page Header -->
+        <div class="d-flex justify-content-between align-items-center mb-3 page-header-flex">
+            <div>
+                <h4 class="fw-bold text-navy mb-1"><i class="bi bi-cart-check me-2 text-gold"></i>مراجعة وتأكيد الطلب</h4>
+                <p class="text-muted small mb-0">يرجى التحقق من المنتجات وبيانات العميل قبل الحفظ</p>
+            </div>
+            <a href="{% url 'product_list' %}" class="btn btn-outline-navy btn-sm rounded-pill px-3">
+                <i class="bi bi-arrow-right me-1"></i>العودة للمتجر
+            </a>
+        </div>
+
+        <form method="post" id="checkoutForm">
+            {% csrf_token %}
+            <div class="row g-3">
+                <!-- Left Column: Order Items -->
+                <div class="col-lg-8 col-12">
+                    <div class="card-custom p-0 overflow-hidden shadow-sm">
+                        <div class="bg-light p-3 border-bottom">
+                            <h6 class="mb-0 fw-bold text-navy"><i class="bi bi-box-seam me-2 text-gold"></i>المنتجات المختارة</h6>
+                        </div>
+                        
+                        <!-- Desktop View Table -->
+                        <div class="desktop-only-table">
+                            <div class="table-responsive">
+                                <table class="table table-custom align-middle mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th>المنتج</th>
+                                            <th class="text-center">السعر</th>
+                                            <th class="text-center" style="width: 150px;">الكمية</th>
+                                            <th class="text-start">الإجمالي</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for item in products_in_cart %}
+                                        <tr class="item-row">
+                                            <td>
+                                                <div class="fw-bold text-navy">{{ item.product.name }}</div>
+                                                <div class="small text-muted">{{ item.product.company.name }} | <span class="num">{{ item.product.density.value }}</span></div>
+                                                <input type="hidden" class="unit-price" value="{{ item.product.price }}">
+                                            </td>
+                                            <td class="text-center fw-bold num">{{ item.product.price }} <small>د.ل</small></td>
+                                            <td>
+                                                <div class="input-group input-group-sm bg-light rounded-pill p-1">
+                                                    <button type="button" class="btn btn-white rounded-circle shadow-sm px-2 py-0 qty-minus"><i class="bi bi-dash"></i></button>
+                                                    <input type="number" name="qty_{{ item.product.id }}" 
+                                                           class="form-control border-0 bg-transparent text-center fw-bold qty-input num" 
+                                                           value="{{ item.quantity }}" min="1">
+                                                    <button type="button" class="btn btn-white rounded-circle shadow-sm px-2 py-0 qty-plus"><i class="bi bi-plus"></i></button>
+                                                </div>
+                                            </td>
+                                            <td class="text-start fw-bold text-navy num">
+                                                <span class="row-total">0.00</span> <small>د.ل</small>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Mobile View List -->
+                        <div class="mobile-card-list p-2 bg-light">
+                            {% for item in products_in_cart %}
+                            <div class="mobile-card-item shadow-sm p-3 mb-2 item-row">
+                                <div class="mc-header border-bottom pb-2 mb-2">
+                                    <div class="fw-bold text-navy">{{ item.product.name }}</div>
+                                    <div class="text-muted small">{{ item.product.company.name }}</div>
+                                    <input type="hidden" class="unit-price" value="{{ item.product.price }}">
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <span class="small text-muted">السعر الفردي:</span>
+                                    <span class="fw-bold num">{{ item.product.price }} د.ل</span>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <span class="small text-muted">الكمية:</span>
+                                    <div class="input-group input-group-sm bg-white rounded-pill p-1 shadow-sm" style="width: 110px;">
+                                        <button type="button" class="btn btn-white rounded-circle px-2 py-0 qty-minus"><i class="bi bi-dash"></i></button>
+                                        <input type="number" name="qty_{{ item.product.id }}_mob" 
+                                               class="form-control border-0 bg-transparent text-center fw-bold qty-input num" 
+                                               value="{{ item.quantity }}" min="1">
+                                        <button type="button" class="btn btn-white rounded-circle px-2 py-0 qty-plus"><i class="bi bi-plus"></i></button>
+                                    </div>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center border-top pt-2">
+                                    <span class="fw-bold text-navy">الإجمالي:</span>
+                                    <span class="fw-bold text-navy num"><span class="row-total">0.00</span> د.ل</span>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
                 </div>
-                <div class="step-line border-top mt-3" style="width: 100px;"></div>
-                <div class="step d-flex flex-column align-items-center mx-4">
-                    <div class="step-icon bg-light text-muted rounded-circle d-flex align-items-center justify-content-center mb-2"
-                        style="width: 40px; height: 40px;">2</div>
-                    <span class="small text-muted">الإصدار</span>
+
+                <!-- Right Column: Customer & Payment -->
+                <div class="col-lg-4 col-12">
+                    <!-- Customer Details -->
+                    <div class="card-custom mb-3 p-3">
+                        <h6 class="fw-bold text-navy mb-3 small"><i class="bi bi-person-circle me-2 text-gold"></i>بيانات العميل</h6>
+                        <div class="mb-3">
+                            <label class="small text-muted fw-bold mb-1">اسم العميل:</label>
+                            <input type="text" name="customer_name" class="form-control rounded-3" 
+                                   value="{{ customer_name|default:'' }}" placeholder="أدخل اسم العميل" required>
+                        </div>
+                        <div class="mb-0">
+                            <label class="small text-muted fw-bold mb-1">رقم الهاتف:</label>
+                            <input type="tel" name="customer_phone" class="form-control rounded-3 num" 
+                                   value="{{ customer_phone|default:'' }}" placeholder="09XXXXXXXX" pattern="09[0-9]{8}" maxlength="10">
+                        </div>
+                    </div>
+
+                    <!-- Payment Summary -->
+                    <div class="card-custom bg-navy text-white shadow-lg p-4">
+                        <h6 class="fw-bold mb-4 text-gold small"><i class="bi bi-wallet2 me-2"></i>ملخص الدفع</h6>
+                        
+                        <div class="d-flex justify-content-between mb-2 small">
+                            <span class="opacity-75">إجمالي المواد:</span>
+                            <span class="num" id="itemsTotal">0.00 د.ل</span>
+                        </div>
+                        <hr class="opacity-25">
+                        <div class="d-flex justify-content-between mb-4">
+                            <span class="h6 mb-0 fw-bold">الإجمالي النهائي:</span>
+                            <span class="h5 mb-0 fw-bold text-gold num" id="finalTotal">0.00 د.ل</span>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="small text-gold fw-bold mb-2 d-block">طريقة الدفع:</label>
+                            <div class="d-flex gap-2">
+                                <input type="radio" class="btn-check" name="payment_method" id="cash" value="cash" checked>
+                                <label class="btn btn-outline-light btn-sm flex-fill rounded-3 py-2 small" for="cash">نقداً</label>
+                                
+                                <input type="radio" class="btn-check" name="payment_method" id="card" value="card">
+                                <label class="btn btn-outline-light btn-sm flex-fill rounded-3 py-2 small" for="card">بطاقة</label>
+                                
+                                <input type="radio" class="btn-check" name="payment_method" id="transfer" value="transfer">
+                                <label class="btn btn-outline-light btn-sm flex-fill rounded-3 py-2 small" for="transfer">تحويل</label>
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" name="initial_status" value="paid" class="btn btn-gold fw-bold py-3">
+                                تأكيد وإصدار الفاتورة <i class="bi bi-check-circle-fill ms-2"></i>
+                            </button>
+                            <button type="submit" name="initial_status" value="pending" class="btn btn-outline-light border-white-10 py-2 small opacity-75">
+                                حفظ كفاتورة آجلة (دين)
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-
-        <div class="card border-0 p-4 p-md-5">
-            <form method="post" id="checkoutForm">
-                {% csrf_token %}
-
-                <div class="row g-4 mb-4">
-                    <div class="col-md-4">
-                        <label class="form-label fw-bold text-navy"><i class="bi bi-person-fill me-2"></i>اسم العميل</label>
-                        <input type="text" name="customer_name" class="form-control form-control-lg border-2"
-                            value="{{ customer_name|default:'' }}" placeholder="أدخل اسم العميل" required style="border-radius: 12px;">
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label fw-bold text-navy"><i class="bi bi-telephone-fill me-2 text-gold"></i>رقم الهاتف</label>
-                        <input type="tel" name="customer_phone" class="form-control form-control-lg border-2"
-                            value="{{ customer_phone|default:'' }}" placeholder="09XXXXXXXX" pattern="09[0-9]{8}" maxlength="10" style="border-radius: 12px;">
-                        <small class="text-muted" style="font-size: 0.7rem;">اختياري: يجب أن يبدأ بـ 09 (10 أرقام)</small>
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label fw-bold text-navy"><i class="bi bi-calendar-event-fill me-2 text-gold"></i>التاريخ والوقت</label>
-                        <input type="text" class="form-control form-control-lg bg-light border-0 text-muted"
-                            value="{% now 'Y-m-d H:i' %}" readonly style="border-radius: 12px;">
-                    </div>
-                </div>
-
-                <div class="table-responsive mb-5 rounded-4 overflow-hidden border">
-                    <table class="table table-borderless align-middle mb-0">
-                        <thead style="background: var(--oil-navy); color: var(--oil-gold);">
-                            <tr>
-                                <th class="p-4">المنتج</th>
-                                <th class="text-center">الكمية</th>
-                                <th class="text-center">سعر الشراء (د.ل)</th>
-                                <th class="text-center">سعر البيع (د.ل)</th>
-                                <th class="text-start p-4">الإجمالي</th>
-                            </tr>
-                        </thead>
-                        <tbody class="bg-white">
-                            {% for item in products_in_cart %}
-                            <tr class="item-row border-bottom">
-                                <td class="p-4">
-                                    <div class="fw-bold text-navy">{{ item.product.name }}</div>
-                                    <small class="text-muted">{{ item.product.company.name }}</small>
-                                </td>
-                                <td style="width: 120px;">
-                                    <input type="number" name="qty_{{ item.product.id }}"
-                                        class="form-control border-0 bg-white text-dark text-center qty-input fw-bold shadow-sm"
-                                        value="{{ item.quantity }}" min="1" onfocus="this.select()">
-                                </td>
-                                <td style="width: 130px;">
-                                    <input type="number" step="0.01" name="cost_{{ item.product.id }}"
-                                        class="form-control border-0 bg-light text-center fw-bold shadow-sm"
-                                        placeholder="0.00" value="{{ item.product.cost|default:'0.00' }}" required onfocus="this.select()">
-                                </td>
-                                <td style="width: 130px;">
-                                    <div class="input-group">
-                                        <input type="number" step="0.01" name="price_{{ item.product.id }}"
-                                            class="form-control border-0 bg-white text-dark text-center price-input fw-bold shadow-sm"
-                                            placeholder="0.00" value="{{ item.product.price|default:'0.00' }}" required {% if forloop.first %}autofocus{% endif %} onfocus="this.select()">
-                                    </div>
-                                </td>
-                                <td class="text-start p-4 fw-bold text-navy fs-5 row-total">0.00</td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                        <tfoot class="bg-light">
-                            <tr>
-                                <td colspan="3" class="p-4 text-start fw-bold fs-4">إجمالي الفاتورة النهائية:</td>
-                                <td class="p-4 text-start fw-bold fs-3 text-primary" id="finalTotal">0.00 <small
-                                         class="currency fs-6">د.ل</small></td>
-                            </tr>
-                        </tfoot>
-                    </table>
-                </div>
-
-                <div class="row g-4 d-flex align-items-center">
-                    <div class="col-lg-7">
-                        <label class="form-label fw-bold text-navy mb-3">طريقة الدفع المتوقعة</label>
-                        <div class="row g-3">
-                            <div class="col-4">
-                                <input type="radio" class="btn-check" name="payment_method" id="pay_cash" value="cash"
-                                    checked autocomplete="off">
-                                <label
-                                    class="btn btn-outline-navy w-100 py-3 d-flex flex-column align-items-center rounded-4"
-                                    for="pay_cash">
-                                    <i class="bi bi-cash-stack mb-2 fs-2"></i>
-                                    <span>نقد</span>
-                                </label>
-                            </div>
-                            <div class="col-4">
-                                <input type="radio" class="btn-check" name="payment_method" id="pay_card" value="card"
-                                    autocomplete="off">
-                                <label
-                                    class="btn btn-outline-navy w-100 py-3 d-flex flex-column align-items-center rounded-4"
-                                    for="pay_card">
-                                    <i class="bi bi-credit-card-2-front mb-2 fs-2"></i>
-                                    <span>بطاقة</span>
-                                </label>
-                            </div>
-                            <div class="col-4">
-                                <input type="radio" class="btn-check" name="payment_method" id="pay_transfer"
-                                    value="transfer" autocomplete="off">
-                                <label
-                                    class="btn btn-outline-navy w-100 py-3 d-flex flex-column align-items-center rounded-4"
-                                    for="pay_transfer">
-                                    <i class="bi bi-arrow-left-right mb-2 fs-2"></i>
-                                    <span>تحويل</span>
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-5">
-                        <div class="p-4 rounded-4 bg-light border border-2 border-dashed text-center h-100 d-flex flex-column justify-content-center">
-                            <p class="mb-0 fw-bold text-navy small">
-                                <i class="bi bi-info-circle-fill me-2 text-primary"></i>
-                                يمكنك إصدار الفاتورة كـ <strong class="text-success">"خالصة"</strong> مباشرة، أو كـ <strong class="text-warning text-dark">"معلّقة"</strong> إذا لم يتم الدفع بعد.
-                            </p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="mt-5 pt-4 border-top">
-                    <div class="row g-3">
-                        <div class="col-md-4">
-                            <button type="submit" name="initial_status" value="paid" class="btn btn-success btn-lg w-100 py-3 shadow-sm fw-bold">
-                                الفاتورة خالصة <i class="bi bi-check-circle-fill ms-2"></i>
-                            </button>
-                        </div>
-                        <div class="col-md-4">
-                            <button type="submit" name="initial_status" value="pending" class="btn btn-warning text-dark border-0 btn-lg w-100 py-3 shadow-sm fw-bold" style="background-color: var(--oil-gold);">
-                                الفاتورة معلّقة (أجل) <i class="bi bi-clock-fill ms-2"></i>
-                            </button>
-                        </div>
-                        <div class="col-md-4">
-                            <a href="{% url 'product_list' %}"
-                                class="btn btn-outline-secondary btn-lg w-100 py-3 fw-bold">إلغاء والعودة</a>
-                        </div>
-                    </div>
-                </div>
-            </form>
-        </div>
+        </form>
     </div>
 </div>
-
 {% endblock %}
 
 {% block extra_js %}
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const rows = document.querySelectorAll('.item-row');
+    document.addEventListener('DOMContentLoaded', function() {
         const finalTotalDisplay = document.getElementById('finalTotal');
+        const itemsTotalDisplay = document.getElementById('itemsTotal');
 
-        function calculateTotal() {
-            let finalTotal = 0;
-            rows.forEach(row => {
+        function calculate() {
+            let total = 0;
+            // Select all rows from both views to sync them
+            const desktopRows = document.querySelectorAll('.desktop-only-table .item-row');
+            const mobileRows = document.querySelectorAll('.mobile-card-list .item-row');
+
+            desktopRows.forEach((row, index) => {
+                const mRow = mobileRows[index];
                 const qtyInput = row.querySelector('.qty-input');
-                const priceInput = row.querySelector('.price-input');
-                const rowTotalDisplay = row.querySelector('.row-total');
-
-                const qty = parseFloat(qtyInput.value) || 0;
-                const price = parseFloat(priceInput.value) || 0;
-                const subtotal = qty * price;
-
-                rowTotalDisplay.textContent = subtotal.toFixed(2);
-                finalTotal += subtotal;
+                const mQtyInput = mRow.querySelector('.qty-input');
+                const unitPrice = parseFloat(row.querySelector('.unit-price').value);
+                
+                // Get qty (either from desktop or mobile, they should be synced)
+                const qty = parseInt(qtyInput.value) || 0;
+                const subtotal = qty * unitPrice;
+                
+                const stStr = subtotal.toLocaleString('en-US', {minimumFractionDigits: 2});
+                row.querySelector('.row-total').textContent = stStr;
+                mRow.querySelector('.row-total').textContent = stStr;
+                
+                total += subtotal;
             });
-            finalTotalDisplay.innerHTML = finalTotal.toFixed(2) + ' <small class="currency fs-6">د.ل</small>';
+            
+            const totalStr = total.toLocaleString('en-US', {minimumFractionDigits: 2}) + ' د.ل';
+            finalTotalDisplay.textContent = totalStr;
+            itemsTotalDisplay.textContent = totalStr;
         }
 
-        document.querySelectorAll('.qty-input, .price-input').forEach(input => {
-            input.addEventListener('input', calculateTotal);
+        // Sync and Add Listeners
+        document.querySelectorAll('.qty-input').forEach(input => {
+            // Get original name (removing _mob)
+            const baseName = input.name.replace('_mob', '');
+            
+            // Increment
+            const row = input.closest('.item-row');
+            row.querySelector('.qty-plus').addEventListener('click', () => {
+                input.value = parseInt(input.value) + 1;
+                syncInputs(baseName, input.value);
+                calculate();
+            });
+            
+            // Decrement
+            row.querySelector('.qty-minus').addEventListener('click', () => {
+                if(parseInt(input.value) > 1) {
+                    input.value = parseInt(input.value) - 1;
+                    syncInputs(baseName, input.value);
+                    calculate();
+                }
+            });
+            
+            // Change
+            input.addEventListener('change', () => {
+                syncInputs(baseName, input.value);
+                calculate();
+            });
         });
+
+        function syncInputs(baseName, value) {
+            document.querySelectorAll(`input[name="${baseName}"], input[name="${baseName}_mob"]`).forEach(i => {
+                i.value = value;
+            });
+        }
+
+        calculate();
     });
 </script>
 {% endblock %}
 
 {% block extra_css %}
 <style>
-    .bg-navy {
-        background-color: var(--oil-navy) !important;
+    .btn-white {
+        background: white;
+        border: 1px solid #e2e8f0;
     }
-
-    .text-navy {
-        color: var(--oil-navy) !important;
+    .border-white-10 {
+        border-color: rgba(255, 255, 255, 0.1) !important;
     }
-
-    .btn-outline-navy {
-        border-color: var(--oil-navy);
+    .btn-check:checked + .btn-outline-light {
+        background-color: var(--oil-gold);
         color: var(--oil-navy);
-    }
-
-    .btn-outline-navy:hover,
-    .btn-check:checked+.btn-outline-navy {
-        background-color: var(--oil-navy);
-        border-color: var(--oil-navy);
-        color: var(--oil-gold);
-    }
-
-    .stepper .step-icon {
-        font-weight: 800;
-        transition: all 0.3s ease;
-    }
-
-    .form-control:focus {
-        border-color: var(--oil-gold) !important;
-        box-shadow: 0 0 0 0.25rem rgba(212, 167, 69, 0.15);
+        border-color: var(--oil-gold);
     }
 </style>
 {% endblock %}

@@ -5,7 +5,7 @@
 {% block content %}
 <div class="row g-4">
     <div class="col-12 mb-2">
-        <div class="d-flex align-items-center justify-content-between">
+        <div class="d-flex align-items-center justify-content-between page-header-flex">
             <div>
                 <h2 class="fw-bold text-navy mb-1"><i class="bi bi-graph-up-arrow me-3 text-gold"></i>تقارير المبيعات والأرباح</h2>
                 <p class="text-muted small mb-0">تحليل مالي مفصل للمبيعات وهامش الربح</p>
@@ -15,26 +15,26 @@
 
     <!-- Stats Summary -->
     <div class="col-md-6">
-        <div class="card border-0 shadow-sm p-4 bg-navy text-white rounded-4 h-100">
+        <div class="card shadow-sm p-4 bg-navy text-white rounded-4 h-100">
             <div class="d-flex justify-content-between align-items-center">
                 <div>
                     <h6 class="text-gold fw-bold mb-1">إجمالي المبيعات</h6>
-                    <div class="display-6 fw-bold" style="font-family: 'monospace';">{{ total_sales|floatformat:2 }} <small class="fs-6 opacity-50">د.ل</small></div>
+                    <div class="display-6 fw-bold num">{{ total_sales|floatformat:2 }} <small class="fs-6 opacity-50">د.ل</small></div>
                 </div>
-                <div class="bg-white bg-opacity-10 p-3 rounded-circle">
+                <div class="bg-white bg-opacity-10 p-3 rounded-circle d-none d-sm-block">
                     <i class="bi bi-cash-stack h3 mb-0 text-gold"></i>
                 </div>
             </div>
         </div>
     </div>
     <div class="col-md-6">
-        <div class="card border-0 shadow-sm p-4 bg-white border-end border-5 border-gold rounded-4 h-100">
+        <div class="card shadow-sm p-4 bg-white border-end border-5 border-gold rounded-4 h-100">
             <div class="d-flex justify-content-between align-items-center">
                 <div>
                     <h6 class="text-navy fw-bold mb-1">صافي الأرباح</h6>
-                    <div class="display-6 fw-bold text-navy" style="font-family: 'monospace';">{{ total_profit|floatformat:2 }} <small class="fs-6 text-muted">د.ل</small></div>
+                    <div class="display-6 fw-bold text-navy num">{{ total_profit|floatformat:2 }} <small class="fs-6 text-muted">د.ل</small></div>
                 </div>
-                <div class="bg-light p-3 rounded-circle">
+                <div class="bg-light p-3 rounded-circle d-none d-sm-block">
                     <i class="bi bi-piggy-bank h3 mb-0 text-gold"></i>
                 </div>
             </div>
@@ -43,17 +43,17 @@
 
     <!-- Filter Bar -->
     <div class="col-12">
-        <div class="card border-0 shadow-sm p-4 mb-2" style="background: white; border-right: 5px solid var(--oil-gold);">
+        <div class="card shadow-sm p-3 p-md-4 mb-2" style="background: white; border-right: 5px solid var(--oil-gold);">
             <form method="get" class="row g-3 align-items-end">
-                <div class="col-md-3">
+                <div class="col-md-3 col-12">
                     <label class="form-label fw-bold text-navy small">البحث</label>
                     <div class="input-group shadow-sm rounded-3">
                         <span class="input-group-text bg-white border-end-0"><i class="bi bi-search"></i></span>
                         <input type="text" name="q" class="form-control border-start-0"
-                            placeholder="اسم العميل أو رقم الفاتورة..." value="{{ query|default:'' }}">
+                            placeholder="اسم العميل أو الفاتورة..." value="{{ query|default:'' }}">
                     </div>
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-3 col-12">
                     <label class="form-label fw-bold text-navy small">الفترة</label>
                     <select name="date_preset" id="date_preset" class="form-select shadow-sm border-0 bg-light">
                         <option value="">كل الأوقات</option>
@@ -65,7 +65,7 @@
                         <option value="last_month" {% if date_preset == 'last_month' %}selected{% endif %}>الشهر الماضي</option>
                     </select>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-4 col-12">
                     <label class="form-label fw-bold text-navy small">نطاق مخصص</label>
                     <div class="input-group shadow-sm">
                         <input type="date" name="date_from" id="date_from" class="form-control border-0 bg-light small" value="{{ date_from|default:'' }}">
@@ -73,7 +73,7 @@
                         <input type="date" name="date_to" id="date_to" class="form-control border-0 bg-light small" value="{{ date_to|default:'' }}">
                     </div>
                 </div>
-                <div class="col-md-2">
+                <div class="col-md-2 col-12">
                     <button type="submit" class="btn btn-navy w-100 shadow-sm"><i class="bi bi-funnel me-2"></i>تطبيق</button>
                 </div>
             </form>
@@ -82,8 +82,9 @@
 
     <!-- Sales Table -->
     <div class="col-12">
-        <div class="card border-0 shadow-sm overflow-hidden">
-            <div class="card-body p-0">
+        <div class="card shadow-sm overflow-hidden">
+            <!-- Desktop Table -->
+            <div class="card-body p-0 desktop-only-table">
                 <div class="table-responsive">
                     <table class="table table-hover align-middle mb-0" id="salesTable">
                         <thead class="bg-light text-navy small text-uppercase fw-bold">
@@ -92,21 +93,20 @@
                                 <th class="p-4">العميل</th>
                                 <th class="p-4 text-center">التاريخ</th>
                                 <th class="p-4 text-center text-muted" title="إجمالي حجم الفاتورة">القيمة الإجمالية</th>
-                                <th class="p-4 text-center text-success" title="المبالغ التي تم تحصيلها فعلياً">المبلغ المدفوع (مبيعات)</th>
+                                <th class="p-4 text-center text-success" title="المبالغ التي تم تحصيلها فعلياً">المبلغ المدفوع</th>
                                 <th class="p-4 text-center">الحالة</th>
-
                             </tr>
                         </thead>
                         <tbody>
                             {% for invoice in invoices %}
                             <tr class="border-bottom border-light sales-row" style="cursor: pointer; transition: background 0.2s;" data-href="{% url 'invoice_view' invoice.id %}">
                                 <td class="p-4 fw-bold">
-                                    <span class="text-navy text-decoration-none">#{{ invoice.id }}</span>
+                                    <span class="text-navy text-decoration-none num">#{{ invoice.id }}</span>
                                 </td>
                                 <td class="p-4">{{ invoice.customer_name }}</td>
-                                <td class="p-4 text-center text-muted small">{{ invoice.date|date:"Y-m-d H:i" }}</td>
-                                <td class="p-4 text-center text-muted">{{ invoice.total_amount|floatformat:2 }}</td>
-                                <td class="p-4 text-center text-success fw-bold">{{ invoice.total_paid|floatformat:2 }}</td>
+                                <td class="p-4 text-center text-muted small num">{{ invoice.date|date:"Y-m-d" }} <br> <span style="font-size:0.75rem;">{{ invoice.date|date:"H:i" }}</span></td>
+                                <td class="p-4 text-center text-muted num">{{ invoice.total_amount|floatformat:2 }}</td>
+                                <td class="p-4 text-center text-success fw-bold num">{{ invoice.total_paid|floatformat:2 }}</td>
                                 <td class="p-4 text-center">
                                     {% if invoice.payment_status == 'paid' %}
                                     <span class="badge bg-success bg-opacity-10 text-success px-3">خالص</span>
@@ -125,6 +125,42 @@
                         </tbody>
                     </table>
                 </div>
+            </div>
+
+            <!-- Mobile Card List -->
+            <div class="mobile-card-list p-2 bg-light">
+                {% for invoice in invoices %}
+                <div class="mobile-card-item shadow-sm mb-2 p-3" onclick="window.location.href='{% url 'invoice_view' invoice.id %}'" style="cursor:pointer;">
+                    <div class="mc-header align-items-center border-bottom pb-2 mb-2">
+                        <div>
+                            <div class="fw-bold text-navy">{{ invoice.customer_name }}</div>
+                            <div class="text-muted small num">#{{ invoice.id }} · {{ invoice.date|date:"Y-m-d" }}</div>
+                        </div>
+                        <div>
+                            {% if invoice.payment_status == 'paid' %}
+                            <span class="badge bg-success bg-opacity-10 text-success">خالص</span>
+                            {% elif invoice.payment_status == 'unpaid' %}
+                            <span class="badge bg-danger bg-opacity-10 text-danger">غير خالص</span>
+                            {% else %}
+                            <span class="badge bg-warning bg-opacity-10 text-warning">معلّقة</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-between mb-1">
+                        <span class="small text-muted">القيمة الإجمالية</span>
+                        <span class="fw-bold num">{{ invoice.total_amount|floatformat:2 }} د.ل</span>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <span class="small text-muted">المدفوع</span>
+                        <span class="fw-bold text-success num">{{ invoice.total_paid|floatformat:2 }} د.ل</span>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="text-center py-5">
+                    <div class="text-muted opacity-50 mb-3"><i class="bi bi-inbox display-3"></i></div>
+                    <p class="h6 text-muted">لا توجد سجلات مبيعات</p>
+                </div>
+                {% endfor %}
             </div>
         </div>
     </div>
@@ -169,11 +205,13 @@
     .border-gold { border-color: var(--oil-gold) !important; }
     
     @media print {
-        .btn, form, .navbar, .no-print { display: none !important; }
+        .btn, form, .navbar, .no-print, .mobile-toggle, .bottom-tabs { display: none !important; }
         .card { border: none !important; box-shadow: none !important; }
         body { background: white !important; }
         .table { width: 100% !important; border-collapse: collapse !important; }
         .table th, .table td { border: 1px solid #dee2e6 !important; padding: 8px !important; }
+        .mobile-card-list { display: none !important; }
+        .desktop-only-table { display: block !important; }
     }
 </style>
 {% endblock %}

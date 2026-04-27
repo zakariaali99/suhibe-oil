@@ -4,37 +4,36 @@
 
 {% block content %}
 <div class="row justify-content-center">
-    <div class="col-xl-8">
-        <div class="card border-0 invoice-card mb-5">
-            <div class="invoice-header p-5 text-white"
+    <div class="col-xl-9 col-12">
+        <div class="card invoice-card mb-4 shadow-lg overflow-hidden rounded-4">
+            <div class="invoice-header p-4 p-md-5 text-white"
                 style="background: var(--oil-navy); border-bottom: 5px solid var(--oil-gold);">
                 <div class="row align-items-center">
-                    <div class="col-8">
-                        <h1 class="fw-bold mb-0 text-gold d-flex align-items-center">
+                    <div class="col-md-8 col-12 mb-3 mb-md-0">
+                        <h2 class="fw-bold mb-0 text-gold d-flex align-items-center">
                             <i class="bi bi-droplet-fill me-3"></i>فاتورة مبيعات
-                        </h1>
-                        <p class="mb-0 opacity-75 mt-2">نظام الزيوت والهيدروليك — ليبيا</p>
+                        </h2>
+                        <p class="mb-0 opacity-75 mt-2">سحيبة للزيوت والهيدروليك — ليبيا</p>
                     </div>
-                    <div class="col-4 text-start">
-                        <div
-                            class="invoice-badge bg-gold text-navy px-3 py-2 rounded-3 d-inline-block fw-bold shadow-sm">
+                    <div class="col-md-4 col-12 text-md-start">
+                        <div class="invoice-badge bg-gold text-navy px-3 py-2 rounded-3 d-inline-block fw-bold shadow-sm num">
                             رقم: #{{ invoice.id }}
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="card-body p-5">
+            <div class="card-body p-4 p-md-5">
                 <!-- Status & Date -->
-                <div class="row mb-5 g-4">
-                    <div class="col-md-5">
+                <div class="row mb-4 g-4">
+                    <div class="col-md-5 col-12">
                         <div class="d-flex align-items-center mb-3">
                             <div class="p-2 bg-light rounded-3 me-3 text-gold"><i class="bi bi-person h4 mb-0"></i></div>
                             <div>
                                 <small class="text-muted d-block">السيد/السادة:</small>
                                 <span class="h5 fw-bold text-navy">{{ invoice.customer_name }}</span>
                                 {% if invoice.customer_phone %}
-                                <div class="text-muted small mt-1"><i class="bi bi-telephone ms-1"></i>{{ invoice.customer_phone }}</div>
+                                <div class="text-muted small mt-1 num"><i class="bi bi-telephone ms-1"></i>{{ invoice.customer_phone }}</div>
                                 {% endif %}
                             </div>
                         </div>
@@ -42,42 +41,42 @@
                             <div class="p-2 bg-light rounded-3 me-3 text-gold"><i class="bi bi-calendar3 h4 mb-0"></i></div>
                             <div>
                                 <small class="text-muted d-block">تاريخ الإصدار:</small>
-                                <span class="fw-bold">{{ invoice.date|date:"Y-m-d — H:i" }}</span>
+                                <span class="fw-bold num">{{ invoice.date|date:"Y-m-d — H:i" }}</span>
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-7 text-md-start pt-2">
-                        <div class="p-4 rounded-4 shadow-sm border text-end" style="background: var(--oil-bg);">
+                    <div class="col-md-7 col-12 text-md-start pt-2">
+                        <div class="p-3 p-md-4 rounded-4 shadow-sm border text-end" style="background: var(--oil-bg);">
                             <div class="row align-items-center">
-                                <div class="col-sm-6 text-end">
+                                <div class="col-sm-6 col-12 text-end mb-3 mb-sm-0">
                                     <div class="mb-3">
                                         <small class="text-muted d-block mb-1">حالة الفاتورة:</small>
                                         {% if invoice.payment_status == 'paid' %}
-                                        <span class="badge bg-success text-white px-4 py-2 fs-6 rounded-pill"><i class="bi bi-check-circle-fill me-2"></i>خالص كلياً</span>
+                                        <span class="badge bg-success text-white px-3 py-2 rounded-pill"><i class="bi bi-check-circle-fill me-1"></i>خالص</span>
                                         {% elif invoice.payment_status == 'unpaid' %}
-                                        <span class="badge bg-danger text-white px-4 py-2 fs-6 rounded-pill"><i class="bi bi-exclamation-triangle-fill me-2"></i>غير خالص</span>
+                                        <span class="badge bg-danger text-white px-3 py-2 rounded-pill"><i class="bi bi-exclamation-triangle-fill me-1"></i>غير خالص</span>
                                         {% else %}
-                                        <span class="badge bg-warning text-dark px-3 py-2 fs-6 rounded-pill"><i class="bi bi-clock-fill me-2"></i>فاتورة معلّقة</span>
+                                        <span class="badge bg-warning text-dark px-3 py-2 rounded-pill"><i class="bi bi-clock-fill me-1"></i>معلّقة</span>
                                         {% endif %}
                                     </div>
                                     <div class="mb-0">
-                                        <small class="text-muted d-block mb-1">طريقة الدفع المتوقعة:</small>
+                                        <small class="text-muted d-block mb-1">طريقة الدفع:</small>
                                         <span class="badge bg-navy text-gold px-3 py-2 rounded-pill">
                                             {% if invoice.payment_method == 'cash' %}نقداً (كاش){% elif invoice.payment_method == 'card' %}بطاقة مصرفية{% else %}تحويل بنكي{% endif %}
                                         </span>
                                     </div>
                                 </div>
-                                <div class="col-sm-6 border-start d-none d-sm-block">
-                                    <small class="text-muted d-block mb-2 text-center">تقدم الدفع (الرصيد: {{ invoice.remaining_balance }} د.ل)</small>
-                                    <div class="progress" style="height: 12px; border-radius: 6px;">
+                                <div class="col-sm-6 col-12 border-sm-start d-none d-sm-block">
+                                    <small class="text-muted d-block mb-2 text-center">تقدم الدفع (المتبقي: <span class="num">{{ invoice.remaining_balance }}</span> د.ل)</small>
+                                    <div class="progress" style="height: 10px; border-radius: 6px;">
                                         <div class="progress-bar {% if invoice.payment_status == 'paid' %}bg-success{% else %}bg-gold{% endif %} progress-bar-striped progress-bar-animated" 
                                             role="progressbar" id="invoiceProgressBar"
                                             data-progress="{{ invoice.payment_progress }}"
-                                            aria-valuenow="{{ invoice.payment_progress }}" aria-valuemin="0" aria-valuemax="100"></div>
+                                            style="width: {{ invoice.payment_progress }}%"></div>
                                     </div>
-                                    <div class="d-flex justify-content-between mt-2 small">
-                                        <span class="fw-bold text-navy">{{ invoice.total_paid }} تم دفعه</span>
-                                        <span class="text-muted">{{ invoice.total_amount }} الإجمالي</span>
+                                    <div class="d-flex justify-content-between mt-2 small num">
+                                        <span class="fw-bold text-navy">{{ invoice.total_paid }}</span>
+                                        <span class="text-muted">{{ invoice.total_amount }}</span>
                                     </div>
                                 </div>
                             </div>
@@ -86,45 +85,41 @@
                 </div>
 
                 <!-- Products Table -->
-                <div class="mb-5 rounded-4 overflow-hidden border">
+                <div class="mb-4 rounded-4 overflow-hidden border">
                     <div class="table-responsive">
-                        <table class="table table-hover align-middle mb-0" style="min-width: 600px;">
+                        <table class="table table-hover align-middle mb-0">
                         <thead class="bg-light">
-                            <tr>
-                                <th class="p-4" style="width: 60px;">#</th>
-                                <th class="p-4">المنتج والمواصفات</th>
+                            <tr class="small fw-bold">
+                                <th class="p-3" style="width: 50px;">#</th>
+                                <th class="p-3">المنتج</th>
                                 <th class="text-center">الكمية</th>
-                                <th class="text-start">سعر الوحدة</th>
-                                <th class="text-start p-4">الإجمالي</th>
+                                <th class="text-start">الوحدة</th>
+                                <th class="text-start p-3">الإجمالي</th>
                             </tr>
                         </thead>
                         <tbody>
                             {% for item in invoice.items.all %}
                             <tr class="border-bottom">
-                                <td class="p-4 text-center fw-bold text-muted">{{ forloop.counter }}</td>
-                                <td class="p-4">
+                                <td class="p-3 text-center fw-bold text-muted num">{{ forloop.counter }}</td>
+                                <td class="p-3">
                                     {% if item.product %}
-                                    <div class="fw-bold fs-5 text-navy">{{ item.product.name }}</div>
-                                    <small class="text-muted">{{ item.product.company.name }} — {{ item.product.density.value }}</small>
+                                    <div class="fw-bold text-navy">{{ item.product.name }}</div>
+                                    <small class="text-muted">{{ item.product.company.name }} | <span class="num">{{ item.product.density.value }}</span></small>
                                     {% else %}
-                                    <span class="text-muted">منتج محذوف من النظام</span>
+                                    <span class="text-muted">منتج غير متوفر</span>
                                     {% endif %}
                                 </td>
-                                <td class="text-center h5 mb-0">{{ item.quantity }}</td>
-                                <td class="text-start">{{ item.unit_price|floatformat:2 }} <small
-                                        class="text-muted opacity-50">د.ل</small></td>
-                                <td class="text-start p-4 fw-bold text-navy fs-5">{{ item.subtotal|floatformat:2 }} <small
-                                        class="text-muted opacity-50">د.ل</small></td>
+                                <td class="text-center num fw-bold">{{ item.quantity }}</td>
+                                <td class="text-start num">{{ item.unit_price|floatformat:2 }}</td>
+                                <td class="text-start p-3 fw-bold text-navy num">{{ item.subtotal|floatformat:2 }}</td>
                             </tr>
                             {% endfor %}
                         </tbody>
                         <tfoot class="bg-light border-top-0">
                             <tr>
-                                <td colspan="4" class="p-4 text-start fw-bold fs-4 border-0">المجموع الكلي للفاتورة:
-                                </td>
-                                <td class="p-4 text-start fw-bold fs-2 text-primary border-0"
-                                    style="color: var(--oil-gold) !important;">
-                                    {{ invoice.total_amount|floatformat:2 }} <small class="fs-5">د.ل</small>
+                                <td colspan="4" class="p-4 text-start fw-bold h5 border-0">المجموع الكلي للفاتورة:</td>
+                                <td class="p-4 text-start fw-bold h4 text-navy border-0 num" style="color: var(--oil-gold) !important;">
+                                    {{ invoice.total_amount|floatformat:2 }} <small class="fs-6">د.ل</small>
                                 </td>
                             </tr>
                         </tfoot>
@@ -134,29 +129,29 @@
 
                 <!-- Footer Note -->
                 <div class="text-center py-4 border-top">
-                    <p class="text-muted mb-0">شكرًا لتعاملكم معنا. نأمل رؤيتكم مرة أخرى.</p>
+                    <p class="text-muted mb-0 small">شكرًا لتعاملكم مع سحيبة للزيوت. نأمل رؤيتكم مرة أخرى.</p>
                 </div>
             </div>
         </div>
 
         <!-- Management Section (Receipts & Audit) -->
-        <div class="no-print">
-            <div class="row g-4">
+        <div class="no-print mb-5">
+            <div class="row g-3">
                 <!-- Receipts -->
-                <div class="col-md-6">
-                    <div class="card border-0 shadow-sm rounded-4 h-100">
-                        <div class="card-header bg-white border-0 p-4 d-flex justify-content-between align-items-center">
-                            <h5 class="fw-bold text-navy mb-0"><i class="bi bi-receipt me-2 text-gold"></i>إيصالات القبض</h5>
+                <div class="col-md-6 col-12">
+                    <div class="card shadow-sm rounded-4 h-100">
+                        <div class="card-header bg-white border-0 p-3 d-flex justify-content-between align-items-center">
+                            <h6 class="fw-bold text-navy mb-0"><i class="bi bi-receipt me-2 text-gold"></i>إيصالات القبض</h6>
                             {% if invoice.payment_status != 'paid' and invoice.remaining_balance > 0 %}
-                            <button class="btn btn-navy btn-sm px-3 rounded-pill border border-dark border-2" data-bs-toggle="modal" data-bs-target="#addReceiptModal">إصدار إيصال</button>
+                            <button class="btn btn-navy btn-sm px-3 rounded-pill" data-bs-toggle="modal" data-bs-target="#addReceiptModal">إصدار إيصال</button>
                             {% endif %}
                         </div>
                         <div class="card-body p-0">
                             <div class="table-responsive">
-                                <table class="table table-hover align-middle mb-0 small">
+                                <table class="table table-hover align-middle mb-0 extra-small">
                                     <thead class="bg-light">
                                         <tr>
-                                            <th class="ps-4">التاريخ</th>
+                                            <th class="ps-3">التاريخ</th>
                                             <th>المبلغ</th>
                                             <th class="text-center">إجراءات</th>
                                         </tr>
@@ -164,27 +159,23 @@
                                     <tbody>
                                         {% for receipt in invoice.receipts.all %}
                                         <tr class="{% if receipt.is_cancelled %}opacity-50 text-decoration-line-through{% endif %}">
-                                            <td class="ps-4 py-3">{{ receipt.date|date:"Y-m-d H:i" }}</td>
-                                            <td class="fw-bold text-navy">{{ receipt.amount|floatformat:2 }} د.ل</td>
+                                            <td class="ps-3 py-2 num">{{ receipt.date|date:"Y-m-d H:i" }}</td>
+                                            <td class="fw-bold text-navy num">{{ receipt.amount|floatformat:2 }} د.ل</td>
                                             <td class="text-center">
                                                 <div class="btn-group btn-group-sm">
-                                                    <a href="{% url 'receipt_view' receipt.id %}" class="btn btn-outline-navy" title="طباعة"><i class="bi bi-printer"></i></a>
+                                                    <a href="{% url 'receipt_view' receipt.id %}" class="btn btn-link p-1 text-navy" title="طباعة"><i class="bi bi-printer"></i></a>
                                                     {% if not receipt.is_cancelled %}
                                                     <form action="{% url 'cancel_receipt' receipt.id %}" method="post" class="d-inline">
                                                         {% csrf_token %}
-                                                        <button type="submit" class="btn btn-outline-warning" title="إلغاء" onclick="return confirm('هل أنت متأكد من إلغاء هذا الإيصال؟')"><i class="bi bi-x-circle"></i></button>
+                                                        <button type="submit" class="btn btn-link p-1 text-warning" title="إلغاء" onclick="return confirm('إلغاء الإيصال؟')"><i class="bi bi-x-circle"></i></button>
                                                     </form>
                                                     {% endif %}
-                                                    <form action="{% url 'delete_receipt' receipt.id %}" method="post" class="d-inline">
-                                                        {% csrf_token %}
-                                                        <button type="submit" class="btn btn-outline-danger" title="حذف نهائي" onclick="return confirm('تحذير: سيتم حذف هذا الإيصال تماماً من النظام. هل تريد الاستمرار؟')"><i class="bi bi-trash3-fill"></i></button>
-                                                    </form>
                                                 </div>
                                             </td>
                                         </tr>
                                         {% empty %}
                                         <tr>
-                                            <td colspan="3" class="text-center py-4 text-muted small">لا توجد إيصالات قبض مصدرة</td>
+                                            <td colspan="3" class="text-center py-4 text-muted small">لا توجد إيصالات</td>
                                         </tr>
                                         {% endfor %}
                                     </tbody>
@@ -195,185 +186,42 @@
                 </div>
 
                 <!-- Audit Trail -->
-                <div class="col-md-6">
-                    <div class="card border-0 shadow-sm rounded-4 h-100">
-                        <div class="card-header bg-white border-0 p-4">
-                            <h5 class="fw-bold text-navy mb-0"><i class="bi bi-shield-check me-2 text-gold"></i>سجل العمليات (Audit)</h5>
+                <div class="col-md-6 col-12">
+                    <div class="card-custom p-0 overflow-hidden shadow-sm h-100">
+                        <div class="bg-light p-3 border-bottom">
+                            <h6 class="fw-bold text-navy mb-0 small"><i class="bi bi-shield-check me-2 text-gold"></i>سجل العمليات</h6>
                         </div>
-                        <div class="card-body p-4 pt-0" style="max-height: 300px; overflow-y: auto;">
-                            <div class="audit-stream">
-                                {% for log in invoice.audit_logs.all|dictsortreversed:"timestamp" %}
-                                <div class="audit-item pb-3 mb-3 border-bottom border-light">
-                                    <div class="d-flex justify-content-between mb-1">
-                                        <span class="fw-bold text-navy small">{{ log.action }}</span>
-                                        <span class="text-muted" style="font-size: 0.75rem;">{{ log.timestamp|date:"H:i — Y/m/d" }}</span>
-                                    </div>
-                                    {% if log.details %}
-                                    <p class="text-secondary small mb-0">{{ log.details }}</p>
-                                    {% endif %}
+                        <div class="p-3" style="max-height: 250px; overflow-y: auto;">
+                            {% for log in invoice.audit_logs.all|dictsortreversed:"timestamp" %}
+                            <div class="audit-item pb-2 mb-2 border-bottom border-light">
+                                <div class="d-flex justify-content-between mb-1">
+                                    <span class="fw-bold text-navy extra-small">{{ log.action }}</span>
+                                    <span class="text-muted num" style="font-size: 0.65rem;">{{ log.timestamp|date:"H:i — Y/m/d" }}</span>
                                 </div>
-                                {% empty %}
-                                <p class="text-muted text-center py-4 small">لا توجد سجلات بعد</p>
-                                {% endfor %}
                             </div>
+                            {% empty %}
+                            <p class="text-muted text-center py-3 small">لا توجد سجلات</p>
+                            {% endfor %}
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <div class="d-flex justify-content-between no-print mt-5 pt-4">
-                    <a href="{% url 'product_list' %}" class="btn btn-outline-navy btn-lg px-5">
-                        <i class="bi bi-arrow-right me-2"></i>العودة للمتجر
-                    </a>
-                    <div class="d-flex gap-3">
-                        <button onclick="window.print()" class="btn btn-navy btn-lg px-4 text-gold shadow">
-                            <i class="bi bi-printer me-2"></i>طباعة فورية
-                        </button>
-                        <button onclick="window.print()" class="btn btn-gold btn-lg px-4 shadow">
-                            <i class="bi bi-file-earmark-pdf me-2"></i>تحميل PDF
-                        </button>
-                        <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary btn-lg">أرشيف الفواتير</a>
-                    </div>
+            <!-- Action Buttons -->
+            <div class="d-flex flex-wrap justify-content-between gap-3 mt-4 no-print">
+                <a href="{% url 'product_list' %}" class="btn btn-outline-navy rounded-pill px-4">
+                    <i class="bi bi-arrow-right me-2"></i>العودة
+                </a>
+                <div class="d-flex gap-2">
+                    <button onclick="window.print()" class="btn btn-navy rounded-pill px-4">
+                        <i class="bi bi-printer me-2 text-gold"></i>طباعة
+                    </button>
+                    <a href="{% url 'dashboard' %}" class="btn btn-light rounded-pill px-4">الأرشيف</a>
                 </div>
             </div>
         </div>
     </div>
 </div>
-
-{% endblock %}
-
-{% block extra_css %}
-<style>
-    .invoice-card {
-        box-shadow: 0 40px 60px -15px rgba(26, 29, 46, 0.1);
-        border-radius: 25px;
-        overflow: hidden;
-    }
-
-    .invoice-badge {
-        font-family: 'monospace';
-        letter-spacing: 1px;
-    }
-
-    .text-gold {
-        color: var(--oil-gold) !important;
-    }
-
-    .bg-navy {
-        background-color: var(--oil-navy) !important;
-    }
-
-    @media (max-width: 768px) {
-        .card {
-            padding: 1.5rem !important;
-        }
-
-        .invoice-header {
-            flex-direction: column !important;
-            text-align: center;
-        }
-
-        .invoice-meta {
-            margin-top: 1.5rem;
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .action-buttons {
-            flex-direction: column;
-            gap: 10px !important;
-        }
-
-        .action-buttons .btn, 
-        .action-buttons .btn-group {
-            width: 100%;
-        }
-    }
-
-    @media (max-width: 576px) {
-        .table {
-            font-size: 0.85rem;
-        }
-        
-        .fs-3 {
-            font-size: 1.5rem !important;
-        }
-
-        .logo-section h1 {
-            font-size: 1.5rem !important;
-        }
-    }
-
-    @media print {
-        @page {
-            size: A4;
-            margin: 0;
-        }
-
-        .no-print,
-        .navbar {
-            display: none !important;
-        }
-
-        body {
-            background: white !important;
-            margin: 0;
-            padding: 0;
-        }
-
-        .container, .row, .col-xl-8 {
-            max-width: 100% !important;
-            width: 100% !important;
-            margin: 0 !important;
-            padding: 0 !important;
-        }
-
-        .invoice-card {
-            box-shadow: none !important;
-            border: none !important;
-            border-radius: 0 !important;
-            margin: 0 !important;
-        }
-
-        .invoice-header {
-            -webkit-print-color-adjust: exact !important;
-            print-color-adjust: exact !important;
-            border-bottom: 5px solid var(--oil-gold) !important;
-        }
-
-        /* Force background colors to print */
-        .bg-navy, .bg-gold, .bg-light, .badge, .bg-success, .bg-danger, .invoice-badge {
-            -webkit-print-color-adjust: exact !important;
-            print-color-adjust: exact !important;
-        }
-
-        /* Force text colors to print */
-        .text-gold, .text-white, .text-navy, .text-muted {
-            -webkit-print-color-adjust: exact !important;
-            print-color-adjust: exact !important;
-        }
-
-        .table thead th, .table tfoot td {
-            background-color: #f8fafc !important;
-            -webkit-print-color-adjust: exact !important;
-            print-color-adjust: exact !important;
-        }
-    }
-</style>
-{% endblock %}
-
-{% block extra_js %}
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const bar = document.getElementById('invoiceProgressBar');
-        if (bar) {
-            bar.style.width = bar.getAttribute('data-progress') + '%';
-        }
-    });
-</script>
 
 <!-- Add Receipt Modal -->
 <div class="modal fade" id="addReceiptModal" tabindex="-1" aria-hidden="true">
@@ -388,19 +236,39 @@
                 <div class="modal-body p-4">
                     <div class="mb-3">
                         <label class="form-label fw-bold text-navy small">قيمة الدفعة (د.ل)</label>
-                        <input type="number" step="0.01" name="amount" class="form-control form-control-lg border-2" placeholder="0.00" required autofocus>
+                        <input type="number" step="0.01" name="amount" class="form-control form-control-lg border-2 num" placeholder="0.00" required autofocus>
                     </div>
                     <div class="mb-0">
                         <label class="form-label fw-bold text-navy small">ملاحظات إضافية (اختياري)</label>
-                        <textarea name="notes" class="form-control border-2" rows="3"></textarea>
+                        <textarea name="notes" class="form-control border-2" rows="2"></textarea>
                     </div>
                 </div>
                 <div class="modal-footer border-0 p-4 pt-0">
                     <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">إلغاء</button>
-                    <button type="submit" class="btn btn-gold rounded-pill px-4 shadow">تأكيد وحفظ</button>
+                    <button type="submit" class="btn btn-gold rounded-pill px-4 shadow">حفظ الإيصال</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .invoice-card {
+        border-radius: 20px !important;
+    }
+    .invoice-badge {
+        font-family: 'Inter', sans-serif;
+        letter-spacing: 0.5px;
+    }
+    @media print {
+        @page { size: A4; margin: 1cm; }
+        .no-print, .navbar, .bottom-tabs { display: none !important; }
+        body { background: white !important; padding: 0 !important; }
+        .card { box-shadow: none !important; border: 1px solid #eee !important; margin: 0 !important; width: 100% !important; }
+        .invoice-header { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+        .bg-navy, .bg-gold, .bg-light, .badge { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+    }
+</style>
 {% endblock %}

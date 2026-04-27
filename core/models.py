@@ -26,21 +26,32 @@ class Density(models.Model):
         verbose_name_plural = _("Densities")
 
 class Product(models.Model):
-    name = models.CharField(_("Product Name"), max_length=255)
+    name = models.CharField(_("Product Name"), max_length=255, db_index=True)
     company = models.ForeignKey(Company, on_delete=models.CASCADE, related_name="products", verbose_name=_("Company"))
     density = models.ForeignKey(Density, on_delete=models.CASCADE, related_name="products", verbose_name=_("Density"))
     image = models.ImageField(_("Product Image"), upload_to='products/', null=True, blank=True) # Added image field
     price = models.DecimalField(_("Selling Price"), max_digits=10, decimal_places=2, default=0.00)
     cost = models.DecimalField(_("Cost Price"), max_digits=10, decimal_places=2, default=0.00)
+    stock_quantity = models.PositiveIntegerField(_("Stock Quantity"), default=0)
     is_available = models.BooleanField(_("Is Available"), default=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.name} ({self.company.name}) - {self.price} LYD"
+        return f"{self.name} ({self.company.name}) - {self.price} LYD [Stock: {self.stock_quantity}]"
 
     class Meta:
         verbose_name = _("Product")
         verbose_name_plural = _("Products")
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        if self.image:
+            from PIL import Image
+            img = Image.open(self.image.path)
+            if img.height > 600 or img.width > 600:
+                output_size = (600, 600)
+                img.thumbnail(output_size)
+                img.save(self.image.path)
 
 class AuditLog(models.Model):
     action = models.CharField(_("Action"), max_length=255)
@@ -139,3 +150,43 @@ class Receipt(models.Model):
     class Meta:
         verbose_name = _("Receipt")
         verbose_name_plural = _("Receipts")
+
+class InternalPurchase(models.Model):
+    EXPENSE_TYPES = (
+        ('company', _('Company Expense')),
+        ('personal', _('Personal Expense')),
+    )
+    PAYMENT_STATUSES = (
+        ('pending', _('Pending')),
+        ('paid', _('Paid')),
+        ('unpaid', _('Unpaid')),
+    )
+    supplier_name = models.CharField(_("Supplier"), max_length=255, blank=True)
+    expense_type = models.CharField(_("Expense Type"), max_length=20, choices=EXPENSE_TYPES, default='company', db_index=True)
+    date = models.DateTimeField(_("Date"), auto_now_add=True, db_index=True)
+    total_amount = models.DecimalField(_("Total Amount"), max_digits=10, decimal_places=2, default=0)
+    total_paid = models.DecimalField(_("Total Paid"), max_digits=10, decimal_places=2, default=0)
+    payment_status = models.CharField(_("Payment Status"), max_length=10, choices=PAYMENT_STATUSES, default='unpaid')
+    notes = models.TextField(_("Notes"), blank=True)
+    created_by = models.CharField(_("Created By"), max_length=150, blank=True)
+
+    @property
+    def remaining_balance(self):
+        return self.total_amount - self.total_paid
+
+    def __str__(self):
+        return f"Purchase #{self.id} - {self.supplier_name} ({self.get_expense_type_display()})"
+
+    class Meta:
+        verbose_name = _("Internal Purchase")
+        verbose_name_plural = _("Internal Purchases")
+
+class InternalPurchaseItem(models.Model):
+    purchase = models.ForeignKey(InternalPurchase, on_delete=models.CASCADE, related_name="items")
+    product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True)
+    quantity = models.PositiveIntegerField(_("Quantity"), default=1)
+    unit_cost = models.DecimalField(_("Unit Cost"), max_digits=10, decimal_places=2)
+    subtotal = models.DecimalField(_("Subtotal"), max_digits=10, decimal_places=2)
+
+    def __str__(self):
+        return f"{self.product.name if self.product else 'Deleted Product'} x {self.quantity}"

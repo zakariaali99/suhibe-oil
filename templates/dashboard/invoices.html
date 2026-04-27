@@ -1,236 +1,215 @@
 {% extends 'base.html' %}
 
-{% block title %}سجل الفواتير - إدارة النظام{% endblock %}
+{% block title %}سجل الفواتير - نظام سحيبة{% endblock %}
 
 {% block content %}
-<div class="row g-4">
-    <div class="col-12 mb-2">
-        <div class="d-flex align-items-center justify-content-between">
+<div class="row g-3">
+    <!-- Header -->
+    <div class="col-12">
+        <div class="d-flex align-items-center justify-content-between page-header-flex mb-2">
             <div>
-                <h2 class="fw-bold text-navy mb-1"><i class="bi bi-receipt me-3 text-gold"></i>أرشيف المبيعات</h2>
-                <p class="text-muted small mb-0">عرض وفلترة كافة الفواتير الصادرة من النظام</p>
+                <h4 class="fw-bold text-navy mb-1"><i class="bi bi-receipt me-2 text-gold"></i>أرشيف المبيعات</h4>
+                <p class="text-muted small mb-0">عرض كافة الفواتير الصادرة وتتبع التحصيل</p>
             </div>
-            <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary btn-sm rounded-pill px-3">العودة للوحة
-                الإدارة</a>
+            <a href="{% url 'product_list' %}" class="btn btn-navy rounded-pill px-3 shadow-sm">
+                <i class="bi bi-cart-plus me-1"></i>فاتورة جديدة
+            </a>
         </div>
     </div>
 
-    <!-- Filter Bar -->
-        <div class="card border-0 shadow-sm p-4 mb-4" style="background: white; border-right: 5px solid var(--oil-gold);">
-            <form method="get" class="row g-3 align-items-end">
+    <!-- Filters -->
+    <div class="col-12">
+        <div class="card-custom p-3 bg-white shadow-sm mb-1">
+            <form method="get" class="row g-2 align-items-end filter-form">
                 <div class="col-md-3">
-                    <label class="form-label fw-bold text-navy small">البحث (اسم العميل أو رقم الفاتورة)</label>
-                    <div class="input-group shadow-sm rounded-3">
-                        <span class="input-group-text bg-white border-end-0"><i class="bi bi-search"></i></span>
-                        <input type="text" name="q" class="form-control border-start-0"
-                            placeholder="مثلاً: أحمد، #12..." value="{{ query|default:'' }}">
-                    </div>
+                    <label class="small text-muted fw-bold mb-1">البحث:</label>
+                    <input type="text" name="q" class="form-control" placeholder="اسم العميل أو رقم..." value="{{ query|default:'' }}">
                 </div>
-                <div class="col-md-2">
-                    <label class="form-label fw-bold text-navy small">الفترة</label>
-                    <select name="date_preset" id="date_preset" class="form-select shadow-sm border-0 bg-light">
+                <div class="col-md-2 col-6">
+                    <label class="small text-muted fw-bold mb-1">الفترة:</label>
+                    <select name="date_preset" class="form-select">
                         <option value="">كل الأوقات</option>
                         <option value="today" {% if date_preset == 'today' %}selected{% endif %}>اليوم</option>
                         <option value="yesterday" {% if date_preset == 'yesterday' %}selected{% endif %}>الأمس</option>
                         <option value="last_7" {% if date_preset == 'last_7' %}selected{% endif %}>آخر 7 أيام</option>
-                        <option value="last_30" {% if date_preset == 'last_30' %}selected{% endif %}>آخر 30 يوم</option>
-                        <option value="this_month" {% if date_preset == 'this_month' %}selected{% endif %}>هذا الشهر</option>
-                        <option value="last_month" {% if date_preset == 'last_month' %}selected{% endif %}>الشهر الماضي</option>
                     </select>
                 </div>
-                <div class="col-md-3">
-                    <label class="form-label fw-bold text-navy small">نطاق مخصص</label>
-                    <div class="input-group shadow-sm">
-                        <input type="date" name="date_from" id="date_from" class="form-control border-0 bg-light small" value="{{ date_from|default:'' }}" title="من">
-                        <span class="input-group-text bg-light border-0 px-1">↔</span>
-                        <input type="date" name="date_to" id="date_to" class="form-control border-0 bg-light small" value="{{ date_to|default:'' }}" title="إلى">
-                    </div>
-                </div>
-                <div class="col-md-2">
-                    <label class="form-label fw-bold text-navy small">حالة الدفع</label>
-                    <select name="paid" class="form-select shadow-sm border-0 bg-light">
-                        <option value="">كل الحالات</option>
-                        <option value="pending" {% if paid_filter == 'pending' %}selected{% endif %}>معلّقة</option>
-                        <option value="unpaid" {% if paid_filter == 'unpaid' %}selected{% endif %}>غير خالص</option>
+                <div class="col-md-2 col-6">
+                    <label class="small text-muted fw-bold mb-1">الحالة:</label>
+                    <select name="paid" class="form-select">
+                        <option value="">الكل</option>
                         <option value="paid" {% if paid_filter == 'paid' %}selected{% endif %}>خالص</option>
+                        <option value="unpaid" {% if paid_filter == 'unpaid' %}selected{% endif %}>دين</option>
                     </select>
                 </div>
-                <div class="col-md-2">
-                    <button type="submit" class="btn btn-navy w-100 shadow-sm"><i class="bi bi-funnel me-2"></i>فلترة</button>
-                    <a href="?" class="btn btn-link btn-sm w-100 text-decoration-none mt-1 text-muted">إعادة تعيين</a>
+                <div class="col-md-2 col-12">
+                    <button type="submit" class="btn btn-navy w-100 rounded-pill">تطبيق</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- Invoices Table -->
-    <div class="col-12">
-        <div class="card border-0 shadow-sm overflow-hidden">
-            <div class="card-body p-0">
-                <div class="table-responsive">
-                    <table class="table table-hover align-middle mb-0">
-                        <thead class="bg-navy text-gold small text-uppercase fw-bold">
-                            <tr>
-                                <th class="p-4" style="width: 80px;">رقم</th>
-                                <th class="p-4">العميل</th>
-                                <th class="p-4 text-center">التاريخ</th>
-                                <th class="p-4 text-center">القيمة</th>
-                                <th class="p-4 text-center">طريقة الدفع</th>
-                                <th class="p-4 text-center">الحالة</th>
-                                <th class="p-4 text-start">إجراءات</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for invoice in invoices %}
-                            <tr class="border-bottom border-light">
-                                <td class="p-4 fw-bold text-navy">#{{ invoice.id }}</td>
-                                <td class="p-4">
-                                    <div class="fw-bold">{{ invoice.customer_name }}</div>
-                                    <div class="text-muted small">{{ invoice.customer_phone }}</div>
-                                </td>
-                                <td class="p-4 text-center text-muted small">
-                                    {{ invoice.date|date:"Y-m-d" }}<br>{{ invoice.date|date:"H:i" }}
-                                </td>
-                                <td class="p-4 text-center">
-                                    <div class="fw-bold text-navy h5 mb-0">{{ invoice.total_amount|floatformat:2 }}</div>
-                                    <small class="text-muted opacity-50">د.ل</small>
-                                </td>
-                                <td class="p-4 text-center">
-                                    {% if invoice.payment_method == 'cash' %}
-                                    <span class="badge bg-light text-navy border px-3"><i class="bi bi-cash me-1"></i>نقد</span>
-                                    {% elif invoice.payment_method == 'card' %}
-                                    <span class="badge bg-light text-navy border px-3"><i class="bi bi-credit-card me-1"></i>بطاقة</span>
-                                    {% else %}
-                                    <span class="badge bg-light text-navy border px-3"><i class="bi bi-bank me-1"></i>تحويل</span>
-                                    {% endif %}
-                                </td>
-                                <td class="p-4 text-center">
-                                    {% if invoice.payment_status == 'paid' %}
-                                    <span class="badge bg-success bg-opacity-15 text-success px-3 py-2">
-                                        <i class="bi bi-check-circle-fill me-1"></i>خالص
-                                    </span>
-                                    {% elif invoice.payment_status == 'unpaid' %}
-                                    <span class="badge bg-danger bg-opacity-15 text-danger px-3 py-2">
-                                        <i class="bi bi-exclamation-circle-fill me-1"></i>غير خالص
-                                    </span>
-                                    {% else %}
-                                    <span class="badge bg-warning bg-opacity-15 text-warning px-3 py-2">
-                                        <i class="bi bi-clock-fill me-1"></i>معلّقة
-                                    </span>
-                                    {% endif %}
-                                </td>
-                                <td class="p-4 text-start">
-                                    <div class="btn-group btn-group-sm rounded-3 shadow-sm overflow-hidden">
-                                        <a href="{% url 'invoice_view' invoice.id %}" class="btn btn-navy px-3"
-                                            title="عرض"><i class="bi bi-eye"></i></a>
-                                        <a href="{% url 'edit_invoice' invoice.id %}" class="btn btn-info text-white px-3"
-                                            title="تعديل"><i class="bi bi-pencil-square"></i></a>
-                                        <a href="{% url 'invoice_pdf' invoice.id %}" class="btn btn-gold px-3"
-                                            title="PDF"><i
-                                                class="bi bi-file-earmark-pdf"></i></a>
-                                        <button type="button" class="btn btn-danger px-3" 
-                                            data-bs-toggle="modal" data-bs-target="#deleteModal{{ invoice.id }}" title="حذف">
-                                            <i class="bi bi-trash3-fill"></i>
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                            {% empty %}
-                            <tr>
-                                <td colspan="7" class="p-5 text-center">
-                                    <div class="text-muted opacity-50 mb-3"><i
-                                            class="bi bi-receipt-cutoff display-3"></i></div>
-                                    <p class="h5 text-muted">لم يتم العثور على أي فواتير مطابقة لبحثك</p>
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
+    <!-- Desktop Table -->
+    <div class="col-12 desktop-only-table">
+        <div class="card-custom shadow-sm">
+            <div class="table-responsive">
+                <table class="table table-custom align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th>رقم</th>
+                            <th>العميل</th>
+                            <th class="text-center">التاريخ</th>
+                            <th class="text-center">الإجمالي</th>
+                            <th class="text-center">المتبقي</th>
+                            <th class="text-center">الحالة</th>
+                            <th class="text-start">إجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for invoice in invoices %}
+                        <tr>
+                            <td class="fw-bold">#{{ invoice.id }}</td>
+                            <td>
+                                <div class="fw-bold text-navy">{{ invoice.customer_name }}</div>
+                                <div class="small text-muted">{{ invoice.customer_phone }}</div>
+                            </td>
+                            <td class="text-center small">{{ invoice.date|date:"Y-m-d H:i" }}</td>
+                            <td class="text-center fw-bold">{{ invoice.total_amount }} د.ل</td>
+                            <td class="text-center">
+                                <span class="fw-bold {% if invoice.remaining_balance > 0 %}text-danger{% else %}text-success{% endif %}">
+                                    {{ invoice.remaining_balance }} د.ل
+                                </span>
+                            </td>
+                            <td class="text-center">
+                                {% if invoice.payment_status == 'paid' %}
+                                <span class="badge badge-soft-success rounded-pill">خالص</span>
+                                {% elif invoice.remaining_balance < invoice.total_amount %}
+                                <span class="badge badge-soft-warning rounded-pill">جزئي</span>
+                                {% else %}
+                                <span class="badge badge-soft-danger rounded-pill">غير خالص</span>
+                                {% endif %}
+                            </td>
+                            <td class="text-start">
+                                <div class="dropdown">
+                                    <button class="btn btn-link text-navy p-1" data-bs-toggle="dropdown">
+                                        <i class="bi bi-three-dots-vertical"></i>
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-end shadow border-0 rounded-3">
+                                        <li><a class="dropdown-item py-2" href="{% url 'invoice_view' invoice.id %}"><i class="bi bi-eye me-2"></i>عرض</a></li>
+                                        <li><a class="dropdown-item py-2" href="{% url 'invoice_pdf' invoice.id %}"><i class="bi bi-file-pdf me-2"></i>PDF</a></li>
+                                        {% if invoice.remaining_balance > 0 %}
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li><a class="dropdown-item py-2 text-success" href="#" data-bs-toggle="modal" data-bs-target="#receiptModal{{ invoice.id }}"><i class="bi bi-cash-coin me-2"></i>تسجيل دفعة</a></li>
+                                        {% endif %}
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li><a class="dropdown-item py-2 text-danger" href="#" data-bs-toggle="modal" data-bs-target="#deleteModal{{ invoice.id }}"><i class="bi bi-trash3 me-2"></i>حذف</a></li>
+                                    </ul>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
-</div>
+
+    <!-- Mobile Card List -->
+    <div class="col-12 mobile-card-list">
+        {% for invoice in invoices %}
+        <div class="mobile-card-item">
+            <div class="mc-header">
+                <div>
+                    <div class="fw-bold text-navy" style="font-size:0.95rem;">{{ invoice.customer_name }}</div>
+                    <div class="text-muted" style="font-size:0.75rem;">#{{ invoice.id }} · {{ invoice.date|date:"Y-m-d" }}</div>
+                </div>
+                {% if invoice.payment_status == 'paid' %}
+                <span class="badge badge-soft-success rounded-pill">خالص</span>
+                {% elif invoice.remaining_balance < invoice.total_amount %}
+                <span class="badge badge-soft-warning rounded-pill">جزئي</span>
+                {% else %}
+                <span class="badge badge-soft-danger rounded-pill">غير خالص</span>
+                {% endif %}
+            </div>
+            <div class="mc-row">
+                <span class="mc-label">الإجمالي</span>
+                <span class="mc-value">{{ invoice.total_amount }} د.ل</span>
+            </div>
+            <div class="mc-row">
+                <span class="mc-label">المتبقي</span>
+                <span class="mc-value {% if invoice.remaining_balance > 0 %}text-danger{% else %}text-success{% endif %}">{{ invoice.remaining_balance }} د.ل</span>
+            </div>
+            <div class="mc-actions">
+                <a href="{% url 'invoice_view' invoice.id %}" class="btn btn-sm btn-outline-navy rounded-pill flex-fill"><i class="bi bi-eye me-1"></i>عرض</a>
+                {% if invoice.remaining_balance > 0 %}
+                <button class="btn btn-sm btn-navy rounded-pill flex-fill" data-bs-toggle="modal" data-bs-target="#receiptModal{{ invoice.id }}"><i class="bi bi-cash-coin me-1"></i>دفعة</button>
+                {% endif %}
+            </div>
+        </div>
+        {% empty %}
+        <div class="text-center py-5 text-muted">
+            <i class="bi bi-receipt fs-1 d-block mb-2 opacity-25"></i>
+            <p>لا توجد فواتير</p>
+        </div>
+        {% endfor %}
     </div>
 </div>
 
-<!-- Delete Modals -->
 {% for invoice in invoices %}
-<div class="modal fade" id="deleteModal{{ invoice.id }}" tabindex="-1" aria-hidden="true">
+<div class="modal fade" id="deleteModal{{ invoice.id }}" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden text-end">
+        <div class="modal-content border-0 rounded-4 shadow">
             <form action="{% url 'delete_invoice' invoice.id %}" method="post">
                 {% csrf_token %}
-                <div class="modal-header bg-danger text-white p-4">
-                    <h5 class="modal-title fw-bold">تحذير: حذف الفاتورة</h5>
-                    <button type="button" class="btn-close btn-close-white ms-0 me-auto" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body p-4 py-5 text-center">
-                    <div class="mb-4">
-                        <i class="bi bi-exclamation-triangle-fill text-danger" style="font-size: 4rem;"></i>
+                <div class="modal-body p-4 text-center">
+                    <i class="bi bi-trash3 text-danger display-3 mb-3"></i>
+                    <h5 class="fw-bold text-navy mb-2">حذف الفاتورة #{{ invoice.id }}؟</h5>
+                    <p class="text-muted small">سيتم إزالتها من التقارير النشطة.</p>
+                    <div class="d-flex gap-2 justify-content-center mt-3">
+                        <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">تراجع</button>
+                        <button type="submit" class="btn btn-danger rounded-pill px-4">حذف</button>
                     </div>
-                    <h5 class="text-navy fw-bold mb-3">هل أنت متأكد من حذف فاتورة {{ invoice.customer_name }}؟</h5>
-                    <p class="text-muted small">سيتم نقل الفاتورة إلى سلة المحذوفات ولن تظهر في التقارير النشطة.</p>
-                </div>
-                <div class="modal-footer border-0 p-4 pt-0 justify-content-center gap-2">
-                    <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">تراجع</button>
-                    <button type="submit" class="btn btn-danger rounded-pill px-4 shadow">تأكيد الحذف</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
 {% endfor %}
-{% endblock %}
 
-{% block extra_js %}
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const datePreset = document.getElementById('date_preset');
-        const dateFrom = document.getElementById('date_from');
-        const dateTo = document.getElementById('date_to');
+{% for invoice in invoices %}
+{% if invoice.remaining_balance > 0 %}
+<div class="modal fade" id="receiptModal{{ invoice.id }}" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 rounded-4 shadow text-end">
+            <form action="{% url 'add_receipt' invoice.id %}" method="post">
+                {% csrf_token %}
+                <div class="modal-header bg-navy text-white p-4">
+                    <h5 class="modal-title fw-bold">إصدار إيصال قبض (فاتورة #{{ invoice.id }})</h5>
+                    <button type="button" class="btn-close btn-close-white ms-0 me-auto" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <div class="mb-3">
+                        <label class="form-label fw-bold text-navy small">المبلغ المتبقي</label>
+                        <input type="text" class="form-control form-control-lg border-2 bg-light text-danger num fw-bold" value="{{ invoice.remaining_balance }}" readonly>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold text-navy small">قيمة الدفعة (د.ل) <span class="text-danger">*</span></label>
+                        <input type="number" step="0.01" name="amount" class="form-control form-control-lg border-2 num" placeholder="0.00" required autofocus>
+                    </div>
+                    <div class="mb-0">
+                        <label class="form-label fw-bold text-navy small">ملاحظات إضافية</label>
+                        <textarea name="notes" class="form-control border-2" rows="2"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer border-0 p-4 pt-0">
+                    <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">إلغاء</button>
+                    <button type="submit" class="btn btn-gold rounded-pill px-4 shadow">تأكيد الدفع</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endfor %}
 
-        datePreset.addEventListener('change', function() {
-            if (this.value) {
-                dateFrom.value = '';
-                dateTo.value = '';
-            }
-        });
-
-        const customInputs = [dateFrom, dateTo];
-        customInputs.forEach(input => {
-            input.addEventListener('change', function() {
-                if (this.value) {
-                    datePreset.value = '';
-                }
-            });
-        });
-    });
-</script>
-{% endblock %}
-
-{% block extra_css %}
-<style>
-    .bg-navy {
-        background-color: var(--oil-navy) !important;
-    }
-
-    .text-gold {
-        color: var(--oil-gold) !important;
-    }
-
-    .btn-navy {
-        background-color: var(--oil-navy);
-        color: var(--oil-gold);
-    }
-
-    .btn-navy:hover {
-        background-color: var(--oil-navy-light);
-        color: #fff;
-    }
-
-    .bg-opacity-15 {
-        --bs-bg-opacity: 0.15;
-    }
-</style>
 {% endblock %}
