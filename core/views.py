@@ -19,6 +19,16 @@ from django.conf import settings  # type: ignore
 from django.contrib.staticfiles import finders  # type: ignore
 from django.utils import timezone
 from datetime import timedelta, datetime
+from functools import wraps
+
+def admin_required(view_func):
+    @wraps(view_func)
+    def _wrapped_view(request, *args, **kwargs):
+        if not request.user.is_superuser:
+            messages.error(request, "عذراً، لا تملك الصلاحيات الكافية للوصول لهذه الصفحة.")
+            return redirect('product_list')
+        return view_func(request, *args, **kwargs)
+    return _wrapped_view
 
 def link_callback(uri, rel):
     """
@@ -291,6 +301,7 @@ def invoice_pdf(request, invoice_id):
 # --- Dashboard Views ---
 
 @login_required
+@admin_required
 def dashboard(request):
     # KPIs
     total_revenue = Receipt.objects.filter(is_cancelled=False).aggregate(total=Sum('amount'))['total'] or Decimal('0.00')
@@ -491,6 +502,7 @@ def delete_product(request, pk):
 
 # Invoices
 @login_required
+@admin_required
 def invoice_list(request):
     query = request.GET.get('q')
     paid_filter = request.GET.get('paid')
@@ -761,6 +773,7 @@ def delete_receipt(request, receipt_id):
     return redirect('invoice_view', invoice_id=invoice.id)
 
 @login_required
+@admin_required
 def sales_view(request):
     query = request.GET.get('q')
     date_preset = request.GET.get('date_preset')
@@ -889,6 +902,7 @@ def export_sales_csv(request):
     return response
 
 @login_required
+@admin_required
 def financial_analysis_view(request):
     date_from = request.GET.get('date_from')
     date_to = request.GET.get('date_to')
@@ -955,7 +969,9 @@ def financial_analysis_view(request):
 
 def login_view(request):
     if request.user.is_authenticated:
-        return redirect('dashboard')
+        if request.user.is_superuser:
+            return redirect('dashboard')
+        return redirect('product_list')
     if request.method == 'POST':
         form = AuthenticationForm(request, data=request.POST)
         if form.is_valid():
@@ -964,7 +980,9 @@ def login_view(request):
             user = authenticate(username=username, password=password)
             if user is not None:
                 login(request, user)
-                return redirect('dashboard')
+                if user.is_superuser:
+                    return redirect('dashboard')
+                return redirect('product_list')
             else:
                 messages.error(request, "اسم المستخدم أو كلمة المرور غير صحيحة.")
         else:
@@ -980,6 +998,7 @@ def logout_view(request):
 # --- New Feature Views ---
 
 @login_required
+@admin_required
 def internal_purchase_list(request):
     expense_type = request.GET.get('type')
     purchases = InternalPurchase.objects.all().prefetch_related('items__product').order_by('-date')
@@ -991,6 +1010,7 @@ def internal_purchase_list(request):
     })
 
 @login_required
+@admin_required
 def create_internal_purchase(request):
     if request.method == 'POST':
         supplier_name = request.POST.get('supplier_name', '').strip()
@@ -1058,11 +1078,13 @@ def create_internal_purchase(request):
     return render(request, 'dashboard/create_purchase.html', {'products': products})
 
 @login_required
+@admin_required
 def internal_purchase_detail(request, pk):
     purchase = get_object_or_404(InternalPurchase, pk=pk)
     return render(request, 'dashboard/purchase_detail.html', {'purchase': purchase})
 
 @login_required
+@admin_required
 def debt_list(request):
     # 1. Customer Debts (What others owe us)
     unpaid_invoices = Invoice.objects.filter(is_deleted=False).exclude(payment_status='paid').prefetch_related('receipts')
@@ -1118,13 +1140,13 @@ from django.contrib.auth.models import User
 from django.contrib.admin.views.decorators import staff_member_required
 
 @login_required
-@staff_member_required
+@admin_required
 def manage_users(request):
     users = User.objects.all().order_by('-date_joined')
     return render(request, 'dashboard/users.html', {'users': users})
 
 @login_required
-@staff_member_required
+@admin_required
 @require_POST
 def add_user(request):
     username = request.POST.get('username')
@@ -1145,7 +1167,7 @@ def add_user(request):
     return redirect('manage_users')
 
 @login_required
-@staff_member_required
+@admin_required
 @require_POST
 def delete_user(request, pk):
     user_to_delete = get_object_or_404(User, pk=pk)
