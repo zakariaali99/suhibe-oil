@@ -5,7 +5,7 @@ from pathlib import Path
 # Initialize environment variables
 env = environ.Env(
     DEBUG=(bool, False),
-    ALLOWED_HOSTS=(list, ['suhibe.ly', 'www.suhibe.ly', 'localhost', '127.0.0.1']),
+    ALLOWED_HOSTS=(list, ['suhaib.ly', 'www.suhaib.ly', 'localhost', '127.0.0.1']),
 )
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -24,7 +24,7 @@ ALLOWED_HOSTS = env('ALLOWED_HOSTS')
 
 # Production Security Settings
 if not DEBUG:
-    CSRF_TRUSTED_ORIGINS = ['https://suhibe.ly', 'https://www.suhibe.ly']
+    CSRF_TRUSTED_ORIGINS = ['https://suhaib.ly', 'https://www.suhaib.ly']
     SECURE_SSL_REDIRECT = True
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
