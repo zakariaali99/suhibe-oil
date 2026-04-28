@@ -130,7 +130,7 @@
             <!-- Mobile Card List -->
             <div class="mobile-card-list p-2 bg-light">
                 {% for invoice in invoices %}
-                <div class="mobile-card-item shadow-sm mb-2 p-3" onclick="window.location.href='{% url 'invoice_view' invoice.id %}'" style="cursor:pointer;">
+                <a href="{% url 'invoice_view' invoice.id %}" class="mobile-card-item shadow-sm mb-2 p-3 d-block text-decoration-none">
                     <div class="mc-header align-items-center border-bottom pb-2 mb-2">
                         <div>
                             <div class="fw-bold text-navy">{{ invoice.customer_name }}</div>
@@ -154,7 +154,7 @@
                         <span class="small text-muted">المدفوع</span>
                         <span class="fw-bold text-success num">{{ invoice.total_paid|floatformat:2 }} د.ل</span>
                     </div>
-                </div>
+                </a>
                 {% empty %}
                 <div class="text-center py-5">
                     <div class="text-muted opacity-50 mb-3"><i class="bi bi-inbox display-3"></i></div>
