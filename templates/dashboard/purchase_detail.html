@@ -46,8 +46,16 @@
                     <div class="h5 fw-bold text-danger mb-1">متبقي: <span class="num">{{ purchase.remaining_balance }}</span> د.ل</div>
                     {% endif %}
                     <div class="progress mt-2" style="height: 6px;">
-                        <div class="progress-bar bg-success" style="width: {% widthratio purchase.total_paid purchase.total_amount 100 %}%"></div>
+                        <div class="progress-bar bg-success" id="purchaseProgressBar" data-progress="{{ purchase.payment_progress }}" style="width: 0%;"></div>
                     </div>
+                    <script>
+                        document.addEventListener('DOMContentLoaded', function() {
+                            const bar = document.getElementById('purchaseProgressBar');
+                            if (bar) {
+                                bar.style.width = bar.getAttribute('data-progress') + '%';
+                            }
+                        });
+                    </script>
                 </div>
             </div>
         </div>
@@ -75,7 +83,7 @@
                             <tr>
                                 <td>
                                     <div class="fw-bold text-navy">{{ item.product.name }}</div>
-                                    <div class="small text-muted">{{ item.product.company.name }}</div>
+
                                 </td>
                                 <td class="text-center num">{{ item.unit_cost }} د.ل</td>
                                 <td class="text-center fw-bold num">{{ item.quantity }}</td>
@@ -100,7 +108,7 @@
                     <div class="mc-header border-bottom pb-2 mb-2">
                         <div>
                             <div class="fw-bold text-navy">{{ item.product.name }}</div>
-                            <div class="text-muted small">{{ item.product.company.name }}</div>
+
                         </div>
                     </div>
                     <div class="d-flex justify-content-between mb-1">

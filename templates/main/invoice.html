@@ -4,7 +4,7 @@
 
 {% block content %}
 <div class="row justify-content-center">
-    <div class="col-xl-9 col-12">
+    <div class="col-12">
         <div class="card invoice-card mb-4 shadow-lg overflow-hidden rounded-4">
             <div class="invoice-header p-4 p-md-5 text-white"
                 style="background: var(--oil-navy); border-bottom: 5px solid var(--oil-gold);">
@@ -65,6 +65,12 @@
                                             {% if invoice.payment_method == 'cash' %}نقداً (كاش){% elif invoice.payment_method == 'card' %}بطاقة مصرفية{% else %}تحويل بنكي{% endif %}
                                         </span>
                                     </div>
+                                    <div class="mt-2 mb-0">
+                                        <small class="text-muted d-block mb-1">نوع البيع:</small>
+                                        <span class="badge bg-gold text-navy px-3 py-2 rounded-pill">
+                                            {% if invoice.sell_type == 'retail' %}تجزئة{% elif invoice.sell_type == 'wholesale' %}جملة{% else %}جملة الجملة{% endif %}
+                                        </span>
+                                    </div>
                                 </div>
                                 <div class="col-sm-6 col-12 border-sm-start d-none d-sm-block">
                                     <small class="text-muted d-block mb-2 text-center">تقدم الدفع (المتبقي: <span class="num">{{ invoice.remaining_balance }}</span> د.ل)</small>
@@ -72,8 +78,16 @@
                                         <div class="progress-bar {% if invoice.payment_status == 'paid' %}bg-success{% else %}bg-gold{% endif %} progress-bar-striped progress-bar-animated" 
                                             role="progressbar" id="invoiceProgressBar"
                                             data-progress="{{ invoice.payment_progress }}"
-                                            style="width: {{ invoice.payment_progress }}%"></div>
+                                            style="width: 0%;"></div>
                                     </div>
+                                    <script>
+                                        document.addEventListener('DOMContentLoaded', function() {
+                                            const bar = document.getElementById('invoiceProgressBar');
+                                            if (bar) {
+                                                bar.style.width = bar.getAttribute('data-progress') + '%';
+                                            }
+                                        });
+                                    </script>
                                     <div class="d-flex justify-content-between mt-2 small num">
                                         <span class="fw-bold text-navy">{{ invoice.total_paid }}</span>
                                         <span class="text-muted">{{ invoice.total_amount }}</span>
@@ -104,7 +118,6 @@
                                 <td class="p-3">
                                     {% if item.product %}
                                     <div class="fw-bold text-navy">{{ item.product.name }}</div>
-                                    <small class="text-muted">{{ item.product.company.name }} | <span class="num">{{ item.product.density.value }}</span></small>
                                     {% else %}
                                     <span class="text-muted">منتج غير متوفر</span>
                                     {% endif %}

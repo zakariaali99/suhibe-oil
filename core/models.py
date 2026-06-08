@@ -2,56 +2,25 @@ from django.db import models  # type: ignore
 from django.utils.translation import gettext_lazy as _  # type: ignore
 from decimal import Decimal
 
-class Company(models.Model):
-    name = models.CharField(_("Company Name"), max_length=255) # Keep name field as per instruction, the snippet was contradictory
-    payment_method = models.CharField(max_length=20, choices=[('cash', 'Cash'), ('card', 'Card'), ('transfer', 'Transfer')], default='cash')
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return self.name
-
-    class Meta:
-        verbose_name = _("Company")
-        verbose_name_plural = _("Companies")
-
-class Density(models.Model):
-    value = models.CharField(_("Density Value"), max_length=100)
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return self.value
-
-    class Meta:
-        verbose_name = _("Density")
-        verbose_name_plural = _("Densities")
-
 class Product(models.Model):
     name = models.CharField(_("Product Name"), max_length=255, db_index=True)
-    company = models.ForeignKey(Company, on_delete=models.CASCADE, related_name="products", verbose_name=_("Company"))
-    density = models.ForeignKey(Density, on_delete=models.CASCADE, related_name="products", verbose_name=_("Density"))
-    image = models.ImageField(_("Product Image"), upload_to='products/', null=True, blank=True) # Added image field
+    image = models.ImageField(_("Product Image"), upload_to='products/', null=True, blank=True)
     price = models.DecimalField(_("Selling Price"), max_digits=10, decimal_places=2, default=0.00)
+    wholesale_price = models.DecimalField(_("Wholesale Price"), max_digits=10, decimal_places=2, default=0.00)
+    bulk_wholesale_price = models.DecimalField(_("Bulk Wholesale Price"), max_digits=10, decimal_places=2, default=0.00)
     cost = models.DecimalField(_("Cost Price"), max_digits=10, decimal_places=2, default=0.00)
     stock_quantity = models.PositiveIntegerField(_("Stock Quantity"), default=0)
     is_available = models.BooleanField(_("Is Available"), default=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.name} ({self.company.name}) - {self.price} LYD [Stock: {self.stock_quantity}]"
+        return f"{self.name} - {self.price} LYD [Stock: {self.stock_quantity}]"
+
 
     class Meta:
         verbose_name = _("Product")
         verbose_name_plural = _("Products")
 
-    def save(self, *args, **kwargs):
-        super().save(*args, **kwargs)
-        if self.image:
-            from PIL import Image
-            img = Image.open(self.image.path)
-            if img.height > 600 or img.width > 600:
-                output_size = (600, 600)
-                img.thumbnail(output_size)
-                img.save(self.image.path)
 
 class AuditLog(models.Model):
     action = models.CharField(_("Action"), max_length=255)
@@ -80,6 +49,7 @@ class Invoice(models.Model):
     date = models.DateTimeField(_("Date"), auto_now_add=True)
     payment_method = models.CharField(_("Payment Method"), max_length=20, choices=PAYMENT_METHODS)
     payment_status = models.CharField(_("Payment Status"), max_length=10, choices=PAYMENT_STATUSES, default='pending')
+    sell_type = models.CharField(_("Sell Type"), max_length=20, choices=[('retail', 'Retail'), ('wholesale', 'Wholesale'), ('bulk_wholesale', 'Bulk Wholesale')], default='retail')
     total_amount = models.DecimalField(_("Total Amount"), max_digits=10, decimal_places=2, default=0)
     total_profit = models.DecimalField(_("Total Profit"), max_digits=10, decimal_places=2, default=0)
     
@@ -173,6 +143,13 @@ class InternalPurchase(models.Model):
     @property
     def remaining_balance(self):
         return self.total_amount - self.total_paid
+
+    @property
+    def payment_progress(self):
+        if self.total_amount <= 0:
+            return 100 if self.payment_status == 'paid' else 0
+        progress = (self.total_paid / self.total_amount) * 100
+        return min(float(progress), 100.0)
 
     def __str__(self):
         return f"Purchase #{self.id} - {self.supplier_name} ({self.get_expense_type_display()})"

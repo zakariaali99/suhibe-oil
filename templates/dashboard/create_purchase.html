@@ -79,7 +79,7 @@
                                             <select name="product_id" class="form-select border-0 bg-transparent fw-bold text-navy select2-products">
                                                 <option value="">-- اختر المنتج --</option>
                                                 {% for product in products %}
-                                                <option value="{{ product.id }}" data-cost="{{ product.cost }}">{{ product.name }} ({{ product.company.name }})</option>
+                                                <option value="{{ product.id }}" data-cost="{{ product.cost }}">{{ product.name }}</option>
                                                 {% endfor %}
                                             </select>
                                         </td>

@@ -1,20 +1,10 @@
 from django.contrib import admin  # type: ignore
-from .models import Company, Density, Product, Invoice, InvoiceItem, AuditLog, Receipt, InvoiceAudit  # type: ignore
-
-@admin.register(Company)
-class CompanyAdmin(admin.ModelAdmin):
-    list_display = ('name', 'created_at')
-    search_fields = ('name',)
-
-@admin.register(Density)
-class DensityAdmin(admin.ModelAdmin):
-    list_display = ('value', 'created_at')
-    search_fields = ('value',)
+from .models import Product, Invoice, InvoiceItem, AuditLog, Receipt, InvoiceAudit  # type: ignore
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ('name', 'company', 'density', 'created_at')
-    list_filter = ('company', 'density')
+    list_display = ('name', 'price', 'wholesale_price', 'bulk_wholesale_price', 'cost', 'stock_quantity', 'created_at')
+    list_filter = ('is_available', 'created_at')
     search_fields = ('name',)
 
 class InvoiceItemInline(admin.TabularInline):

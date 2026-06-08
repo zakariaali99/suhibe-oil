@@ -7,19 +7,29 @@ from django.views.decorators.http import require_POST  # type: ignore
 from django.contrib.auth import login, authenticate, logout # type: ignore
 from django.contrib.auth.decorators import login_required # type: ignore
 from django.contrib.auth.forms import AuthenticationForm # type: ignore
-from .models import Company, Density, Product, Invoice, InvoiceItem, InvoiceAudit, Receipt, AuditLog, InternalPurchase, InternalPurchaseItem
+from .models import Product, Invoice, InvoiceItem, InvoiceAudit, Receipt, AuditLog, InternalPurchase, InternalPurchaseItem
 from decimal import Decimal, InvalidOperation, ROUND_HALF_UP
 
 # PDF generation imports
 from xhtml2pdf import pisa  # type: ignore
 import io
 import os
-import csv
 from django.conf import settings  # type: ignore
 from django.contrib.staticfiles import finders  # type: ignore
 from django.utils import timezone
 from datetime import timedelta, datetime
 from functools import wraps
+import openpyxl  # type: ignore
+from openpyxl.styles import Font, Alignment, PatternFill  # type: ignore
+
+def _recalc_payment_status(invoice):
+    remaining = invoice.remaining_balance
+    if remaining <= 0:
+        invoice.payment_status = 'paid'
+    elif invoice.total_paid > 0:
+        invoice.payment_status = 'unpaid'
+    else:
+        invoice.payment_status = 'pending'
 
 def admin_required(view_func):
     @wraps(view_func)
@@ -69,22 +79,13 @@ def link_callback(uri, rel):
 @login_required
 def product_list(request):
     query = request.GET.get('q', '')
-    company_id = request.GET.get('company')
-    density_id = request.GET.get('density')
     
-    products = Product.objects.filter(is_available=True).select_related('company', 'density')
+    products = Product.objects.filter(is_available=True)
     
     if query:
         products = products.filter(
-            Q(name__icontains=query) | 
-            Q(company__name__icontains=query) | 
-            Q(density__value__icontains=query)
+            Q(name__icontains=query)
         )
-    
-    if company_id:
-        products = products.filter(company_id=company_id)
-    if density_id:
-        products = products.filter(density_id=density_id)
     
     cart = request.session.get('cart', {})
     cart_items = []
@@ -97,18 +98,11 @@ def product_list(request):
                 cart_items.append({'product': prod, 'quantity': qty})
                 cart_total_qty += qty
 
-    companies = Company.objects.annotate(product_count=Count('products')).filter(product_count__gt=0)
-    densities = Density.objects.annotate(product_count=Count('products')).filter(product_count__gt=0)
-
     return render(request, 'main/product_list.html', {
         'products': products,
         'cart_items': cart_items,
         'cart_total_qty': cart_total_qty,
         'query': query,
-        'selected_company': company_id,
-        'selected_density': density_id,
-        'companies': companies,
-        'densities': densities,
     })
 
 @login_required
@@ -118,10 +112,18 @@ def add_to_cart(request, product_id):
     if not product.is_available:
         messages.error(request, "هذا المنتج غير متوفر حالياً.")
         return redirect('product_list')
-        
+    
+    if product.stock_quantity <= 0:
+        messages.error(request, "هذا المنتج نفد من المخزون.")
+        return redirect('product_list')
+    
     cart = request.session.get('cart', {})
     product_id_str = str(product_id)
-    cart[product_id_str] = cart.get(product_id_str, 0) + 1
+    new_qty = cart.get(product_id_str, 0) + 1
+    if new_qty > product.stock_quantity:
+        messages.warning(request, f"لا يمكن إضافة كمية تتجاوز المخزون المتوفر ({product.stock_quantity}).")
+        return redirect('product_list')
+    cart[product_id_str] = new_qty
     request.session['cart'] = cart
     messages.success(request, "تمت إضافة المنتج للعربة.")
     return redirect('product_list')
@@ -133,6 +135,10 @@ def update_cart_qty(request, product_id, action):
     pid_str = str(product_id)
     if pid_str in cart:
         if action == 'plus':
+            product = get_object_or_404(Product, id=product_id)
+            if cart[pid_str] + 1 > product.stock_quantity:
+                messages.warning(request, f"لا يمكن تجاوز المخزون المتوفر ({product.stock_quantity}).")
+                return redirect('product_list')
             cart[pid_str] += 1
         elif action == 'minus':
             cart[pid_str] -= 1
@@ -201,12 +207,14 @@ def checkout(request):
 
         try:
             initial_status = request.POST.get('initial_status', 'pending')
+            sell_type = request.POST.get('sell_type', 'retail')
             # Create Invoice
             invoice = Invoice.objects.create(
                 customer_name=customer_name,
                 customer_phone=customer_phone,
                 payment_method=payment_method,
-                payment_status=initial_status
+                payment_status=initial_status,
+                sell_type=sell_type
             )
             
             subtotals = []
@@ -220,8 +228,18 @@ def checkout(request):
                 
                 if qty <= 0: continue
 
-                # Auto-pull prices from product
-                price = prod.price
+                if prod.stock_quantity < qty:
+                    messages.warning(request, f"الكمية المطلوبة من {prod.name} ({qty}) تتجاوز المخزون المتوفر ({prod.stock_quantity}). تم تخطي هذا المنتج.")
+                    continue
+
+                # Auto-pull prices from product based on sell_type
+                if sell_type == 'wholesale':
+                    price = prod.wholesale_price
+                elif sell_type == 'bulk_wholesale':
+                    price = prod.bulk_wholesale_price
+                else:
+                    price = prod.price
+                    
                 cost = prod.cost
 
                 qty_decimal = Decimal(qty)
@@ -324,8 +342,6 @@ def dashboard(request):
     company_debt = total_purch_due - total_purch_paid
 
     stats = {
-        'companies': Company.objects.count(),
-        'densities': Density.objects.count(),
         'products': Product.objects.count(),
         'invoices': Invoice.objects.filter(is_deleted=False).count(),
         'total_revenue': total_revenue,
@@ -337,132 +353,50 @@ def dashboard(request):
     
     return render(request, 'dashboard/index.html', {'stats': stats})
 
-# Companies
-@login_required
-def manage_companies(request):
-    companies = Company.objects.all().order_by('-created_at')
-    return render(request, 'dashboard/companies.html', {'companies': companies})
-
-@require_POST
-@login_required
-def add_company(request):
-    name = request.POST.get('name', '').strip()
-    if name:
-        Company.objects.create(name=name)
-        messages.success(request, "تمت إضافة الشركة.")
-    else:
-        messages.error(request, "اسم الشركة مطلوب.")
-    return redirect('manage_companies')
-
-@require_POST
-@login_required
-def edit_company(request, pk):
-    company = get_object_or_404(Company, pk=pk)
-    name = request.POST.get('name', '').strip()
-    if name:
-        company.name = name
-        company.save()
-        messages.success(request, "تم تحديث الشركة.")
-    return redirect('manage_companies')
-
-@require_POST
-@login_required
-def delete_company(request, pk):
-    company = get_object_or_404(Company, pk=pk)
-    
-    # Capture product names for audit
-    product_names = list(company.products.values_list('name', flat=True))
-    details = f"حذف الشركة: {company.name}. المنتجات المتأثرة: {', '.join(product_names)}"
-    
-    AuditLog.objects.create(
-        action="حذف شركة",
-        entity_type="Company",
-        entity_id=company.id,
-        details=details,
-        user=request.user.username
-    )
-    
-    company.delete()
-    messages.info(request, "تم حذف الشركة بنجاح.")
-    return redirect('manage_companies')
-
-# Densities
-@login_required
-def manage_densities(request):
-    densities = Density.objects.all().order_by('-created_at')
-    return render(request, 'dashboard/densities.html', {'densities': densities})
-
-@login_required
-@require_POST
-def add_density(request):
-    value = request.POST.get('value', '').strip()
-    if value:
-        Density.objects.create(value=value)
-        messages.success(request, "تمت إضافة الكثافة.")
-    else:
-        messages.error(request, "قيمة الكثافة مطلوبة.")
-    return redirect('manage_densities')
-
-@require_POST
-@login_required
-def edit_density(request, pk):
-    density = get_object_or_404(Density, pk=pk)
-    value = request.POST.get('value', '').strip()
-    if value:
-        density.value = value
-        density.save()
-        messages.success(request, "تم تحديث الكثافة.")
-    return redirect('manage_densities')
-
-@require_POST
-@login_required
-def delete_density(request, pk):
-    density = get_object_or_404(Density, pk=pk)
-    density.delete()
-    messages.info(request, "تم حذف الكثافة.")
-    return redirect('manage_densities')
-
 # Products
 @login_required
 def manage_products(request):
-    products = Product.objects.all().select_related('company', 'density').order_by('-created_at')
-    companies = Company.objects.all()
-    densities = Density.objects.all()
+    products = Product.objects.all().order_by('-created_at')
     return render(request, 'dashboard/products.html', {
         'products': products,
-        'companies': companies,
-        'densities': densities
     })
 
 @login_required
 @require_POST
 def add_product(request):
     name = request.POST.get('name', '').strip()
-    company_id = request.POST.get('company_id')
-    density_id = request.POST.get('density_id')
     image = request.FILES.get('image')
     is_available = request.POST.get('is_available') == 'on'
     price = request.POST.get('price', '0')
+    wholesale_price = request.POST.get('wholesale_price', '0')
+    bulk_wholesale_price = request.POST.get('bulk_wholesale_price', '0')
     cost = request.POST.get('cost', '0')
     stock_quantity = request.POST.get('stock_quantity', '0')
     
-    if name and company_id and density_id:
-        company = get_object_or_404(Company, id=company_id)
-        density = get_object_or_404(Density, id=density_id)
-        
-        Product.objects.create(
-            name=name,
-            company=company,
-            density=density,
-            image=image,
-            is_available=is_available,
-            price=Decimal(price or '0'),
-            cost=Decimal(cost or '0'),
-            stock_quantity=int(stock_quantity or 0),
-        )
-        messages.success(request, "تمت إضافة المنتج.")
-    else:
-        messages.error(request, "جميع الحقول مطلوبة.")
+    if not name:
+        messages.error(request, "اسم المنتج مطلوب.")
+        return redirect('manage_products')
+
+    price_d = Decimal(price or '0')
+    wholesale_d = Decimal(wholesale_price or '0')
+    bulk_d = Decimal(bulk_wholesale_price or '0')
+    cost_d = Decimal(cost or '0')
+
+    if price_d < 0 or wholesale_d < 0 or bulk_d < 0 or cost_d < 0:
+        messages.error(request, "الأسعار والتكلفة يجب أن تكون أرقاماً غير سالبة.")
+        return redirect('manage_products')
+
+    Product.objects.create(
+        name=name,
+        image=image,
+        is_available=is_available,
+        price=price_d,
+        wholesale_price=wholesale_d,
+        bulk_wholesale_price=bulk_d,
+        cost=cost_d,
+        stock_quantity=int(stock_quantity or 0),
+    )
+    messages.success(request, "تمت إضافة المنتج.")
     return redirect('manage_products')
 
 @require_POST
@@ -470,26 +404,38 @@ def add_product(request):
 def edit_product(request, pk):
     product = get_object_or_404(Product, pk=pk)
     name = request.POST.get('name', '').strip()
-    company_id = request.POST.get('company_id')
-    density_id = request.POST.get('density_id')
     image = request.FILES.get('image')
     price = request.POST.get('price', '0')
+    wholesale_price = request.POST.get('wholesale_price', '0')
+    bulk_wholesale_price = request.POST.get('bulk_wholesale_price', '0')
     cost = request.POST.get('cost', '0')
     stock_quantity = request.POST.get('stock_quantity')
     
-    if name and company_id and density_id:
-        product.name = name
-        product.company_id = company_id
-        product.density_id = density_id
-        product.is_available = request.POST.get('is_available') == 'on'
-        product.price = Decimal(price or '0')
-        product.cost = Decimal(cost or '0')
-        if stock_quantity is not None:
-            product.stock_quantity = int(stock_quantity or 0)
-        if image:
-            product.image = image
-        product.save()
-        messages.success(request, "تم تحديث المنتج.")
+    if not name:
+        messages.error(request, "اسم المنتج مطلوب.")
+        return redirect('manage_products')
+
+    price_d = Decimal(price or '0')
+    wholesale_d = Decimal(wholesale_price or '0')
+    bulk_d = Decimal(bulk_wholesale_price or '0')
+    cost_d = Decimal(cost or '0')
+
+    if price_d < 0 or wholesale_d < 0 or bulk_d < 0 or cost_d < 0:
+        messages.error(request, "الأسعار والتكلفة يجب أن تكون أرقاماً غير سالبة.")
+        return redirect('manage_products')
+
+    product.name = name
+    product.is_available = request.POST.get('is_available') == 'on'
+    product.price = price_d
+    product.wholesale_price = wholesale_d
+    product.bulk_wholesale_price = bulk_d
+    product.cost = cost_d
+    if stock_quantity is not None:
+        product.stock_quantity = int(stock_quantity or 0)
+    if image:
+        product.image = image
+    product.save()
+    messages.success(request, "تم تحديث المنتج.")
     return redirect('manage_products')
 
 @require_POST
@@ -610,6 +556,16 @@ def edit_invoice(request, pk):
                 if item.quantity != qty or item.unit_price != price or item.cost_price != cost:
                     changes.append(f"منتج {item.product.name}: تعديل (السعر: {item.unit_price}->{price}, التكلفة: {item.cost_price}->{cost}, الكمية: {item.quantity}->{qty})")
                 
+                # Adjust stock if quantity changed
+                if item.product and item.quantity != qty:
+                    diff = qty - item.quantity
+                    if diff > 0 and item.product.stock_quantity < diff:
+                        messages.warning(request, f"المخزون غير كافٍ لتعديل كمية {item.product.name}")
+                        continue
+                    Product.objects.filter(id=item.product.id).update(
+                        stock_quantity=F('stock_quantity') - diff
+                    )
+                
                 item.quantity = qty
                 item.unit_price = price
                 item.cost_price = cost
@@ -640,6 +596,13 @@ def edit_invoice(request, pk):
 @require_POST
 def delete_invoice(request, pk):
     invoice = get_object_or_404(Invoice, pk=pk)
+    # Restore stock before soft-delete
+    for item in invoice.items.all():
+        if item.product:
+            Product.objects.filter(id=item.product.id).update(
+                stock_quantity=F('stock_quantity') + item.quantity
+            )
+    
     invoice.is_deleted = True
     invoice.deleted_at = timezone.now()
     invoice.deleted_by = request.user.username
@@ -688,10 +651,7 @@ def add_receipt(request, invoice_id):
             )
             
             # Auto-update status
-            if invoice.remaining_balance <= 0:
-                invoice.payment_status = 'paid'
-            elif invoice.payment_status == 'pending':
-                invoice.payment_status = 'unpaid' # Transition from pending once payment starts
+            _recalc_payment_status(invoice)
             invoice.save()
             
             InvoiceAudit.objects.create(
@@ -720,8 +680,7 @@ def cancel_receipt(request, receipt_id):
     receipt.save()
     
     # Recalculate status
-    if invoice.payment_status == 'paid' and invoice.remaining_balance > 0:
-        invoice.payment_status = 'unpaid'
+    _recalc_payment_status(invoice)
     invoice.save()
     
     InvoiceAudit.objects.create(
@@ -765,8 +724,7 @@ def delete_receipt(request, receipt_id):
     receipt.delete()
     
     # Recalculate status
-    if invoice.payment_status == 'paid' and invoice.remaining_balance > 0:
-        invoice.payment_status = 'unpaid'
+    _recalc_payment_status(invoice)
     invoice.save()
     
     messages.success(request, "تم حذف الإيصال نهائياً وتحديث الرصيد.")
@@ -825,28 +783,30 @@ def sales_view(request):
             Q(id__icontains=query.replace('#', ''))
         )
     
-    # Financial Summary (Optimized)
-    invoices_for_calc = invoices.exclude(payment_status='pending').prefetch_related('items')
-    total_sales = Receipt.objects.filter(invoice__in=invoices_for_calc, is_cancelled=False).aggregate(total=Sum('amount'))['total'] or Decimal('0.00')
+    # Financial Summary (Accrual basis)
+    invoices_for_calc = invoices.exclude(payment_status='pending')
+    total_sales = invoices_for_calc.aggregate(total=Sum('total_amount'))['total'] or Decimal('0.00')
     
-    total_cost = Decimal('0.00')
-    for inv in invoices_for_calc:
-        total_cost += sum((item.cost_price * item.quantity) for item in inv.items.all())
-            
+    total_cost = InvoiceItem.objects.filter(invoice__in=invoices_for_calc).aggregate(
+        total=Sum(F('cost_price') * F('quantity'))
+    )['total'] or Decimal('0.00')
+    
+    total_collected = Receipt.objects.filter(
+        invoice__in=invoices_for_calc, is_cancelled=False
+    ).aggregate(total=Sum('amount'))['total'] or Decimal('0.00')
+    
     total_profit = total_sales - total_cost
 
     return render(request, 'dashboard/sales.html', {
         'invoices': invoices,
         'total_sales': total_sales,
         'total_profit': total_profit,
+        'total_collected': total_collected,
         'query': query,
         'date_preset': date_preset,
         'date_from': date_from,
         'date_to': date_to,
     })
-
-import openpyxl # type: ignore
-from openpyxl.styles import Font, Alignment, PatternFill # type: ignore
 
 @login_required
 def export_sales_csv(request):
@@ -919,20 +879,22 @@ def financial_analysis_view(request):
     if payment_method:
         invoices_base = invoices_base.filter(payment_method=payment_method)
     
-    # Calculations
-    # 1. Total Expenses (Always counted for non-deleted invoices)
+    # Calculations (Accrual basis)
+    # 1. Total Revenue (Sum of invoice totals for non-pending invoices)
+    total_revenue = invoices_base.aggregate(total=Sum('total_amount'))['total'] or Decimal('0.00')
+    
+    # 2. Total COGS (Cost of goods sold from invoice items)
     expenses_data = InvoiceItem.objects.filter(invoice__in=invoices_base).aggregate(
         total_expenses=Sum(F('cost_price') * F('quantity'))
     )
     total_expenses = expenses_data['total_expenses'] or Decimal('0.00')
     
-    # 2. Total Revenue (ALL collected cash from non-canceled receipts of non-pending invoices)
-    receipts_data = Receipt.objects.filter(invoice__in=invoices_base, is_cancelled=False).aggregate(
-        total_revenue=Sum('amount')
-    )
-    total_revenue = receipts_data['total_revenue'] or Decimal('0.00')
+    # 3. Total Collected (Actual cash received — secondary metric)
+    total_collected = Receipt.objects.filter(invoice__in=invoices_base, is_cancelled=False).aggregate(
+        total=Sum('amount')
+    )['total'] or Decimal('0.00')
     
-    # 3. Internal Purchases (Company & Personal Expenses)
+    # 4. Internal Purchases (Company & Personal Expenses)
     purchases_base = InternalPurchase.objects.all()
     if date_from:
         purchases_base = purchases_base.filter(date__date__gte=date_from)
@@ -942,12 +904,10 @@ def financial_analysis_view(request):
     company_expenses = purchases_base.filter(expense_type='company').aggregate(total=Sum('total_amount'))['total'] or Decimal('0.00')
     personal_expenses = purchases_base.filter(expense_type='personal').aggregate(total=Sum('total_amount'))['total'] or Decimal('0.00')
 
-    # 4. Net Profit (Actual Cash Collected - Inventory Cost - Company Expenses)
-    # COGS (total_expenses) is already calculated from InvoiceItems.
-    # We subtract company overhead/expenses to get the true net profit.
+    # 5. Net Profit (Revenue - COGS - Company Expenses)
     net_profit = total_revenue - total_expenses - company_expenses
     
-    # 4. Profit Margin
+    # 6. Profit Margin
     margin = Decimal('0.00')
     if total_revenue > 0:
         margin = (net_profit / total_revenue) * 100
@@ -956,6 +916,7 @@ def financial_analysis_view(request):
     context = {
         'total_revenue': total_revenue,
         'total_expenses': total_expenses,
+        'total_collected': total_collected,
         'company_expenses': company_expenses,
         'personal_expenses': personal_expenses,
         'net_profit': net_profit,
@@ -1137,7 +1098,6 @@ def record_purchase_payment(request, pk):
     return redirect('purchase_list')
 
 from django.contrib.auth.models import User
-from django.contrib.admin.views.decorators import staff_member_required
 
 @login_required
 @admin_required

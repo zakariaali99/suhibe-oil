@@ -26,5 +26,9 @@ from django.views.static import serve # type: ignore
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("", include("core.urls")),
-    re_path(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT}),
 ]
+
+if settings.DEBUG:
+    urlpatterns += [
+        re_path(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT}),
+    ]

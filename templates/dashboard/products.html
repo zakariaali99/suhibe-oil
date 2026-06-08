@@ -37,9 +37,10 @@
                     <thead>
                         <tr>
                             <th>المنتج</th>
-                            <th class="text-center">الكثافة</th>
                             <th class="text-center">التكلفة</th>
-                            <th class="text-center">سعر البيع</th>
+                            <th class="text-center">تجزئة (قطاعي)</th>
+                            <th class="text-center">جملة</th>
+                            <th class="text-center">جملة الجملة</th>
                             <th class="text-center">المخزون</th>
                             <th class="text-center">الحالة</th>
                             <th class="text-start">إجراءات</th>
@@ -59,15 +60,13 @@
                                     </div>
                                     <div>
                                         <div class="fw-bold text-navy">{{ product.name }}</div>
-                                        <div class="small text-muted">{{ product.company.name }}</div>
                                     </div>
                                 </div>
                             </td>
-                            <td class="text-center">
-                                <span class="badge bg-light text-navy border num">{{ product.density.value }}</span>
-                            </td>
                             <td class="text-center fw-bold num">{{ product.cost }} <small>د.ل</small></td>
                             <td class="text-center fw-bold text-success num">{{ product.price }} <small>د.ل</small></td>
+                            <td class="text-center fw-bold text-warning num">{{ product.wholesale_price }} <small>د.ل</small></td>
+                            <td class="text-center fw-bold text-info num">{{ product.bulk_wholesale_price }} <small>د.ل</small></td>
                             <td class="text-center">
                                 <span class="fw-bold num {% if product.stock_quantity <= 5 %}text-danger{% else %}text-navy{% endif %}">
                                     {{ product.stock_quantity }}
@@ -110,7 +109,6 @@
                         </div>
                         <div>
                             <div class="fw-bold text-navy">{{ product.name }}</div>
-                            <div class="text-muted" style="font-size:0.75rem;">{{ product.company.name }} · <span class="num">{{ product.density.value }}</span></div>
                         </div>
                     </div>
                     <div>
@@ -122,8 +120,16 @@
                     </div>
                 </div>
                 <div class="mc-row">
-                    <span class="mc-label">سعر البيع</span>
+                    <span class="mc-label">تجزئة</span>
                     <span class="mc-value text-success num">{{ product.price }} د.ل</span>
+                </div>
+                <div class="mc-row">
+                    <span class="mc-label">جملة</span>
+                    <span class="mc-value text-warning num">{{ product.wholesale_price }} د.ل</span>
+                </div>
+                <div class="mc-row">
+                    <span class="mc-label">جملة الجملة</span>
+                    <span class="mc-value text-info num">{{ product.bulk_wholesale_price }} د.ل</span>
                 </div>
                 <div class="mc-row">
                     <span class="mc-label">التكلفة</span>
@@ -165,26 +171,22 @@
                     </div>
                     <div class="row g-3 mb-3">
                         <div class="col-6">
-                            <label class="small text-muted fw-bold mb-1">الشركة:</label>
-                            <select name="company_id" class="form-select rounded-3" required>
-                                {% for c in companies %}<option value="{{ c.id }}">{{ c.name }}</option>{% endfor %}
-                            </select>
-                        </div>
-                        <div class="col-6">
-                            <label class="small text-muted fw-bold mb-1">الكثافة:</label>
-                            <select name="density_id" class="form-select rounded-3" required>
-                                {% for d in densities %}<option value="{{ d.id }}" class="num">{{ d.value }}</option>{% endfor %}
-                            </select>
-                        </div>
-                    </div>
-                    <div class="row g-3 mb-3">
-                        <div class="col-6">
                             <label class="small text-muted fw-bold mb-1">سعر التكلفة (د.ل):</label>
                             <input type="number" step="0.01" name="cost" class="form-control rounded-3 num" value="0.00" required>
                         </div>
                         <div class="col-6">
-                            <label class="small text-muted fw-bold mb-1">سعر البيع (د.ل):</label>
+                            <label class="small text-muted fw-bold mb-1">سعر البيع تجزئة (د.ل):</label>
                             <input type="number" step="0.01" name="price" class="form-control rounded-3 num" value="0.00" required>
+                        </div>
+                    </div>
+                    <div class="row g-3 mb-3">
+                        <div class="col-6">
+                            <label class="small text-muted fw-bold mb-1">سعر جملة (د.ل):</label>
+                            <input type="number" step="0.01" name="wholesale_price" class="form-control rounded-3 num" value="0.00" required>
+                        </div>
+                        <div class="col-6">
+                            <label class="small text-muted fw-bold mb-1">سعر جملة الجملة (د.ل):</label>
+                            <input type="number" step="0.01" name="bulk_wholesale_price" class="form-control rounded-3 num" value="0.00" required>
                         </div>
                     </div>
                     <div class="mb-3">
@@ -227,30 +229,22 @@
                     </div>
                     <div class="row g-3 mb-3">
                         <div class="col-6">
-                            <label class="small text-muted fw-bold mb-1">الشركة:</label>
-                            <select name="company_id" class="form-select rounded-3" required>
-                                {% for c in companies %}
-                                <option value="{{ c.id }}" {% if c.id == product.company.id %}selected{% endif %}>{{ c.name }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                        <div class="col-6">
-                            <label class="small text-muted fw-bold mb-1">الكثافة:</label>
-                            <select name="density_id" class="form-select rounded-3" required>
-                                {% for d in densities %}
-                                <option value="{{ d.id }}" class="num" {% if d.id == product.density.id %}selected{% endif %}>{{ d.value }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                    </div>
-                    <div class="row g-3 mb-3">
-                        <div class="col-6">
                             <label class="small text-muted fw-bold mb-1">سعر التكلفة (د.ل):</label>
                             <input type="number" step="0.01" name="cost" class="form-control rounded-3 num" value="{{ product.cost }}" required>
                         </div>
                         <div class="col-6">
-                            <label class="small text-muted fw-bold mb-1">سعر البيع (د.ل):</label>
+                            <label class="small text-muted fw-bold mb-1">سعر البيع تجزئة (د.ل):</label>
                             <input type="number" step="0.01" name="price" class="form-control rounded-3 num" value="{{ product.price }}" required>
+                        </div>
+                    </div>
+                    <div class="row g-3 mb-3">
+                        <div class="col-6">
+                            <label class="small text-muted fw-bold mb-1">سعر جملة (د.ل):</label>
+                            <input type="number" step="0.01" name="wholesale_price" class="form-control rounded-3 num" value="{{ product.wholesale_price }}" required>
+                        </div>
+                        <div class="col-6">
+                            <label class="small text-muted fw-bold mb-1">سعر جملة الجملة (د.ل):</label>
+                            <input type="number" step="0.01" name="bulk_wholesale_price" class="form-control rounded-3 num" value="{{ product.bulk_wholesale_price }}" required>
                         </div>
                     </div>
                     <div class="mb-3">

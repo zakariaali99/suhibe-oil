@@ -109,6 +109,11 @@
                                                     {% else %}
                                                     <div style="color: #f59e0b; font-weight: bold; font-size: 10pt;">{{ "فاتورة معلقة"|reshape_arabic }}</div>
                                                     {% endif %}
+                                                    
+                                                    <div style="color: #64748b; font-size: 8pt; margin-top: 10pt; margin-bottom: 2pt;">{{ "نوع البيع:"|reshape_arabic }}</div>
+                                                    <div style="color: #1a1d2e; font-weight: bold; font-size: 10pt;">
+                                                        {% if invoice.sell_type == 'retail' %}{{ "تجزئة"|reshape_arabic }}{% elif invoice.sell_type == 'wholesale' %}{{ "جملة"|reshape_arabic }}{% else %}{{ "جملة الجملة"|reshape_arabic }}{% endif %}
+                                                    </div>
                                                 </td>
                                             </tr>
                                         </table>
@@ -134,7 +139,7 @@
                                         <td style="padding: 12pt 10pt; border-bottom: 0.5pt solid #f1f5f9;">
                                             {% if item.product %}
                                             <div style="font-weight: bold; font-size: 12pt; color: #1a1d2e; margin-bottom: 2pt;">{{ item.product.name|reshape_arabic }}</div>
-                                            <div style="font-size: 9pt; color: #64748b;">{{ item.product.company.name|reshape_arabic }} — {{ item.product.density.value|reshape_arabic }}</div>
+
                                             {% else %}
                                             <div style="color: #ef4444; font-size: 10pt;">{{ "منتج محذوف"|reshape_arabic }}</div>
                                             {% endif %}

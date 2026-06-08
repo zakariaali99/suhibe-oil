@@ -23,16 +23,7 @@ urlpatterns = [
     # Dashboard
     path('manage/', views.dashboard, name='dashboard'),
     
-    path('manage/companies/', views.manage_companies, name='manage_companies'),
-    path('manage/companies/add/', views.add_company, name='add_company'),
-    path('manage/companies/edit/<int:pk>/', views.edit_company, name='edit_company'),
-    path('manage/companies/delete/<int:pk>/', views.delete_company, name='delete_company'),
-    
-    path('manage/densities/', views.manage_densities, name='manage_densities'),
-    path('manage/densities/add/', views.add_density, name='add_density'),
-    path('manage/densities/edit/<int:pk>/', views.edit_density, name='edit_density'),
-    path('manage/densities/delete/<int:pk>/', views.delete_density, name='delete_density'),
-    
+
     path('manage/products/', views.manage_products, name='manage_products'),
     path('manage/products/add/', views.add_product, name='add_product'),
     path('manage/products/edit/<int:pk>/', views.edit_product, name='edit_product'),

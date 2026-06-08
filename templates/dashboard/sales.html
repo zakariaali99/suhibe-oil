@@ -14,12 +14,13 @@
     </div>
 
     <!-- Stats Summary -->
-    <div class="col-md-6">
+    <div class="col-md-4">
         <div class="card shadow-sm p-4 bg-navy text-white rounded-4 h-100">
             <div class="d-flex justify-content-between align-items-center">
                 <div>
-                    <h6 class="text-gold fw-bold mb-1">إجمالي المبيعات</h6>
+                    <h6 class="text-gold fw-bold mb-1">إجمالي المبيعات (استحقاق)</h6>
                     <div class="display-6 fw-bold num">{{ total_sales|floatformat:2 }} <small class="fs-6 opacity-50">د.ل</small></div>
+                    <small class="opacity-75">قيمة الفواتير الصادرة</small>
                 </div>
                 <div class="bg-white bg-opacity-10 p-3 rounded-circle d-none d-sm-block">
                     <i class="bi bi-cash-stack h3 mb-0 text-gold"></i>
@@ -27,12 +28,27 @@
             </div>
         </div>
     </div>
-    <div class="col-md-6">
+    <div class="col-md-4">
+        <div class="card shadow-sm p-4 bg-white border-end border-5 border-success rounded-4 h-100">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h6 class="text-success fw-bold mb-1">المحصل فعلياً</h6>
+                    <div class="display-6 fw-bold text-success num">{{ total_collected|floatformat:2 }} <small class="fs-6 text-muted">د.ل</small></div>
+                    <small class="text-muted">المبالغ المستلمة</small>
+                </div>
+                <div class="bg-light p-3 rounded-circle d-none d-sm-block">
+                    <i class="bi bi-cash-coin h3 mb-0 text-success"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
         <div class="card shadow-sm p-4 bg-white border-end border-5 border-gold rounded-4 h-100">
             <div class="d-flex justify-content-between align-items-center">
                 <div>
                     <h6 class="text-navy fw-bold mb-1">صافي الأرباح</h6>
                     <div class="display-6 fw-bold text-navy num">{{ total_profit|floatformat:2 }} <small class="fs-6 text-muted">د.ل</small></div>
+                    <small class="text-muted">الإيرادات - التكاليف</small>
                 </div>
                 <div class="bg-light p-3 rounded-circle d-none d-sm-block">
                     <i class="bi bi-piggy-bank h3 mb-0 text-gold"></i>
